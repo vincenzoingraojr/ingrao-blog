@@ -68,7 +68,7 @@ function ModifyPassword() {
 
                                 if (Date.now() >= exp! * 1000) {
                                     setStatus(
-                                        "Your token is expired. Please repeat the email address verification."
+                                        "Your token is expired. Please repeat the password recovery operation."
                                     );
                                 } else {
                                     if (
