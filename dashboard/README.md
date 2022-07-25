@@ -1,6 +1,6 @@
 # ingrao.blog | Dashboard
 
-This web app uses React.js and Apollo Client. It is written in TypeScript, and we use `styled-components` to style the web app. I use Figma to create the SVG icons.
+This web app uses React.js and Apollo Client. It is written in TypeScript, and I use `styled-components` to style the web app. I use Figma to create the SVG icons.
 
 ## How to start the local front-end development
 
