@@ -1,0 +1,179 @@
+@import url("https://storage.ingrao.blog/static/css/roboto-condensed.css");
+
+html {
+    font-family: "Roboto Condensed", sans-serif;
+    font-size: 18px;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+body {
+    display: grid;
+    gap: 48px;
+    overflow: auto;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+*:focus {
+    outline: none;
+}
+
+a {
+    font-weight: 400;
+    font-size: inherit;
+    color: blue;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    text-decoration: underline;
+}
+
+header.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+}
+
+header.page-header a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    text-decoration: none;
+}
+
+header.page-header a:hover, header.page-header a:active {
+    text-decoration: none;
+}
+
+header.page-header a div.site-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: inherit;
+    height: inherit;
+}
+
+header.page-header a div.site-logo svg {
+    width: inherit;
+    height: inherit;
+    fill: #000000;
+}
+
+header.page-header div.site-title {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    text-transform: lowercase;
+}
+
+header.page-header div.site-title span.blue-text {
+    color: blue;
+}
+
+div.page-content {
+    display: grid;
+    gap: 48px;
+}
+
+div.page-title {
+    display: block;
+    font-size: 72px;
+    font-weight: 700;
+}
+
+div.page-text {
+    display: block;
+}
+
+footer.page-footer {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    font-size: 16px;
+    column-gap: 12px;
+    row-gap: 4px;
+}
+
+div.footer-item {
+    display: block;
+}
+
+@media only screen and (max-width: 400px) {
+    body {
+        margin-left: 16px;
+        margin-right: 16px;
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+
+    header.page-header a {
+        width: 36px;
+        height: 36px;
+    }
+
+    header.page-header div.site-title {
+        font-size: 24px;
+    }
+
+    div.page-title {
+        font-size: 64px;
+    }
+}
+
+@media only screen and (min-width: 400px) and (max-width: 600px) {
+    body {
+        margin-left: 48px;
+        margin-right: 48px;
+    }
+}
+
+@media only screen and (min-width: 600px) {
+    body {
+        margin-left: 6%;
+        margin-right: 6%;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    body {
+        margin-left: 12%;
+        margin-right: 12%;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    body {
+        margin-left: 18%;
+        margin-right: 18%;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    body {
+        margin-left: 22%;
+        margin-right: 22%;
+    }
+}
+
+@media only screen and (min-width: 1356px) {
+    body {
+        margin-left: 24%;
+        margin-right: 24%;
+    }
+}
