@@ -19,7 +19,7 @@ export const sendVerificationEmail = (email: string, origin: string, token: stri
     const link = `${origin === "dash" ? process.env.DASHBOARD_ORIGIN : process.env.CLIENT_ORIGIN}/verify/${token}`;
 
     ejs.renderFile(
-        path.join(__dirname, "/templates/VerifyEmail.ejs"),
+        path.join(__dirname, "./templates/VerifyEmail.ejs"),
         { link: link },
         function (error, data) {
             if (error) {

@@ -14,6 +14,7 @@ import { User } from "./entities/User";
 import { createAccessToken, createRefreshToken } from "./auth/auth";
 import { sendRefreshToken } from "./auth/sendRefreshToken";
 import { PostResolver } from "./resolvers/PostResolver";
+import { initAdmin } from "./helpers/initAdmin";
 
 async function main() {
     const app = express();
@@ -107,6 +108,8 @@ async function main() {
     app.listen({ port: process.env.PORT || 4000 }, () => {
         console.log("Express server started.");
     });
+
+    await initAdmin();
 }
 
 main().catch((error) => {
