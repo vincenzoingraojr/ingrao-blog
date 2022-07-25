@@ -132,7 +132,7 @@ export const CustomFieldContainer = styled.div`
     display: block;
     background-color: transparent;
     border: 2px solid #000000;
-    height: 60px;
+    height: 64px;
     padding-left: 12px;
     padding-right: 12px;
 `;

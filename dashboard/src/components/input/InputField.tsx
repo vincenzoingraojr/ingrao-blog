@@ -28,7 +28,7 @@ const InputFieldContainer = styled.div`
     position: relative;
     border: 2px solid #000000;
     background-color: transparent;
-    min-height: 60px;
+    min-height: 64px;
     padding-left: 12px;
     padding-right: 12px;
 `;

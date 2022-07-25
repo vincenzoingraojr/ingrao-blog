@@ -1,7 +1,6 @@
 div.select-container {
     display: block;
     background-color: #ffffff;
-    border-radius: 0;
     width: 100%;
 }
 
@@ -39,7 +38,7 @@ div.select__indicator.select__dropdown-indicator svg {
 div.select__menu {
     margin-top: 12px;
     margin-bottom: 12px;
-    background-color: #000000;
+    background-color: #ffffff;
     border-radius: 0;
     border: 2px solid #000000;
     box-sizing: border-box;
