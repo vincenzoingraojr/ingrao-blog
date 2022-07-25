@@ -355,7 +355,7 @@
 .react-datepicker__time-container--with-today-button {
     display: inline;
     border: 1px solid #000000;
-    border-radius: 6px;
+    border-radius: 0;
     position: absolute;
     right: -72px;
     top: 0;
@@ -464,7 +464,7 @@
 .react-datepicker__day-name,
 .react-datepicker__day,
 .react-datepicker__time-name {
-    color: #ffffff;
+    color: #000000;
     display: inline-block;
     width: 1.7rem;
     line-height: 1.7rem;
