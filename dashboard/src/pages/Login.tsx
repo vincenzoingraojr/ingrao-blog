@@ -1,9 +1,7 @@
 import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import Head from "../components/Head";
-import DatePickerField from "../components/input/datepicker/DatePickerField";
 import InputField from "../components/input/InputField";
-import SelectField from "../components/input/select/SelectField";
 import AuthLayout from "../components/layouts/AuthLayout";
 import {
     MeDocument,
@@ -24,12 +22,6 @@ import { setAccessToken } from "../utils/token";
 
 function Login() {
     const [login] = useLoginMutation();
-    const genderOptions = [
-        { value: "Gender", label: "Gender" },
-        { value: "Female", label: "Female" },
-        { value: "Male", label: "Male" },
-        { value: "Non-binary", label: "Non-binary" },
-    ];
 
     const navigate = useNavigate();
 
@@ -92,16 +84,6 @@ function Login() {
                                 <Form>
                                     {status ? <Status>{status}</Status> : null}
                                     <AuthFormContent>
-                                        <DatePickerField
-                                            field="birthDate"
-                                            placeholder="Birthday"
-                                        />
-                                        <SelectField
-                                            field="gender"
-                                            placeholder="Gender"
-                                            errors={errors}
-                                            options={genderOptions}
-                                        />
                                         <InputField
                                             field="email"
                                             type="email"
