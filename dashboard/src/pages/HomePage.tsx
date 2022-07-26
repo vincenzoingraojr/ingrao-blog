@@ -1,4 +1,5 @@
 import Head from "../components/Head";
+import PageLayout from "../components/layouts/PageLayout";
 
 function HomePage() {
     return (
@@ -7,7 +8,13 @@ function HomePage() {
                 title="Home | dashboard.ingrao.blog"
                 description="This is the dashboard homepage."
             />
-            <div>Home.</div>
+            <PageLayout 
+                content={
+                    <>
+                        Home.
+                    </>
+                }
+            />
         </>
     );
 }
