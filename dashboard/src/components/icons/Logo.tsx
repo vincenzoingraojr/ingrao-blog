@@ -20,7 +20,7 @@ const Logo: FunctionComponent<LogoProps> = ({ type }) => {
         if (type === "index-logo") {
             setSize(144);
         } else if (type === "logo") {
-            setSize(48);
+            setSize(44);
         } else {
             setSize(36);
         }
