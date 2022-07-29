@@ -20,11 +20,11 @@ const PageLayoutContainer = styled.div`
     width: 100%;
 
     @media ${devices.mobileL} {
-        width: 100%;
+        width: 90vw;
     }
 
     @media ${devices.tablet} {
-        grid-template-rows: 120px auto;
+        grid-template-rows: 140px auto;
         width: 78vw;
     }
 

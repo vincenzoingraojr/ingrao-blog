@@ -5,7 +5,7 @@ function HomePage() {
     return (
         <>
             <Head
-                title="Home | dashboard.ingrao.blog"
+                title="Dashboard | ingrao.blog"
                 description="This is the dashboard homepage."
             />
             <PageLayout 
