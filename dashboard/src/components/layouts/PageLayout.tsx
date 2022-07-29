@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
+import { PageText } from "../../styles/global";
 import Nav from "../Nav";
 
 interface PageLayoutProps {
@@ -43,6 +44,36 @@ const PageLayoutContainer = styled.div`
 
 const PageLayoutContent = styled.div`
     display: block;
+    min-height: calc(100% + 120px);
+
+    @media ${devices.tablet} {
+        min-height: calc(100vh - 244px);
+    }
+`;
+
+const FooterContainer = styled.footer`
+    display: none;
+
+    @media ${devices.tablet} {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        height: 80px;
+        border-top: 2px solid #000000;
+        font-size: 14px;
+        column-gap: 12px;
+        row-gap: 4px;
+        margin-top: 24px;
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+`;
+
+const FooterItem = styled(PageText)`
+    display: block;
+    text-rendering: optimizeLegibility;
 `;
 
 const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
@@ -53,6 +84,33 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
                 <PageLayoutContent>
                     {content}
                 </PageLayoutContent>
+                <FooterContainer>
+                    <FooterItem>
+                        &copy; {new Date().getFullYear()} ingrao.blog
+                    </FooterItem>
+                    <FooterItem>
+                        <a
+                            href="https://ingrao.blog"
+                            target="_blank"
+                            title="ingrao.blog"
+                            rel="noreferrer"
+                            aria-label="ingrao.blog"
+                        >
+                            Blog
+                        </a>
+                    </FooterItem>
+                    <FooterItem>
+                        <a
+                            href="https://twitter.com/vincentingraojr"
+                            target="_blank"
+                            title="Vincenzo Ingrao Jr.'s official Twitter account"
+                            rel="noreferrer"
+                            aria-label="Vincenzo Ingrao Jr.'s official Twitter account"
+                        >
+                            Twitter
+                        </a>
+                    </FooterItem>
+                </FooterContainer>
             </PageLayoutContainer>
         </PageLayoutWrapper>
     );

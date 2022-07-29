@@ -10,6 +10,7 @@ import { setAccessToken } from "./utils/token";
 import Preloader from "./components/utils/Preloader";
 import Index from "./pages/Index";
 import CompleteAccount from "./pages/CompleteAccount";
+import CreatePostPage from "./pages/CreatePostPage";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -94,6 +95,15 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={<HomePage />}
+                        />
+                    }
+                />
+                <Route
+                    path="/create-post"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<CreatePostPage />}
                         />
                     }
                 />

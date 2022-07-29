@@ -2,19 +2,19 @@ import Head from "../components/Head";
 import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
 
-function HomePage() {
+function CreatePostPage() {
     return (
         <>
             <Head
-                title="Dashboard | ingrao.blog"
-                description="This is the dashboard homepage."
+                title="Create a new post | dashboard.ingrao.blog"
+                description="In this page you can create a new post and update the existing ones."
             />
             <PageLayout 
                 content={
                     <PageContentLayout 
                         content={
                             <>
-                                Home.
+                                Create a new post.
                             </>
                         }
                     />
@@ -24,4 +24,4 @@ function HomePage() {
     );
 }
 
-export default HomePage;
+export default CreatePostPage;
