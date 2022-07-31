@@ -1,6 +1,7 @@
 import { Field } from "formik";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { ControlContainer } from "../../styles/global";
 import Eye from "../icons/Eye";
 
 interface InputFieldProps {
@@ -72,23 +73,6 @@ const InputContainerField = styled.div`
     input[type="text"]:not(:only-child),
     input[type="password"]:not(:only-child) {
         width: calc(100% - 38px);
-    }
-`;
-
-const ShowPassword = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    width: 26px;
-    height: 26px;
-    border-radius: 9999px;
-    background-color: transparent;
-    transition: background-color ease 0.2s;
-
-    &:hover,
-    &:focus {
-        background-color: #d9d9d9;
     }
 `;
 
@@ -165,14 +149,15 @@ const InputField: FunctionComponent<InputFieldProps> = ({
                             innerRef={inputField}
                         />
                         {isPassword ? (
-                            <ShowPassword
+                            <ControlContainer
                                 role="button"
+                                size={26}
                                 onClick={() => {
                                     setSwitchedType(!switchedType);
                                 }}
                             >
                                 <Eye mode={switchedType} />
-                            </ShowPassword>
+                            </ControlContainer>
                         ) : null}
                     </InputContainerField>
                 </InputContainer>

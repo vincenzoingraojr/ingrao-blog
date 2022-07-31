@@ -226,3 +226,34 @@ export const OptionTitle = styled.div`
     font-weight: 700;
     font-size: 24px;
 `;
+
+export const ModalContentContainer = styled.div`
+    display: block;
+    padding-top: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+`;
+
+export const FlexContainer24 = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+`;
+
+export const ControlContainer = styled.div.attrs((props: { size?: number }) => props)`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: ${(props) => props.size ? `${props.size}px` : `36px`};
+    height: ${(props) => props.size ? `${props.size}px` : `36px`};
+    border-radius: 9999px;
+    background-color: transparent;
+    transition: background-color ease 0.2s;
+
+    &:hover,
+    &:focus {
+        background-color: #d9d9d9;
+    }
+`;

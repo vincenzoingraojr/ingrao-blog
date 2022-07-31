@@ -4,7 +4,7 @@ import { Link, useNavigate, useNavigationType } from "react-router-dom";
 import Logo from "../icons/Logo";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
-import { PageBlock, PageTextMT48 } from "../../styles/global";
+import { ControlContainer, PageBlock, PageTextMT48 } from "../../styles/global";
 
 interface AuthLayoutProps {
     content: JSX.Element;
@@ -52,23 +52,6 @@ const AuthPageHeader = styled.div`
     @media ${devices.desktop} {
         padding-left: 28%;
         padding-right: 28%;
-    }
-`;
-
-const ExitAuthPage = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    width: 36px;
-    height: 36px;
-    border-radius: 9999px;
-    background-color: transparent;
-    transition: background-color ease 0.2s;
-
-    &:hover,
-    &:focus {
-        background-color: #d9d9d9;
     }
 `;
 
@@ -135,7 +118,7 @@ const AuthLayout: FunctionComponent<AuthLayoutProps> = ({ content }) => {
     return (
         <AuthPage>
             <AuthPageHeader>
-                <ExitAuthPage
+                <ControlContainer
                     title="Go back"
                     role="button"
                     aria-label="Go back"
@@ -148,7 +131,7 @@ const AuthLayout: FunctionComponent<AuthLayoutProps> = ({ content }) => {
                     }}
                 >
                     <Back />
-                </ExitAuthPage>
+                </ControlContainer>
                 <AuthPageLogo>
                     <Link to="/" title="ingrao.blog" aria-label="ingrao.blog">
                         <Logo type="inline" />

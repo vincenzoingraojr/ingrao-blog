@@ -54,6 +54,7 @@ export class PostResolver {
     ): Promise<PostResponse> {
         let errors = [];
         let post;
+        let status;
 
         if (!payload || (payload && payload.role === "user")) {
             errors.push({
@@ -74,6 +75,8 @@ export class PostResolver {
                         authorId: payload.id,
                         author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
                     }).save();
+                    
+                    status = "Post created successfully.";
                 } catch (error) {
                     console.log(error);
 
@@ -89,6 +92,7 @@ export class PostResolver {
         return {
             post,
             errors,
+            status,
         };
     }
 

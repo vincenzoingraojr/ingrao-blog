@@ -1,0 +1,34 @@
+mutation createPost($slug: String!) {
+    createPost(slug: $slug) {
+        post {
+            id
+            slug
+            draft
+            authorId
+            author {
+                id
+                firstName
+                lastName
+                email
+                birthDate
+                gender
+                title
+                verified
+                role
+                profilePicture
+            }
+            title
+            description
+            slogan
+            postCover
+            content
+            createdAt
+            updatedAt
+        }
+        status
+        errors {
+            field
+            message
+        }
+    }
+}
