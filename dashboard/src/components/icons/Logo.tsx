@@ -7,8 +7,8 @@ export interface LogoProps {
 }
 
 const LogoContainer = styled(SvgIcon).attrs((props: { size: number }) => props)`
-    width: ${(props) => (props.size && `${props.size}px`)};
-    height: ${(props) => (props.size && `${props.size}px`)};
+    width: ${(props) => props.size && `${props.size}px`};
+    height: ${(props) => props.size && `${props.size}px`};
     fill: #000000;
     stroke: none;
 `;
@@ -20,7 +20,7 @@ const Logo: FunctionComponent<LogoProps> = ({ type }) => {
         if (type === "index-logo") {
             setSize(144);
         } else if (type === "logo") {
-            setSize(44);
+            setSize(42);
         } else {
             setSize(36);
         }

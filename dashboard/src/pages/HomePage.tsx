@@ -9,17 +9,7 @@ function HomePage() {
                 title="Dashboard | ingrao.blog"
                 description="This is the dashboard homepage."
             />
-            <PageLayout 
-                content={
-                    <PageContentLayout 
-                        content={
-                            <>
-                                Home.
-                            </>
-                        }
-                    />
-                }
-            />
+            <PageLayout content={<PageContentLayout content={<>Home.</>} />} />
         </>
     );
 }

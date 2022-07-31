@@ -170,23 +170,35 @@ export const ImageButtonContainer = styled.div`
     cursor: pointer;
     transition: background-color ease 0.2s;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         background-color: rgba(0, 0, 0, 0.8);
     }
 `;
 
 export const LinkButton = styled(Link)`
-    display: inline-block;
+    display: inline-flex;
+    gap: 24px;
     padding: 12px 24px;
+    align-items: center;
+    justify-content: flex-start;
     text-decoration: none;
     background-color: inherit;
     color: inherit;
     font-weight: 700;
     text-transform: uppercase;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
         text-decoration: none;
     }
+`;
+
+export const LinkButtonText = styled.div`
+    font-weight: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-transform: inherit;
 `;
 
 export const FeedLoading = styled.div`
@@ -195,4 +207,22 @@ export const FeedLoading = styled.div`
     align-items: center;
     justify-content: center;
     height: 42px;
+`;
+
+export const OptionsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+`;
+
+export const OptionContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+`;
+
+export const OptionTitle = styled.div`
+    display: block;
+    font-weight: 700;
+    font-size: 24px;
 `;

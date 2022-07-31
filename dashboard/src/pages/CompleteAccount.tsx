@@ -72,21 +72,19 @@ function ModifyPassword() {
                                     );
                                 } else {
                                     if (
-                                        response.data?.passwordSetup
-                                            .errors?.length !== 0
+                                        response.data?.passwordSetup.errors
+                                            ?.length !== 0
                                     ) {
                                         setStatus(null);
                                         setErrors(
                                             toErrorMap(
-                                                response.data
-                                                    ?.passwordSetup
+                                                response.data?.passwordSetup
                                                     .errors!
                                             )
                                         );
                                     } else {
                                         setStatus(
-                                            response.data.passwordSetup
-                                                .status
+                                            response.data.passwordSetup.status
                                         );
                                     }
                                 }

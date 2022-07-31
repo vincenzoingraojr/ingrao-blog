@@ -66,7 +66,8 @@ const ExitAuthPage = styled.div`
     background-color: transparent;
     transition: background-color ease 0.2s;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         background-color: #d9d9d9;
     }
 `;
@@ -149,11 +150,7 @@ const AuthLayout: FunctionComponent<AuthLayoutProps> = ({ content }) => {
                     <Back />
                 </ExitAuthPage>
                 <AuthPageLogo>
-                    <Link
-                        to="/"
-                        title="ingrao.blog"
-                        aria-label="ingrao.blog"
-                    >
+                    <Link to="/" title="ingrao.blog" aria-label="ingrao.blog">
                         <Logo type="inline" />
                     </Link>
                 </AuthPageLogo>

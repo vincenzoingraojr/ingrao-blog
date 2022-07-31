@@ -21,7 +21,7 @@ const PageLayoutContainer = styled.div`
     width: 100%;
 
     @media ${devices.mobileL} {
-        width: 90vw;
+        width: 86vw;
     }
 
     @media ${devices.tablet} {
@@ -81,9 +81,7 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
         <PageLayoutWrapper>
             <PageLayoutContainer>
                 <Nav />
-                <PageLayoutContent>
-                    {content}
-                </PageLayoutContent>
+                <PageLayoutContent>{content}</PageLayoutContent>
                 <FooterContainer>
                     <FooterItem>
                         &copy; {new Date().getFullYear()} ingrao.blog

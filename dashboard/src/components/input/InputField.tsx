@@ -69,7 +69,8 @@ const InputContainerField = styled.div`
     width: 100%;
     gap: 12px;
 
-    input[type="text"]:not(:only-child), input[type="password"]:not(:only-child) {
+    input[type="text"]:not(:only-child),
+    input[type="password"]:not(:only-child) {
         width: calc(100% - 38px);
     }
 `;
@@ -85,7 +86,8 @@ const ShowPassword = styled.div`
     background-color: transparent;
     transition: background-color ease 0.2s;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         background-color: #d9d9d9;
     }
 `;

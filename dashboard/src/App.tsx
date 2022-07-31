@@ -10,7 +10,9 @@ import { setAccessToken } from "./utils/token";
 import Preloader from "./components/utils/Preloader";
 import Index from "./pages/Index";
 import CompleteAccount from "./pages/CompleteAccount";
-import CreatePostPage from "./pages/CreatePostPage";
+import CreatePostPage from "./pages/create-post/CreatePostPage";
+import Modal from "./components/utils/modal/Modal";
+import NewPost from "./pages/create-post/NewPost";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -107,7 +109,39 @@ function App() {
                         />
                     }
                 />
+                <Route
+                    path="/create-post/new"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Create a new post"
+                                    modalContent={<NewPost />}
+                                />
+                            }
+                        />
+                    }
+                />
             </Routes>
+            {state?.backgroundLocation && (
+                <Routes>
+                    <Route
+                        path="/create-post/new"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Create a new post"
+                                        modalContent={<NewPost />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                </Routes>
+            )}
         </>
     );
 }

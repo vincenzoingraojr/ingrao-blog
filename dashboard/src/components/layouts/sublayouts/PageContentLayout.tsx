@@ -7,18 +7,16 @@ interface PageContentLayoutProps {
 
 const PageContentContainer = styled.div`
     display: block;
-    padding-top: 24px;
+    padding-top: 48px;
     padding-left: 16px;
     padding-right: 16px;
-    padding-bottom: 24px;
+    padding-bottom: 48px;
 `;
 
-const PageContentLayout: FunctionComponent<PageContentLayoutProps> = ({ content }) => {
-    return (
-        <PageContentContainer>
-            {content}
-        </PageContentContainer>
-    );
+const PageContentLayout: FunctionComponent<PageContentLayoutProps> = ({
+    content,
+}) => {
+    return <PageContentContainer>{content}</PageContentContainer>;
 };
 
 export default PageContentLayout;

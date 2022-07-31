@@ -36,7 +36,11 @@ function Login() {
                     <AuthForm>
                         <AuthFormTitle>Log in</AuthFormTitle>
                         <Formik
-                            initialValues={{ email: "", password: "", origin: "dash" }}
+                            initialValues={{
+                                email: "",
+                                password: "",
+                                origin: "dash",
+                            }}
                             onSubmit={async (
                                 values,
                                 { setErrors, setStatus }

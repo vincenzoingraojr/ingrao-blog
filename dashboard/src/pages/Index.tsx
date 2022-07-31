@@ -102,11 +102,13 @@ function Index() {
                     <IndexLogoContainer>
                         <Logo type="index-logo" />
                     </IndexLogoContainer>
-                    <IndexTitle>
-                        A dashboard for ingrao.blog
-                    </IndexTitle>
+                    <IndexTitle>A dashboard for ingrao.blog</IndexTitle>
                     <PageBlock>
-                        <AuthLinkButton to="/login" title="Log in to the dashboard" aria-label="Log in to the dashboard">
+                        <AuthLinkButton
+                            to="/login"
+                            title="Log in to the dashboard"
+                            aria-label="Log in to the dashboard"
+                        >
                             Log in
                         </AuthLinkButton>
                     </PageBlock>
@@ -141,6 +143,6 @@ function Index() {
             </IndexPage>
         </>
     );
-};
+}
 
 export default Index;

@@ -50,7 +50,8 @@ const SiteBrand = styled.div`
         gap: 16px;
     }
 
-    a:hover, a:active {
+    a:hover,
+    a:active {
         text-decoration: none;
     }
 `;
@@ -135,7 +136,8 @@ const NavEntry = styled.div`
         transition: background-color ease 0.2s;
     }
 
-    a:hover, a:active {
+    a:hover,
+    a:active {
         text-decoration: none;
         background-color: rgba(0, 0, 0, 0.2);
     }
@@ -205,7 +207,9 @@ function Nav() {
                             {({ isActive }) => (
                                 <>
                                     <NavEntryIcon>
-                                        <Home isActive={isActive ? true : false} />
+                                        <Home
+                                            isActive={isActive ? true : false}
+                                        />
                                     </NavEntryIcon>
                                     <NavEntryText>Home</NavEntryText>
                                 </>
@@ -224,7 +228,9 @@ function Nav() {
                             {({ isActive }) => (
                                 <>
                                     <NavEntryIcon>
-                                        <Add isActive={isActive ? true : false} />
+                                        <Add
+                                            isActive={isActive ? true : false}
+                                        />
                                     </NavEntryIcon>
                                     <NavEntryText>Create post</NavEntryText>
                                 </>
@@ -235,6 +241,6 @@ function Nav() {
             </NavInnerContainer>
         </NavContainer>
     );
-};
+}
 
 export default Nav;
