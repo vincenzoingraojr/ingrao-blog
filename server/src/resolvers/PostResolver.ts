@@ -41,6 +41,19 @@ export class PostResolver {
         });
     }
 
+    @Query(() => [Post])
+    draftPostFeed() {
+        return Post.find({
+            order: {
+                updatedAt: "DESC",
+            },
+            where: {
+                draft: true,
+            },
+            relations: ["author"],
+        });
+    }
+
     @Query(() => Post, { nullable: true })
     findPost(@Arg("id", { nullable: true }) id: string) {
         return Post.findOne({ where: { id }, relations: ["author"] });

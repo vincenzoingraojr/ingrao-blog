@@ -17,28 +17,28 @@ export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field()
+    @Field(() => String, { nullable: false })
     @Column({ unique: true, nullable: false })
     slug: string;
 
-    @Field(() => Boolean)
+    @Field(() => Boolean, { nullable: false })
     @Column({ nullable: false })
     draft: boolean;
 
-    @Field()
-    @Column()
+    @Field(() => Number, { nullable: false })
+    @Column({ nullable: false })
     authorId: number;
     
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: true })
+    @Column({ nullable: true })
     title: string;
 
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: true })
+    @Column({ nullable: true })
     description: string;
 
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: true })
+    @Column({ nullable: true })
     slogan: string;
 
     @Field(() => String, { nullable: true })
@@ -49,8 +49,8 @@ export class Post extends BaseEntity {
     @ManyToOne(() => User, (user) => user.posts)
     author: User;
 
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: true })
+    @Column({ nullable: true })
     content: string;
 
     @Field(() => String)

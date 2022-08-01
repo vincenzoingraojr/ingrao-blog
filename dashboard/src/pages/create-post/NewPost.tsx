@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import InputField from "../../components/input/InputField";
 import ModalLoading from "../../components/utils/modal/ModalLoading";
-import { useCreatePostMutation, useMeQuery } from "../../generated/graphql";
+import { DraftPostFeedDocument, DraftPostFeedQuery, useCreatePostMutation, useDraftPostFeedQuery, useMeQuery } from "../../generated/graphql";
 import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../styles/global";
 import styled from "styled-components";
 import { toErrorMap } from "../../utils/toErrorMap";
@@ -15,6 +15,10 @@ function NewPost() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "network-only",
         variables: { origin: "dash" },
+    });
+
+    const { data: draftPostFeedData } = useDraftPostFeedQuery({
+        fetchPolicy: "network-only",
     });
 
     const [createPost] = useCreatePostMutation();
@@ -38,6 +42,23 @@ function NewPost() {
                         ) => {
                             const response = await createPost({
                                 variables: values,
+                                update: (store, { data }) => {
+                                    if (
+                                        data &&
+                                        data.createPost &&
+                                        data.createPost.post
+                                    ) {
+                                        store.writeQuery<DraftPostFeedQuery>({
+                                            query: DraftPostFeedDocument,
+                                            data: {
+                                                draftPostFeed: [
+                                                    data.createPost.post,
+                                                    ...draftPostFeedData?.draftPostFeed!,
+                                                ],
+                                            },
+                                        });
+                                    }
+                                },
                             });
 
                             if (

@@ -18,6 +18,15 @@ import { BrowserRouter } from "react-router-dom";
 
 const cache = new InMemoryCache({
     typePolicies: {
+        Query: {
+            fields: {
+                draftPostFeed: {
+                    merge: (_existing = [], incoming) => {
+                        return incoming;
+                    },
+                },
+            },
+        },
         User: {
             fields: {
                 posts: {

@@ -1,0 +1,27 @@
+query draftPostFeed {
+    draftPostFeed {
+        id
+        slug
+        draft
+        authorId
+        author {
+            id
+            firstName
+            lastName
+            email
+            birthDate
+            gender
+            title
+            verified
+            role
+            profilePicture
+        }
+        title
+        description
+        slogan
+        postCover
+        content
+        createdAt
+        updatedAt
+    }
+}

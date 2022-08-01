@@ -134,15 +134,15 @@ export type Post = {
   __typename?: 'Post';
   author: User;
   authorId: Scalars['Float'];
-  content: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   draft: Scalars['Boolean'];
   id: Scalars['Int'];
   postCover?: Maybe<Scalars['String']>;
-  slogan: Scalars['String'];
+  slogan?: Maybe<Scalars['String']>;
   slug: Scalars['String'];
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['String'];
 };
 
@@ -155,6 +155,7 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  draftPostFeed: Array<Post>;
   findPost?: Maybe<Post>;
   me?: Maybe<User>;
   postFeed: Array<Post>;
@@ -198,7 +199,12 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', status?: string | null | undefined, post?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title: string, description: string, slogan: string, postCover?: string | null | undefined, content: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', status?: string | null | undefined, post?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
+export type DraftPostFeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DraftPostFeedQuery = { __typename?: 'Query', draftPostFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined } }> };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -207,7 +213,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', accessToken?: string | null | undefined, status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title: string, description: string, slogan: string, postCover?: string | null | undefined, content: string, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', accessToken?: string | null | undefined, status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -219,7 +225,7 @@ export type MeQueryVariables = Exact<{
 }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title: string, description: string, slogan: string, postCover?: string | null | undefined, content: string, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined };
 
 export type NotAuthModifyPasswordMutationVariables = Exact<{
   token: Scalars['String'];
@@ -310,6 +316,62 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const DraftPostFeedDocument = gql`
+    query draftPostFeed {
+  draftPostFeed {
+    id
+    slug
+    draft
+    authorId
+    author {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+    }
+    title
+    description
+    slogan
+    postCover
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useDraftPostFeedQuery__
+ *
+ * To run a query within a React component, call `useDraftPostFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDraftPostFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDraftPostFeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDraftPostFeedQuery(baseOptions?: Apollo.QueryHookOptions<DraftPostFeedQuery, DraftPostFeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DraftPostFeedQuery, DraftPostFeedQueryVariables>(DraftPostFeedDocument, options);
+      }
+export function useDraftPostFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DraftPostFeedQuery, DraftPostFeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DraftPostFeedQuery, DraftPostFeedQueryVariables>(DraftPostFeedDocument, options);
+        }
+export type DraftPostFeedQueryHookResult = ReturnType<typeof useDraftPostFeedQuery>;
+export type DraftPostFeedLazyQueryHookResult = ReturnType<typeof useDraftPostFeedLazyQuery>;
+export type DraftPostFeedQueryResult = Apollo.QueryResult<DraftPostFeedQuery, DraftPostFeedQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!, $origin: String!) {
   login(email: $email, password: $password, origin: $origin) {
