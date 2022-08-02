@@ -1,29 +1,20 @@
 import { FunctionComponent } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import postCover from "../../../images/post-cover.svg";
-import { PageText } from "../../../styles/global";
+import { ControlContainer, PageText } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
+import More from "../../icons/More";
 
 interface PostComponentProps {
     post: any;
     draft: boolean;
 }
 
-const PostWrapper = styled.div`
+const PostContainer = styled.div`
     display: block;
     width: 100%;
-`;
-
-const PostContainer = styled(Link)`
-    display: block;
-    text-decoration: none;
-    color: #000000;
-
-    &:hover,
-    &:active {
-        text-decoration: none;
-    }
+    cursor: pointer;
 `;
 
 const PostInnerContainer = styled.div`
@@ -81,6 +72,7 @@ const PostSmallText = styled(PageText)`
 `;
 
 const PostComponent: FunctionComponent<PostComponentProps> = ({ post, draft }) => {
+    const navigate = useNavigate();
     let date = "";
 
     if (draft) {
@@ -90,47 +82,53 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({ post, draft }) =
     }
 
     return (
-        <PostWrapper key={post.id}>
-            <PostContainer
-                to={draft ? `/update-post/${post.id}` : `/post/${post.slug}`}
-                title={draft ? `Unpublished post: ${post.id}` : `${post.title}`}
-                aria-label={draft ? `Unpublished post: ${post.id}` : `${post.title}`}
-            >
-                <PostInnerContainer>
-                    <PostHeader>
-                        <HeadText>
-                            {draft ? <>Unpublished post: {post.id}</> : <>{post.slogan}</>}
-                        </HeadText>
-                    </PostHeader>
-                    <PostImage>
-                        <img
-                            src={
-                                post.postCover !== null && post.postCover !== "" ? 
-                                post.postCover : postCover
-                            }
-                            title={draft ? `Unpublished post (${post.id}) cover image` : `${post.title}`}
-                            alt={draft ? `Unpublished post (${post.id}) cover` : `${post.title}`}
-                        />
-                    </PostImage>
-                    <PostBody>
-                        <PostTitle>
-                            {post.title !== null && post.title !== "" ? <>{post.title}</> : <>{post.slug}</>}
-                        </PostTitle>
-                        {post.description && (
-                            <PageText>
-                                {post.description}
-                            </PageText>
-                        )}
-                        <PostSmallText>
-                            Written by <b>{post.author.firstName}{" "}{post.author.lastName}</b>
-                        </PostSmallText>
-                        <PostSmallText>
-                            {draft ? <>Updated</> : <>Published on</>}{" "}{date}
-                        </PostSmallText>
-                    </PostBody>
-                </PostInnerContainer>
-            </PostContainer>
-        </PostWrapper>
+        <PostContainer
+            onClick={() => {
+                navigate(draft ? `/update-post/${post.id}` : `/post/${post.slug}`);
+            }}
+            role="link"
+            title={draft ? `Unpublished post: ${post.id}` : `${post.title}`}
+            aria-label={draft ? `Unpublished post: ${post.id}` : `${post.title}`}
+        >
+            <PostInnerContainer>
+                <PostHeader>
+                    <HeadText>
+                        {draft ? <>Unpublished post: {post.id}</> : <>{post.slogan}</>}
+                    </HeadText>
+                    <ControlContainer role="button" size={26} onClick={(e) => {
+                        e.stopPropagation();
+                    }}>
+                        <More />
+                    </ControlContainer>
+                </PostHeader>
+                <PostImage>
+                    <img
+                        src={
+                            post.postCover !== null && post.postCover !== "" ? 
+                            post.postCover : postCover
+                        }
+                        title={draft ? `Unpublished post (${post.id}) cover image` : `${post.title}`}
+                        alt={draft ? `Unpublished post (${post.id}) cover` : `${post.title}`}
+                    />
+                </PostImage>
+                <PostBody>
+                    <PostTitle>
+                        {post.title !== null && post.title !== "" ? <>{post.title}</> : <>{post.slug}</>}
+                    </PostTitle>
+                    {post.description && (
+                        <PageText>
+                            {post.description}
+                        </PageText>
+                    )}
+                    <PostSmallText>
+                        Written by <b>{post.author.firstName}{" "}{post.author.lastName}</b>
+                    </PostSmallText>
+                    <PostSmallText>
+                        {draft ? <>Updated</> : <>Published on</>}{" "}{date}
+                    </PostSmallText>
+                </PostBody>
+            </PostInnerContainer>
+        </PostContainer>
     );
 }
 
