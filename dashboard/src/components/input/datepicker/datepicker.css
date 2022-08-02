@@ -388,7 +388,7 @@
     ul.react-datepicker__time-list
     li.react-datepicker__time-list-item:hover {
     cursor: pointer;
-    background-color: #d9d9d9;
+    background-color: #c0c0c0;
 }
 .react-datepicker__time-container
     .react-datepicker__time
@@ -434,7 +434,7 @@
     cursor: pointer;
 }
 .react-datepicker__week-number.react-datepicker__week-number--clickable:hover {
-    background-color: #d9d9d9;
+    background-color: #c0c0c0;
 }
 
 .react-datepicker__day-names,
@@ -495,7 +495,7 @@
 .react-datepicker__month-text:hover,
 .react-datepicker__quarter-text:hover,
 .react-datepicker__year-text:hover {
-    background-color: #d9d9d9;
+    background-color: #c0c0c0;
 }
 .react-datepicker__day--today,
 .react-datepicker__month-text--today,
@@ -592,7 +592,7 @@
 .react-datepicker__quarter-text--disabled,
 .react-datepicker__year-text--disabled {
     cursor: default;
-    color: #d9d9d9;
+    color: #c0c0c0;
 }
 .react-datepicker__day--disabled:hover,
 .react-datepicker__month-text--disabled:hover,
@@ -701,7 +701,7 @@
 .react-datepicker__year-option:hover,
 .react-datepicker__month-option:hover,
 .react-datepicker__month-year-option:hover {
-    background-color: #d9d9d9;
+    background-color: #c0c0c0;
 }
 .react-datepicker__year-option:hover
     .react-datepicker__navigation--years-upcoming,
@@ -709,7 +709,7 @@
     .react-datepicker__navigation--years-upcoming,
 .react-datepicker__month-year-option:hover
     .react-datepicker__navigation--years-upcoming {
-    border-bottom-color: #d9d9d9;
+    border-bottom-color: #c0c0c0;
 }
 .react-datepicker__year-option:hover
     .react-datepicker__navigation--years-previous,
@@ -717,7 +717,7 @@
     .react-datepicker__navigation--years-previous,
 .react-datepicker__month-year-option:hover
     .react-datepicker__navigation--years-previous {
-    border-top-color: #d9d9d9;
+    border-top-color: #c0c0c0;
 }
 .react-datepicker__year-option--selected,
 .react-datepicker__month-option--selected,

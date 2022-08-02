@@ -94,7 +94,7 @@ const NavPrimaryContent = styled.nav`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #d9d9d9;
+    background-color: #c0c0c0;
     justify-content: space-evenly;
     height: 60px;
     z-index: 100;
@@ -183,7 +183,7 @@ function Nav() {
         <NavContainer>
             <NavTopContainer>
                 <SiteBrand>
-                    <Link to="/home">
+                    <Link to="/home" title="ingrao.blog" aria-label="ingrao.blog">
                         <SiteBrandIcon>
                             <Logo type="logo" />
                         </SiteBrandIcon>

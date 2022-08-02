@@ -16,10 +16,26 @@ import Add from "../../components/icons/Add";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDraftPostFeedQuery } from "../../generated/graphql";
 import LoadingComponent from "../../components/utils/LoadingComponent";
+import PostComponent from "../../components/layouts/items/PostComponent";
+import { devices } from "../../styles/devices";
 
 const CreateNewPostButton = styled(LinkButton)`
     color: #ffffff;
     background-color: blue;
+`;
+
+const PostGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+
+    @media (min-width: 560px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media ${devices.laptopS} {
+        grid-template-columns: repeat(3, 1fr);
+    }
 `;
 
 function CreatePostPage() {
@@ -59,23 +75,35 @@ function CreatePostPage() {
                                         <Outlet />
                                     </PageBlock>
                                 </OptionContainer>
-                                <PageBlock>
-                                    {(loading && !data) || error ? (
-                                        <FeedLoading>
-                                            <LoadingComponent />
-                                        </FeedLoading>
-                                    ) : (
-                                        <>
-                                            {data?.draftPostFeed?.map(
-                                                (post) => (
-                                                    <PageBlock key={post.id}>
-                                                        {post.slug}
-                                                    </PageBlock>
-                                                )
-                                            )}
-                                        </>
-                                    )}
-                                </PageBlock>
+                                <OptionContainer>
+                                    <OptionTitle>Edit unpublished posts</OptionTitle>
+                                    <PageText>
+                                        Here you can edit the unpublished posts.
+                                    </PageText>
+                                    <PageBlock>
+                                        {(loading && !data) || error ? (
+                                            <FeedLoading>
+                                                <LoadingComponent />
+                                            </FeedLoading>
+                                        ) : (
+                                            <>
+                                                {data?.draftPostFeed?.length === 0 ? (
+                                                    <PageText>
+                                                        No posts need to be updated or published.
+                                                    </PageText>
+                                                ) : (
+                                                    <PostGrid>
+                                                        {data?.draftPostFeed?.map(
+                                                            (post) => (
+                                                                <PostComponent key={post.id} post={post} draft={true} />
+                                                            )
+                                                        )}
+                                                    </PostGrid>
+                                                )}
+                                            </>
+                                        )}
+                                    </PageBlock>
+                                </OptionContainer>
                             </OptionsContainer>
                         }
                     />

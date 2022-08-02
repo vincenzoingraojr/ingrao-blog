@@ -63,3 +63,8 @@ input::placeholder {
 .not-scrolling {
     overflow: hidden;
 }
+
+img {
+    width: 100%;
+    height: auto;
+}

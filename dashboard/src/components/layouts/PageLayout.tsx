@@ -44,7 +44,7 @@ const PageLayoutContainer = styled.div`
 
 const PageLayoutContent = styled.div`
     display: block;
-    min-height: calc(100% + 120px);
+    min-height: calc(100% + 60px);
 
     @media ${devices.tablet} {
         min-height: calc(100vh - 244px);

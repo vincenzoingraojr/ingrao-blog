@@ -254,6 +254,6 @@ export const ControlContainer = styled.div.attrs((props: { size?: number }) => p
 
     &:hover,
     &:focus {
-        background-color: #d9d9d9;
+        background-color: #c0c0c0;
     }
 `;
