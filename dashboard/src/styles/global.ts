@@ -14,6 +14,20 @@ export const Button = styled.button`
     cursor: pointer;
 `;
 
+export const TextButton = styled.button`
+    display: block;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover, &:focus {
+        text-decoration: underline;
+    }
+`;
+
 export const PageBlock = styled.div`
     display: block;
 `;

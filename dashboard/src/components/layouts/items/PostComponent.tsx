@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import postCover from "../../../images/post-cover.svg";
-import { PageText } from "../../../styles/global";
+import { PageText, TextButton } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
 
 interface PostComponentProps {
@@ -68,6 +68,25 @@ const PostTitle = styled(PageText)`
 
 const PostSmallText = styled(PageText)`
     font-size: 16px;
+`;
+
+const PostButtonsContainer = styled.div`
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    font-size: 16px;
+    column-gap: 12px;
+    row-gap: 4px;
+`;
+
+const ViewPostButton = styled(TextButton)`
+    color: blue;
+`;
+
+const DeletePostButton = styled(TextButton)`
+    color: red;
 `;
 
 const PostComponent: FunctionComponent<PostComponentProps> = ({
@@ -150,6 +169,26 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                     <PostSmallText>
                         {draft ? <>Updated</> : <>Published on</>} {date}
                     </PostSmallText>
+                    {draft && (
+                        <PostButtonsContainer>
+                            <ViewPostButton
+                                type="button"
+                                role="button"
+                                title="View post"
+                                aria-label="View post"
+                            >
+                                View post
+                            </ViewPostButton>
+                            <DeletePostButton
+                                type="button"
+                                role="button"
+                                title="Delete post"
+                                aria-label="Delete post"
+                            >
+                                Delete post
+                            </DeletePostButton>
+                        </PostButtonsContainer>
+                    )}
                 </PostBody>
             </PostInnerContainer>
         </PostContainer>
