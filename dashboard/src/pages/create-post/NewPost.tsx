@@ -1,8 +1,21 @@
 import { Form, Formik } from "formik";
 import InputField from "../../components/input/InputField";
 import ModalLoading from "../../components/utils/modal/ModalLoading";
-import { DraftPostFeedDocument, DraftPostFeedQuery, useCreatePostMutation, useDraftPostFeedQuery, useMeQuery } from "../../generated/graphql";
-import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../styles/global";
+import {
+    DraftPostFeedDocument,
+    DraftPostFeedQuery,
+    useCreatePostMutation,
+    useDraftPostFeedQuery,
+    useMeQuery,
+} from "../../generated/graphql";
+import {
+    Button,
+    FlexContainer24,
+    ModalContentContainer,
+    PageBlock,
+    PageTextMB24,
+    Status,
+} from "../../styles/global";
 import styled from "styled-components";
 import { toErrorMap } from "../../utils/toErrorMap";
 
@@ -36,10 +49,7 @@ function NewPost() {
                         initialValues={{
                             slug: "",
                         }}
-                        onSubmit={async (
-                            values,
-                            { setErrors, setStatus }
-                        ) => {
+                        onSubmit={async (values, { setErrors, setStatus }) => {
                             const response = await createPost({
                                 variables: values,
                                 update: (store, { data }) => {
@@ -66,7 +76,7 @@ function NewPost() {
                                 response.data?.createPost?.errors?.length === 0
                             ) {
                                 setStatus(response.data?.createPost?.status);
-                            } else {    
+                            } else {
                                 setStatus(null);
                                 setErrors(
                                     toErrorMap(

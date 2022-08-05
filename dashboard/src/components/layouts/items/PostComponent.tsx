@@ -2,9 +2,9 @@ import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import postCover from "../../../images/post-cover.svg";
-import { ControlContainer, PageText } from "../../../styles/global";
+import { PageText } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
-import More from "../../icons/More";
+import Popover from "../../utils/popover/Popover";
 
 interface PostComponentProps {
     post: any;
@@ -62,7 +62,8 @@ const PostTitle = styled(PageText)`
     font-size: 24px;
     text-decoration: none;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         text-decoration: underline;
     }
 `;
@@ -71,65 +72,91 @@ const PostSmallText = styled(PageText)`
     font-size: 16px;
 `;
 
-const PostComponent: FunctionComponent<PostComponentProps> = ({ post, draft }) => {
+const PostComponent: FunctionComponent<PostComponentProps> = ({
+    post,
+    draft,
+}) => {
     const navigate = useNavigate();
+
     let date = "";
 
     if (draft) {
         date = processDate(post.updatedAt);
     } else {
-        date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", { month: "long", day: "numeric", year: "numeric" });
+        date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+        });
     }
 
     return (
         <PostContainer
             onClick={() => {
-                navigate(draft ? `/update-post/${post.id}` : `/post/${post.slug}`);
+                navigate(
+                    draft ? `/update-post/${post.id}` : `/post/${post.slug}`
+                );
             }}
             role="link"
             title={draft ? `Unpublished post: ${post.id}` : `${post.title}`}
-            aria-label={draft ? `Unpublished post: ${post.id}` : `${post.title}`}
+            aria-label={
+                draft ? `Unpublished post: ${post.id}` : `${post.title}`
+            }
         >
             <PostInnerContainer>
                 <PostHeader>
                     <HeadText>
-                        {draft ? <>Unpublished post: {post.id}</> : <>{post.slogan}</>}
+                        {draft ? (
+                            <>Unpublished post: {post.id}</>
+                        ) : (
+                            <>{post.slogan}</>
+                        )}
                     </HeadText>
-                    <ControlContainer role="button" size={26} onClick={(e) => {
-                        e.stopPropagation();
-                    }}>
-                        <More />
-                    </ControlContainer>
+                    <Popover content={<>Content</>} />
                 </PostHeader>
                 <PostImage>
                     <img
                         src={
-                            post.postCover !== null && post.postCover !== "" ? 
-                            post.postCover : postCover
+                            post.postCover !== null && post.postCover !== ""
+                                ? post.postCover
+                                : postCover
                         }
-                        title={draft ? `Unpublished post (${post.id}) cover image` : `${post.title}`}
-                        alt={draft ? `Unpublished post (${post.id}) cover` : `${post.title}`}
+                        title={
+                            draft
+                                ? `Unpublished post (${post.id}) cover image`
+                                : `${post.title}`
+                        }
+                        alt={
+                            draft
+                                ? `Unpublished post (${post.id}) cover`
+                                : `${post.title}`
+                        }
                     />
                 </PostImage>
                 <PostBody>
                     <PostTitle>
-                        {post.title !== null && post.title !== "" ? <>{post.title}</> : <>{post.slug}</>}
+                        {post.title !== null && post.title !== "" ? (
+                            <>{post.title}</>
+                        ) : (
+                            <>{post.slug}</>
+                        )}
                     </PostTitle>
                     {post.description && (
-                        <PageText>
-                            {post.description}
-                        </PageText>
+                        <PageText>{post.description}</PageText>
                     )}
                     <PostSmallText>
-                        Written by <b>{post.author.firstName}{" "}{post.author.lastName}</b>
+                        Written by{" "}
+                        <b>
+                            {post.author.firstName} {post.author.lastName}
+                        </b>
                     </PostSmallText>
                     <PostSmallText>
-                        {draft ? <>Updated</> : <>Published on</>}{" "}{date}
+                        {draft ? <>Updated</> : <>Published on</>} {date}
                     </PostSmallText>
                 </PostBody>
             </PostInnerContainer>
         </PostContainer>
     );
-}
+};
 
 export default PostComponent;

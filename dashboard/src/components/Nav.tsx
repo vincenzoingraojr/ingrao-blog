@@ -183,7 +183,11 @@ function Nav() {
         <NavContainer>
             <NavTopContainer>
                 <SiteBrand>
-                    <Link to="/home" title="ingrao.blog" aria-label="ingrao.blog">
+                    <Link
+                        to="/home"
+                        title="ingrao.blog"
+                        aria-label="ingrao.blog"
+                    >
                         <SiteBrandIcon>
                             <Logo type="logo" />
                         </SiteBrandIcon>

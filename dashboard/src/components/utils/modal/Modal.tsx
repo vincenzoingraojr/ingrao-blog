@@ -145,7 +145,7 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                     }
                 }}
             ></ModalOverlay>
-            <ModalContainer>
+            <ModalContainer role="dialog">
                 <ModalHeader>
                     <ControlContainer
                         role="button"

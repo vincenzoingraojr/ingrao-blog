@@ -241,13 +241,15 @@ export const FlexContainer24 = styled.div`
     gap: 24px;
 `;
 
-export const ControlContainer = styled.div.attrs((props: { size?: number }) => props)`
+export const ControlContainer = styled.div.attrs(
+    (props: { size?: number }) => props
+)`
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    width: ${(props) => props.size ? `${props.size}px` : `36px`};
-    height: ${(props) => props.size ? `${props.size}px` : `36px`};
+    width: ${(props) => (props.size ? `${props.size}px` : `36px`)};
+    height: ${(props) => (props.size ? `${props.size}px` : `36px`)};
     border-radius: 9999px;
     background-color: transparent;
     transition: background-color ease 0.2s;

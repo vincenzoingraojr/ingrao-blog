@@ -32,7 +32,7 @@ const PostGrid = styled.div`
     @media (min-width: 560px) {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     @media ${devices.laptopS} {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -41,7 +41,9 @@ const PostGrid = styled.div`
 function CreatePostPage() {
     const location = useLocation();
 
-    const { data, loading, error } = useDraftPostFeedQuery({ fetchPolicy: "cache-and-network" });
+    const { data, loading, error } = useDraftPostFeedQuery({
+        fetchPolicy: "cache-and-network",
+    });
 
     return (
         <>
@@ -76,7 +78,9 @@ function CreatePostPage() {
                                     </PageBlock>
                                 </OptionContainer>
                                 <OptionContainer>
-                                    <OptionTitle>Edit unpublished posts</OptionTitle>
+                                    <OptionTitle>
+                                        Edit unpublished posts
+                                    </OptionTitle>
                                     <PageText>
                                         Here you can edit the unpublished posts.
                                     </PageText>
@@ -87,15 +91,23 @@ function CreatePostPage() {
                                             </FeedLoading>
                                         ) : (
                                             <>
-                                                {data?.draftPostFeed?.length === 0 ? (
+                                                {data?.draftPostFeed?.length ===
+                                                0 ? (
                                                     <PageText>
-                                                        No posts need to be updated or published.
+                                                        No posts need to be
+                                                        updated or published.
                                                     </PageText>
                                                 ) : (
                                                     <PostGrid>
                                                         {data?.draftPostFeed?.map(
                                                             (post) => (
-                                                                <PostComponent key={post.id} post={post} draft={true} />
+                                                                <PostComponent
+                                                                    key={
+                                                                        post.id
+                                                                    }
+                                                                    post={post}
+                                                                    draft={true}
+                                                                />
                                                             )
                                                         )}
                                                     </PostGrid>
