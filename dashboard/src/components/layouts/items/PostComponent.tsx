@@ -4,7 +4,6 @@ import styled from "styled-components";
 import postCover from "../../../images/post-cover.svg";
 import { PageText } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
-import Popover from "../../utils/popover/Popover";
 
 interface PostComponentProps {
     post: any;
@@ -26,8 +25,7 @@ const PostInnerContainer = styled.div`
 const PostHeader = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: flex-start;
 `;
 
 const HeadText = styled.div`
@@ -112,7 +110,6 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                             <>{post.slogan}</>
                         )}
                     </HeadText>
-                    <Popover content={<>Content</>} />
                 </PostHeader>
                 <PostImage>
                     <img
