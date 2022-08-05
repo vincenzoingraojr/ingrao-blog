@@ -20,8 +20,8 @@ const PopoverContainer = styled.div.attrs(
 const Popover: FunctionComponent<PopoverProps> = ({ content }) => {
     const [visible, setVisibility] = useState(false);
   
-    const referenceRef = useRef(null);
-    const popperRef = useRef(null);
+    const referenceRef = useRef<HTMLDivElement>(null);
+    const popperRef = useRef<HTMLDivElement>(null);
 
     const { styles, attributes } = usePopper(
         referenceRef.current,
@@ -39,16 +39,16 @@ const Popover: FunctionComponent<PopoverProps> = ({ content }) => {
         };
     }, []);
 
-    function handleDocumentClick(event: any) {
-        if (referenceRef !== null && referenceRef.current !== null && referenceRef.current.contains(event.target)) {
+    function handleDocumentClick(e: any) {
+        if (referenceRef !== null && referenceRef.current !== null && referenceRef.current.contains(e.target)) {
             return;
         }
 
         setVisibility(false);
     }
 
-    function handleDropdownClick(event: any) {
-        event.stopPropagation();
+    function handleDropdownClick(e: any) {
+        e.stopPropagation();
         setVisibility(!visible);
     }
 
