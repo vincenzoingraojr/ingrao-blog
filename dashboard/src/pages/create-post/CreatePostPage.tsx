@@ -2,7 +2,7 @@ import Head from "../../components/Head";
 import PageLayout from "../../components/layouts/PageLayout";
 import PageContentLayout from "../../components/layouts/sublayouts/PageContentLayout";
 import {
-    FeedLoading,
+    LoadingContainer,
     LinkButton,
     LinkButtonText,
     OptionContainer,
@@ -86,9 +86,9 @@ function CreatePostPage() {
                                     </PageText>
                                     <PageBlock>
                                         {(loading && !data) || error ? (
-                                            <FeedLoading>
+                                            <LoadingContainer>
                                                 <LoadingComponent />
-                                            </FeedLoading>
+                                            </LoadingContainer>
                                         ) : (
                                             <>
                                                 {data?.draftPostFeed?.length ===

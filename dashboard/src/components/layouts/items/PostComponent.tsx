@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useDeletePostMutation } from "../../../generated/graphql";
 import postCover from "../../../images/post-cover.svg";
 import { PageText, TextButton } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
@@ -107,6 +108,8 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
         });
     }
 
+    const [deletePost] = useDeletePostMutation();
+
     return (
         <PostContainer
             onClick={() => {
@@ -189,6 +192,13 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                                 aria-label="Delete post"
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    deletePost({
+                                        variables: {
+                                            postId: post.id,
+                                        }
+                                    }).then(() => {
+                                        navigate(0);
+                                    })
                                 }}
                             >
                                 Delete post

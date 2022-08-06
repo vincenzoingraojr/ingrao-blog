@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { devices } from "../../../styles/devices";
 import { PageText } from "../../../styles/global";
 
 interface TabLayoutProps {
@@ -74,6 +75,25 @@ const TabElement = styled.div`
 const TabElementText = styled(PageText)`
     font-weight: inherit;
     color: inherit;
+`;
+
+export const TabLayoutTitle = styled.div`
+    display: block;
+    font-weight: 700;
+    margin-bottom: 48px;
+    font-size: 32px;
+
+    @media ${devices.mobileS} {
+        font-size: 44px;
+    }
+
+    @media ${devices.mobileL} {
+        font-size: 50px;
+    }
+
+    @media ${devices.tablet} {
+        font-size: 60px;
+    }
 `;
 
 const TabLayout: FunctionComponent<TabLayoutProps> = ({ tabData, content }) => {

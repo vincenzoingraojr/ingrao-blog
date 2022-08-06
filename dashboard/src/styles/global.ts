@@ -215,7 +215,7 @@ export const LinkButtonText = styled.div`
     text-transform: inherit;
 `;
 
-export const FeedLoading = styled.div`
+export const LoadingContainer = styled.div`
     display: flex;
     width: 100%;
     align-items: center;

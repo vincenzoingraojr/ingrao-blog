@@ -113,13 +113,13 @@ export class PostResolver {
     @Mutation(() => PostResponse)
     @UseMiddleware(isAuth)
     async updatePost(
-        @Arg("postId") postId: number,
+        @Arg("postId", () => Int) postId: number,
         @Arg("slug") slug: string,
-        @Arg("title") title: string,
-        @Arg("description") description: string,
-        @Arg("slogan") slogan: string,
-        @Arg("postCover") postCover: string,
-        @Arg("content") content: string,
+        @Arg("title", { nullable: true }) title: string,
+        @Arg("description", { nullable: true }) description: string,
+        @Arg("slogan", { nullable: true }) slogan: string,
+        @Arg("postCover", { nullable: true }) postCover: string,
+        @Arg("content", { nullable: true }) content: string,
         @Ctx() { payload }: MyContext
     ): Promise<PostResponse> {
         let errors = [];
@@ -164,11 +164,6 @@ export class PostResolver {
                             author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
                         });
     
-                        post = await Post.findOne({
-                            id: postId,
-                            authorId: payload.id,
-                        });
-    
                         status = "Your changes have been saved.";
                     } catch (error) {
                         console.log(error);
@@ -184,7 +179,6 @@ export class PostResolver {
         }
 
         return {
-            post,
             errors,
             status,
         };
@@ -193,13 +187,13 @@ export class PostResolver {
     @Mutation(() => PostResponse)
     @UseMiddleware(isAuth)
     async publishPost(
-        @Arg("postId") postId: number,
+        @Arg("postId", () => Int) postId: number,
         @Arg("slug") slug: string,
-        @Arg("title") title: string,
-        @Arg("description") description: string,
-        @Arg("slogan") slogan: string,
-        @Arg("postCover") postCover: string,
-        @Arg("content") content: string,
+        @Arg("title", { nullable: true }) title: string,
+        @Arg("description", { nullable: true }) description: string,
+        @Arg("slogan", { nullable: true }) slogan: string,
+        @Arg("postCover", { nullable: true }) postCover: string,
+        @Arg("content", { nullable: true }) content: string,
         @Ctx() { payload }: MyContext
     ): Promise<PostResponse> {
         let errors = [];
@@ -287,7 +281,7 @@ export class PostResolver {
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
     async deletePost(
-        @Arg("postId") postId: number,
+        @Arg("postId", () => Int) postId: number,
         @Ctx() { payload }: MyContext
     ) {
         if (!payload || (payload && payload.role === "user")) {

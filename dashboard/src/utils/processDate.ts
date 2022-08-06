@@ -16,7 +16,7 @@ export const processDate = (date: string) => {
     } else {
         if (daysDifference * 24 < 1) {
             if (daysDifference * 24 * 60 < 1) {
-                return "Just now";
+                return "just now";
             } else {
                 return `${(daysDifference * 24 * 60).toFixed(0)} ${
                     parseInt((daysDifference * 24 * 60).toFixed(0)) > 1
