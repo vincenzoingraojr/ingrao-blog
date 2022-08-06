@@ -6,12 +6,21 @@ import InputField from "../../components/input/InputField";
 import FocusPageLayout from "../../components/layouts/FocusPageLayout";
 import { TabLayoutTitle } from "../../components/layouts/sublayouts/TabLayout";
 import LoadingComponent from "../../components/utils/LoadingComponent";
-import { useFindPostQuery, useUpdatePostMutation } from "../../generated/graphql";
-import { FlexContainer24, LoadingContainer, PageBlock, Status } from "../../styles/global";
+import {
+    useFindPostQuery,
+    useEditUnpublishedPostMutation,
+} from "../../generated/graphql";
+import {
+    FlexContainer24,
+    LoadingContainer,
+    PageBlock,
+    Status,
+} from "../../styles/global";
 import { toErrorMap } from "../../utils/toErrorMap";
 import UpdatePostComponent from "./UpdatePostComponent";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
+import EditorField from "../../components/input/content/EditorField";
 
 const PostFormContainer = styled.div`
     display: grid;
@@ -19,7 +28,7 @@ const PostFormContainer = styled.div`
     grid-template-columns: auto;
 
     @media ${devices.tablet} {
-        grid-template-columns: 65% auto;
+        grid-template-columns: 600px auto;
     }
 `;
 
@@ -31,7 +40,7 @@ function UpdatePost() {
         variables: { id: parseInt(params.id!) },
     });
 
-    const [updatePost] = useUpdatePostMutation();
+    const [updatePost] = useEditUnpublishedPostMutation();
 
     useEffect(() => {
         if (!loading && !error) {
@@ -44,100 +53,161 @@ function UpdatePost() {
             console.log("Loading...");
         }
     }, [navigate, data, loading, error]);
-    
+
     return (
         <>
-            <Head 
+            <Head
                 title="Update a post | dashboard.ingrao.blog"
                 description="In this page you can update a post."
             />
-            <FocusPageLayout title={`Update post ${params.id}`} 
+            <FocusPageLayout
+                title={`Update post ${params.id}`}
                 content={
-                    <UpdatePostComponent id={params.id!} content={
-                        <>
-                            {(loading && !data) || error ? (
-                                <LoadingContainer>
-                                    <LoadingComponent />
-                                </LoadingContainer>
-                            ) : (
-                                <>
-                                    <TabLayoutTitle>
-                                        Update post {params.id}
-                                    </TabLayoutTitle>
-                                    <PostFormContainer>
-                                        <Formik
-                                            initialValues={{
-                                                postId: parseInt(params.id!),
-                                                slug: data?.findPost?.slug!,
-                                                title: data?.findPost?.title,
-                                                description: data?.findPost?.description,
-                                                slogan: data?.findPost?.slogan,
-                                                postCover: data?.findPost?.postCover,
-                                                content: data?.findPost?.content,
-                                            }}
-                                            onSubmit={async (
-                                                values,
-                                                { setErrors, setStatus }
-                                            ) => {
-                                                const response = await updatePost({
-                                                    variables: values,
-                                                });
+                    <UpdatePostComponent
+                        id={params.id!}
+                        content={
+                            <>
+                                {(loading && !data) || error ? (
+                                    <LoadingContainer>
+                                        <LoadingComponent />
+                                    </LoadingContainer>
+                                ) : (
+                                    <>
+                                        <TabLayoutTitle>
+                                            Update post {params.id}
+                                        </TabLayoutTitle>
+                                        <PostFormContainer>
+                                            <Formik
+                                                initialValues={{
+                                                    postId: parseInt(
+                                                        params.id!
+                                                    ),
+                                                    slug: data?.findPost?.slug!,
+                                                    title: data?.findPost
+                                                        ?.title,
+                                                    description:
+                                                        data?.findPost
+                                                            ?.description,
+                                                    slogan: data?.findPost
+                                                        ?.slogan,
+                                                    postCover:
+                                                        data?.findPost
+                                                            ?.postCover,
+                                                    content:
+                                                        data?.findPost?.content,
+                                                }}
+                                                onSubmit={async (
+                                                    values,
+                                                    { setErrors, setStatus }
+                                                ) => {
+                                                    const response =
+                                                        await updatePost({
+                                                            variables: values,
+                                                        });
 
-                                                if (response.data?.updatePost.status) {
-                                                    setStatus(response.data.updatePost.status);
-                                                } else if (response.data?.updatePost.errors?.length !== 0) {
-                                                    setStatus(null);
-                                                    setErrors(
-                                                        toErrorMap(
-                                                            response.data?.updatePost?.errors!
-                                                        )
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            {({ errors, status, values }) => (
-                                                <Form>
-                                                    <PageBlock>
-                                                        {status ? <Status>{status}</Status> : null}
-                                                        <FlexContainer24>
-                                                            <InputField
-                                                                field="slug"
-                                                                type="text"
-                                                                placeholder="Slug"
-                                                                value={values.slug}
-                                                                errors={errors}
-                                                            />
-                                                            <InputField
-                                                                field="title"
-                                                                type="text"
-                                                                placeholder="Title"
-                                                                value={values.title || ""}
-                                                                errors={errors}
-                                                            />
-                                                            <InputField
-                                                                field="description"
-                                                                type="text"
-                                                                placeholder="Description"
-                                                                value={values.description || ""}
-                                                                errors={errors}
-                                                            />
-                                                            <InputField
-                                                                field="slogan"
-                                                                type="text"
-                                                                placeholder="Slogan"
-                                                                value={values.slogan || ""}
-                                                                errors={errors}
-                                                            />
-                                                        </FlexContainer24>
-                                                    </PageBlock>
-                                                </Form>
-                                            )}
-                                        </Formik>
-                                    </PostFormContainer>
-                                </>
-                            )}
-                        </>
-                    } />
+                                                    if (
+                                                        response.data
+                                                            ?.editUnpublishedPost
+                                                            .status
+                                                    ) {
+                                                        setStatus(
+                                                            response.data
+                                                                .editUnpublishedPost
+                                                                .status
+                                                        );
+                                                    } else if (
+                                                        response.data
+                                                            ?.editUnpublishedPost
+                                                            .errors?.length !==
+                                                        0
+                                                    ) {
+                                                        setStatus(null);
+                                                        setErrors(
+                                                            toErrorMap(
+                                                                response.data
+                                                                    ?.editUnpublishedPost
+                                                                    ?.errors!
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                {({
+                                                    errors,
+                                                    status,
+                                                    values,
+                                                }) => (
+                                                    <Form>
+                                                        <PageBlock>
+                                                            {status ? (
+                                                                <Status>
+                                                                    {status}
+                                                                </Status>
+                                                            ) : null}
+                                                            <FlexContainer24>
+                                                                <InputField
+                                                                    field="slug"
+                                                                    type="text"
+                                                                    placeholder="Slug"
+                                                                    value={
+                                                                        values.slug
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                />
+                                                                <InputField
+                                                                    field="title"
+                                                                    type="text"
+                                                                    placeholder="Title"
+                                                                    value={
+                                                                        values.title ||
+                                                                        ""
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                />
+                                                                <InputField
+                                                                    field="description"
+                                                                    type="text"
+                                                                    placeholder="Description"
+                                                                    value={
+                                                                        values.description ||
+                                                                        ""
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                />
+                                                                <InputField
+                                                                    field="slogan"
+                                                                    type="text"
+                                                                    placeholder="Slogan"
+                                                                    value={
+                                                                        values.slogan ||
+                                                                        ""
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                />
+                                                                <EditorField 
+                                                                    field="content"
+                                                                    placeholder="Post content"
+                                                                    errors={errors}
+                                                                />
+                                                            </FlexContainer24>
+                                                        </PageBlock>
+                                                    </Form>
+                                                )}
+                                            </Formik>
+                                        </PostFormContainer>
+                                    </>
+                                )}
+                            </>
+                        }
+                    />
                 }
             />
         </>
@@ -145,4 +215,3 @@ function UpdatePost() {
 }
 
 export default UpdatePost;
-

@@ -74,10 +74,13 @@ const FocusPageLayoutContent = styled.div`
     padding-right: 16px;
 `;
 
-const FocusPageLayout: FunctionComponent<FocusPageLayoutProps> = ({ title, content }) => {
+const FocusPageLayout: FunctionComponent<FocusPageLayoutProps> = ({
+    title,
+    content,
+}) => {
     const navigate = useNavigate();
     const navigationType = useNavigationType();
-    
+
     return (
         <FocusPageLayoutWrapper>
             <FocusPageLayoutContainer>
@@ -96,9 +99,7 @@ const FocusPageLayout: FunctionComponent<FocusPageLayoutProps> = ({ title, conte
                     >
                         <Back />
                     </ControlContainer>
-                    <FocusPageHeaderText>
-                        {title}
-                    </FocusPageHeaderText>
+                    <FocusPageHeaderText>{title}</FocusPageHeaderText>
                 </FocusPageHeader>
                 <FocusPageLayoutContent>{content}</FocusPageLayoutContent>
             </FocusPageLayoutContainer>

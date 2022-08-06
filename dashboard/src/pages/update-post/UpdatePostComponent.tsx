@@ -7,7 +7,10 @@ interface UpdatePostComponentProps {
     content: JSX.Element;
 }
 
-const UpdatePostComponent: FunctionComponent<UpdatePostComponentProps> = ({ id, content }) => {
+const UpdatePostComponent: FunctionComponent<UpdatePostComponentProps> = ({
+    id,
+    content,
+}) => {
     const updatePostTabs = [
         {
             url: `update-post/${id}`,
@@ -19,9 +22,7 @@ const UpdatePostComponent: FunctionComponent<UpdatePostComponentProps> = ({ id, 
         },
     ];
 
-    return (
-        <TabLayout tabData={updatePostTabs} content={content} />
-    );
-}
+    return <TabLayout tabData={updatePostTabs} content={content} />;
+};
 
 export default UpdatePostComponent;

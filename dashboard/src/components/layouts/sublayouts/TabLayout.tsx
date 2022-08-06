@@ -115,11 +115,9 @@ const TabLayout: FunctionComponent<TabLayoutProps> = ({ tabData, content }) => {
                     </TabElement>
                 ))}
             </TabLayoutHeader>
-            <TabLayoutContentContainer>
-                {content}
-            </TabLayoutContentContainer>
+            <TabLayoutContentContainer>{content}</TabLayoutContentContainer>
         </TabLayoutContainer>
     );
-}
+};
 
 export default TabLayout;

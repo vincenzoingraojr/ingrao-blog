@@ -112,7 +112,7 @@ export class PostResolver {
 
     @Mutation(() => PostResponse)
     @UseMiddleware(isAuth)
-    async updatePost(
+    async editUnpublishedPost(
         @Arg("postId", () => Int) postId: number,
         @Arg("slug") slug: string,
         @Arg("title", { nullable: true }) title: string,
@@ -186,7 +186,7 @@ export class PostResolver {
 
     @Mutation(() => PostResponse)
     @UseMiddleware(isAuth)
-    async publishPost(
+    async editPublishedPost(
         @Arg("postId", () => Int) postId: number,
         @Arg("slug") slug: string,
         @Arg("title", { nullable: true }) title: string,
@@ -201,7 +201,7 @@ export class PostResolver {
         let status = "";
 
         if (!payload || (payload && payload.role === "user")) {
-            status = "You are not authorizated to publish a post.";
+            status = "You are not authorizated to edit a published post.";
         } else {
             post = await Post.findOne({
                 id: postId,
@@ -266,7 +266,7 @@ export class PostResolver {
                         author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
                     });
 
-                    status = "Your post is now online.";
+                    status = "Your changes are now online.";
                 }
             }
         }
@@ -276,6 +276,28 @@ export class PostResolver {
             errors,
             status,
         };
+    }
+
+    @Mutation(() => Boolean)
+    @UseMiddleware(isAuth)
+    async unpublishPost(
+        @Arg("postId", () => Int) postId: number,
+        @Ctx() { payload }: MyContext
+    ) {
+        if (!payload || (payload && payload.role === "user")) {
+            return false;
+        }
+
+        await Post.update(
+        {
+            id: postId,
+            authorId: payload.id,
+        },
+        {
+            draft: true,
+        });
+
+        return true;
     }
 
     @Mutation(() => Boolean)

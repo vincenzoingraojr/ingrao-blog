@@ -195,10 +195,10 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                                     deletePost({
                                         variables: {
                                             postId: post.id,
-                                        }
+                                        },
                                     }).then(() => {
                                         navigate(0);
-                                    })
+                                    });
                                 }}
                             >
                                 Delete post

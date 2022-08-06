@@ -23,7 +23,8 @@ export const TextButton = styled.button`
     cursor: pointer;
     text-decoration: none;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         text-decoration: underline;
     }
 `;

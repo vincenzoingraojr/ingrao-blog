@@ -1,0 +1,25 @@
+mutation editUnpublishedPost(
+    $postId: Int!
+    $slug: String!
+    $title: String
+    $description: String
+    $slogan: String
+    $postCover: String
+    $content: String
+) {
+    editUnpublishedPost(
+        postId: $postId
+        slug: $slug
+        title: $title
+        description: $description
+        slogan: $slogan
+        postCover: $postCover
+        content: $content
+    ) {
+        errors {
+            field
+            message
+        }
+        status
+    }
+}
