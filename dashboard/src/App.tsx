@@ -13,6 +13,7 @@ import CompleteAccount from "./pages/CompleteAccount";
 import CreatePostPage from "./pages/create-post/CreatePostPage";
 import Modal from "./components/utils/modal/Modal";
 import NewPost from "./pages/create-post/NewPost";
+import UpdatePost from "./pages/update-post/UpdatePost";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -120,6 +121,15 @@ function App() {
                                     modalContent={<NewPost />}
                                 />
                             }
+                        />
+                    }
+                />
+                <Route
+                    path="/update-post/:id"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<UpdatePost />}
                         />
                     }
                 />

@@ -3,6 +3,7 @@ import {
     Arg,
     Ctx,
     Field,
+    Int,
     Mutation,
     ObjectType,
     Query,
@@ -55,7 +56,7 @@ export class PostResolver {
     }
 
     @Query(() => Post, { nullable: true })
-    findPost(@Arg("id", { nullable: true }) id: string) {
+    findPost(@Arg("id", () => Int, { nullable: true }) id: number) {
         return Post.findOne({ where: { id }, relations: ["author"] });
     }
 

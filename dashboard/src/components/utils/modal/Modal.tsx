@@ -109,7 +109,6 @@ const ModalHeader = styled.div`
 const ModalTitle = styled.div`
     display: block;
     font-weight: 700;
-    font-size: inherit;
     width: calc(100% - 52px);
     overflow: hidden;
     text-overflow: ellipsis;

@@ -176,6 +176,9 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                                 role="button"
                                 title="View post"
                                 aria-label="View post"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
                             >
                                 View post
                             </ViewPostButton>
@@ -184,6 +187,9 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                                 role="button"
                                 title="Delete post"
                                 aria-label="Delete post"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
                             >
                                 Delete post
                             </DeletePostButton>

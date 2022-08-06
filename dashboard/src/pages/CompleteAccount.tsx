@@ -17,7 +17,7 @@ import {
 } from "../styles/global";
 import { toErrorMap } from "../utils/toErrorMap";
 
-function ModifyPassword() {
+function CompleteAccount() {
     const navigate = useNavigate();
     const params = useParams();
 
@@ -127,4 +127,4 @@ function ModifyPassword() {
     );
 }
 
-export default ModifyPassword;
+export default CompleteAccount;
