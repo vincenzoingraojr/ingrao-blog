@@ -5,7 +5,10 @@ import { devices } from "../../../styles/devices";
 import { PageText } from "../../../styles/global";
 
 interface TabLayoutProps {
-    tabData: any;
+    tabData: {
+        url: string;
+        text: string;
+    }[];
     content: JSX.Element;
 }
 
@@ -100,7 +103,7 @@ const TabLayout: FunctionComponent<TabLayoutProps> = ({ tabData, content }) => {
     return (
         <TabLayoutContainer>
             <TabLayoutHeader>
-                {tabData.map((tabElement: any, i: any) => (
+                {tabData.map((tabElement: { url: string, text: string }, i: number) => (
                     <TabElement key={i}>
                         <NavLink
                             className={(navData: any) =>

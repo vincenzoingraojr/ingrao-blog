@@ -192,10 +192,12 @@ function UpdatePost() {
                                                                         errors
                                                                     }
                                                                 />
-                                                                <EditorField 
+                                                                <EditorField
                                                                     field="content"
                                                                     placeholder="Post content"
-                                                                    errors={errors}
+                                                                    errors={
+                                                                        errors
+                                                                    }
                                                                 />
                                                             </FlexContainer24>
                                                         </PageBlock>

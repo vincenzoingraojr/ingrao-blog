@@ -1,5 +1,5 @@
 import { Field } from "formik";
-import { FunctionComponent, useEffect, useRef, useState } from "react";
+import { FunctionComponent } from "react";
 import EditorComponent from "./EditorComponent";
 import styled from "styled-components";
 
@@ -23,41 +23,30 @@ const EditorFieldError = styled.div`
 
 const EditorFieldContainer = styled.div`
     display: block;
-    position: relative;
-    border: 2px solid #000000;
     background-color: transparent;
-    min-height: 64px;
+    border: 2px solid #000000;
     padding-left: 12px;
     padding-right: 12px;
+    width: 100%;
 `;
 
-const EditorInfoContainer = styled.div.attrs(
-    (props: { focus: boolean }) => props
-)`
+const EditorInfoContainer = styled.div`
     display: flex;
-    position: absolute;
     align-items: center;
     justify-content: flex-start;
     height: 22px;
-    margin-top: ${(props) => (props.focus ? "4px" : "19px")};
-    margin-bottom: ${(props) => (props.focus ? "4px" : "0px")};
-    transition: margin ease 0.2s;
+    margin-top: 4px;
+    margin-bottom: 4px;
 `;
 
-const LabelEditorInfo = styled.label.attrs((props: { focus: boolean }) => props)`
+const EditorInfo = styled.div`
     display: block;
-    font-size: ${(props) => (props.focus ? "14px" : "16px")};
-    cursor: pointer;
-    transition: font-size ease 0.2s;
+    font-size: 14px;
 `;
 
-const EditorContainer = styled.div`
-    display: flex;
-    align-items: center;
-    min-height: 26px;
+const EditorFieldInnerContainer = styled.div`
+    display: block;
     width: 100%;
-    margin-top: 30px;
-    transition: margin ease 0.2s;
     margin-bottom: 4px;
 `;
 
@@ -66,48 +55,18 @@ const EditorField: FunctionComponent<EditorFieldProps> = ({
     placeholder,
     errors,
 }) => {
-    const [isFocused, setIsFocused] = useState(false);
-
-    const editorField = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        if (editorField !== null && editorField.current?.value !== "") {
-            setIsFocused(true);
-        }
-    }, [isFocused]);
-    
     return (
         <EditorFieldWrapper>
             {errors[field] ? (
                 <EditorFieldError>{errors[field]}</EditorFieldError>
             ) : null}
-            <EditorFieldContainer
-                onClick={() => {
-                    setIsFocused(true);
-
-                    if (editorField !== null) {
-                        editorField.current?.focus();
-                    }
-                }}
-            >
-                <EditorInfoContainer focus={isFocused}>
-                    <LabelEditorInfo htmlFor={field} focus={isFocused}>
-                        {placeholder}
-                    </LabelEditorInfo>
+            <EditorFieldContainer>
+                <EditorInfoContainer>
+                    <EditorInfo>{placeholder}</EditorInfo>
                 </EditorInfoContainer>
-                <EditorContainer>
-                    <Field
-                        name={field}
-                        component={EditorComponent}
-                        onFocus={() => {
-                            setIsFocused(true);
-                        }}
-                        onBlur={() => {
-                            setIsFocused(false);
-                        }}
-                        innerRef={editorField}
-                    />
-                </EditorContainer>
+                <EditorFieldInnerContainer>
+                    <Field name={field} component={EditorComponent} />
+                </EditorFieldInnerContainer>
             </EditorFieldContainer>
         </EditorFieldWrapper>
     );
