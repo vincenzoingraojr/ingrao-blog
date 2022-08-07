@@ -1,0 +1,32 @@
+.rdw-editor-main {
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+}
+.rdw-editor-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  background: white;
+  flex-wrap: wrap;
+  font-size: 16px;
+  margin-bottom: 6px;
+  user-select: none;
+}
+.public-DraftStyleDefault-block {
+  margin: 1em 0;
+}
+.rdw-editor-wrapper:focus {
+  outline: none;
+}
+.rdw-editor-wrapper {
+  box-sizing: content-box;
+}
+.rdw-editor-main blockquote {
+  border-left: 4px solid #000000;
+  padding-left: 6px;
+}
+.rdw-editor-main pre {
+  background: #C0C0C0;
+  border-radius: 2px;
+  padding: 1px 10px;
+}
