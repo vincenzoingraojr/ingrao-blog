@@ -1,20 +1,9 @@
-import nodemailer from "nodemailer";
 import ejs from "ejs";
 import path from "path";
+import aws from "aws-sdk";
 
 export const sendVerificationEmail = (email: string, origin: string, token: string) => {
-    let transporter = nodemailer.createTransport({
-        host: "authsmtp.securemail.pro",
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
+    const ses = new aws.SES({ credentials: { accessKeyId: process.env.SES_KEY_ID!, secretAccessKey: process.env.SES_SECRET_KEY! }, region: "eu-south-1" });
 
     const link = `${origin === "dash" ? process.env.DASHBOARD_ORIGIN : process.env.CLIENT_ORIGIN}/verify/${token}`;
 
@@ -25,11 +14,27 @@ export const sendVerificationEmail = (email: string, origin: string, token: stri
             if (error) {
                 console.log(error);
             } else {
-                transporter.sendMail({
-                    from: "ingrao.blog <info@ingrao.blog>",
-                    to: email,
-                    subject: "Verify your account",
-                    html: data,
+                const params: aws.SES.SendEmailRequest = {
+                    Destination: {
+                        ToAddresses: [email],
+                    },
+                    Message: {
+                        Body: {
+                            Html: {
+                                Data: data
+                            },
+                        },
+                        Subject: {
+                            Data: "Verify your account",
+                        },
+                    },
+                    Source: "noreply@ingrao.blog",
+                };
+
+                ses.sendEmail(params).promise().then(() => {
+                    console.log("Email sent.");
+                }).catch((error) => {
+                    console.error(error);
                 });
             }
         }

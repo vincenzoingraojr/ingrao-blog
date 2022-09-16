@@ -21,6 +21,7 @@ import ejs from "ejs";
 import path from "path";
 import { FieldError } from "./common";
 import { isAuth } from "../middleware/isAuth";
+import aws from "aws-sdk";
 
 @ObjectType()
 export class UserResponse {
@@ -84,18 +85,7 @@ export class UserResolver {
         @Arg("origin") origin: string,
         @Ctx() { res }: MyContext
     ): Promise<UserResponse> {
-        let transporter = nodemailer.createTransport({
-            host: "authsmtp.securemail.pro",
-            port: 465,
-            secure: true,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASSWORD,
-            },
-            tls: {
-                rejectUnauthorized: false,
-            },
-        });
+        const ses = new aws.SES({ credentials: { accessKeyId: process.env.SES_KEY_ID!, secretAccessKey: process.env.SES_SECRET_KEY! }, region: "eu-south-1" });
         
         let errors = [];
         let user;
@@ -133,14 +123,29 @@ export class UserResolver {
                         if (error) {
                             console.log(error);
                         } else {
-                            transporter.sendMail({
-                                from: "ingrao.blog <info@ingrao.blog>",
-                                to: email,
-                                subject: "Complete your account",
-                                html: data,
+                            const params: aws.SES.SendEmailRequest = {
+                                Destination: {
+                                    ToAddresses: [email],
+                                },
+                                Message: {
+                                    Body: {
+                                        Html: {
+                                            Data: data
+                                        },
+                                    },
+                                    Subject: {
+                                        Data: "Complete your account",
+                                    },
+                                },
+                                Source: "noreply@ingrao.blog",
+                            };
+            
+                            ses.sendEmail(params).promise().then(() => {
+                                status =
+                                    "You should now receive an email containing the instructions to set up a password.";
+                            }).catch((error) => {
+                                console.error(error);
                             });
-                            status =
-                                "You should now receive an email containing the instructions to set up a password.";
                         }
                     }
                 );
@@ -199,28 +204,34 @@ export class UserResolver {
                 message: "The password lenght must be greater than 2",
             });
         }
-        if (firstName == "" || firstName == null) {
+        if (firstName === "" || firstName === null) {
             errors.push({
                 field: "firstName",
                 message: "The first name field cannot be empty",
             });
         }
-        if (lastName == "" || lastName == null) {
+        if (lastName === "" || lastName === null) {
             errors.push({
                 field: "lastName",
                 message: "The last name field cannot be empty",
             });
         }
-        if (title == "Title" || title == "") {
+        if (title === "Title" || title === "") {
             errors.push({
                 field: "title",
                 message: "The title field cannot take this value",
             });
         }
-        if (gender == "Gender" || gender == "") {
+        if (gender === "Gender" || gender === "") {
             errors.push({
                 field: "gender",
                 message: "The gender field cannot take this value",
+            });
+        }
+        if (birthDate === null) {
+            errors.push({
+                field: "birthDate",
+                message: "The birthdate field cannot take this value",
             });
         }
 
@@ -478,18 +489,7 @@ export class UserResolver {
         @Arg("birthDate") birthDate: Date,
         @Ctx() { payload }: MyContext
     ): Promise<UserResponse> {
-        let transporter = nodemailer.createTransport({
-            host: "authsmtp.securemail.pro",
-            port: 465,
-            secure: true,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASSWORD,
-            },
-            tls: {
-                rejectUnauthorized: false,
-            },
-        });
+        const ses = new aws.SES({ credentials: { accessKeyId: process.env.SES_KEY_ID!, secretAccessKey: process.env.SES_SECRET_KEY! }, region: "eu-south-1" });
 
         let errors = [];
         let user;
@@ -502,34 +502,40 @@ export class UserResolver {
                     message: "Invalid email",
                 });
             }
-            if (firstName == "" || firstName == null) {
+            if (firstName === "" || firstName === null) {
                 errors.push({
                     field: "firstName",
                     message: "The first name field cannot be empty",
                 });
             }
-            if (lastName == "" || lastName == null) {
+            if (lastName === "" || lastName === null) {
                 errors.push({
                     field: "lastName",
                     message: "The last name field cannot be empty",
                 });
             }
-            if (role == "Role" || role == "") {
+            if (role === "Role" || role === "") {
                 errors.push({
                     field: "role",
                     message: "The role field cannot take this value",
                 });
             }
-            if (title == "Title" || title == "") {
+            if (title === "Title" || title === "") {
                 errors.push({
                     field: "title",
                     message: "The title field cannot take this value",
                 });
             }
-            if (gender == "Gender" || gender == "") {
+            if (gender === "Gender" || gender === "") {
                 errors.push({
                     field: "gender",
                     message: "The gender field cannot take this value",
+                });
+            }
+            if (birthDate === null) {
+                errors.push({
+                    field: "birthDate",
+                    message: "The birthdate field cannot take this value",
                 });
             }
     
@@ -565,14 +571,29 @@ export class UserResolver {
                             if (error) {
                                 console.log(error);
                             } else {
-                                transporter.sendMail({
-                                    from: "ingrao.blog <info@ingrao.blog>",
-                                    to: email,
-                                    subject: "Complete your account",
-                                    html: data,
+                                const params: aws.SES.SendEmailRequest = {
+                                    Destination: {
+                                        ToAddresses: [email],
+                                    },
+                                    Message: {
+                                        Body: {
+                                            Html: {
+                                                Data: data
+                                            },
+                                        },
+                                        Subject: {
+                                            Data: "Complete your account",
+                                        },
+                                    },
+                                    Source: "noreply@ingrao.blog",
+                                };
+                
+                                ses.sendEmail(params).promise().then(() => {
+                                    status =
+                                        "The new user should now receive an email containing the instructions to set up a password.";
+                                }).catch((error) => {
+                                    console.error(error);
                                 });
-                                status =
-                                    "The new user should now receive an email containing the instructions to set up a password.";
                             }
                         }
                     );

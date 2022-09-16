@@ -21,7 +21,7 @@ export class Post extends BaseEntity {
     @Column({ unique: true, nullable: false })
     slug: string;
 
-    @Field(() => Boolean, { nullable: false})
+    @Field(() => Boolean, { nullable: false })
     @Column({ nullable: false })
     draft: boolean;
 
@@ -30,19 +30,19 @@ export class Post extends BaseEntity {
     authorId: number;
     
     @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: "" })
     title: string;
 
     @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: "" })
     description: string;
 
     @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: "" })
     slogan: string;
 
     @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: "" })
     postCover: string;
 
     @Field(() => User)
@@ -50,7 +50,7 @@ export class Post extends BaseEntity {
     author: User;
 
     @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: "" })
     content: string;
 
     @Field(() => String)

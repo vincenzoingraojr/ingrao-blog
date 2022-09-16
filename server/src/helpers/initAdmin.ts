@@ -1,23 +1,12 @@
 import { User } from "../entities/User";
 import { getConnection } from "typeorm";
 import { createAccessToken } from "../auth/auth";
-import nodemailer from "nodemailer";
+import aws from "aws-sdk";
 import ejs from "ejs";
 import path from "path";
 
 export async function initAdmin() {
-    let transporter = nodemailer.createTransport({
-        host: "authsmtp.securemail.pro",
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
+    const ses = new aws.SES({ credentials: { accessKeyId: process.env.SES_KEY_ID!, secretAccessKey: process.env.SES_SECRET_KEY! }, region: "eu-south-1" });
     
     let adminUser = await User.findOne({ where: { email: "vincent@ingrao.blog" } });
 
@@ -52,14 +41,28 @@ export async function initAdmin() {
                 if (error) {
                     console.log(error);
                 } else {
-                    transporter.sendMail({
-                        from: "ingrao.blog <info@ingrao.blog>",
-                        to: "vincent@ingrao.blog",
-                        subject: "Complete your account",
-                        html: data,
+                    const params: aws.SES.SendEmailRequest = {
+                        Destination: {
+                            ToAddresses: ["vincent@ingrao.blog"],
+                        },
+                        Message: {
+                            Body: {
+                                Html: {
+                                    Data: data
+                                },
+                            },
+                            Subject: {
+                                Data: "Complete your account",
+                            },
+                        },
+                        Source: "noreply@ingrao.blog",
+                    };
+    
+                    ses.sendEmail(params).promise().then(() => {
+                        console.log("Admin user initialized.");
+                    }).catch((error) => {
+                        console.error(error);
                     });
-
-                    console.log("Admin user initialized.");
                 }
             }
         );

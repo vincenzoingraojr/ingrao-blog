@@ -16,39 +16,39 @@ export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: false })
+    @Column({ nullable: false })
     firstName: string;
 
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: false })
+    @Column({ nullable: false })
     lastName: string;
 
-    @Field()
-    @Column({ unique: true })
+    @Field(() => String, { nullable: false })
+    @Column({ unique: true, nullable: false })
     email: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: "" })
     password: string;
 
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: false })
+    @Column({ nullable: false })
     title: string;
 
-    @Field()
-    @Column()
+    @Field(() => String, { nullable: false })
+    @Column({ nullable: false })
     gender: string;
 
-    @Field(() => String)
-    @CreateDateColumn()
+    @Field(() => String, { nullable: false })
+    @CreateDateColumn({ nullable: false })
     birthDate: Date;
 
-    @Field(() => [Post], { nullable: true })
+    @Field(() => [Post], { nullable: true, defaultValue: [] })
     @OneToMany(() => Post, (post) => post.author, { nullable: true })
     posts: Post[];
 
-    @Field()
-    @Column()
+    @Field(() => Boolean, { nullable: false })
+    @Column({ nullable: false })
     verified: boolean;
 
     @Field(() => String, { nullable: false })

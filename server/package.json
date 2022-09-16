@@ -21,6 +21,7 @@
         "apollo-server-core": "^3.6.1",
         "apollo-server-express": "^3.6.1",
         "argon2": "^0.28.3",
+        "aws-sdk": "^2.1217.0",
         "class-validator": "^0.13.2",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
