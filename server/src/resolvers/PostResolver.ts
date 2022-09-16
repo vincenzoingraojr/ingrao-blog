@@ -171,7 +171,7 @@ export class PostResolver {
                         errors.push({
                             field: "slug",
                             message:
-                                "An error has occurred. Please try again later to create a new post",
+                                "An error has occurred. Please try again later to update the post",
                         });
                     }
                 }

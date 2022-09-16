@@ -11,6 +11,7 @@ import {
     useEditUnpublishedPostMutation,
 } from "../../generated/graphql";
 import {
+    Button,
     FlexContainer24,
     LoadingContainer,
     PageBlock,
@@ -30,6 +31,11 @@ const PostFormContainer = styled.div`
     @media ${devices.tablet} {
         grid-template-columns: 600px auto;
     }
+`;
+
+const UpdatePostButton = styled(Button)`
+    background-color: blue;
+    color: #ffffff;
 `;
 
 function UpdatePost() {
@@ -199,6 +205,16 @@ function UpdatePost() {
                                                                         errors
                                                                     }
                                                                 />
+                                                                <PageBlock>
+                                                                    <UpdatePostButton
+                                                                        type="submit"
+                                                                        title="Update post"
+                                                                        role="button"
+                                                                        aria-label="Update post"
+                                                                    >
+                                                                        Update post
+                                                                    </UpdatePostButton>
+                                                                </PageBlock>
                                                             </FlexContainer24>
                                                         </PageBlock>
                                                     </Form>

@@ -16,7 +16,7 @@ const EditorComponent: FunctionComponent<EditorComponentProps> = ({
 }) => {
     return (
         <EditorContainer>
-
+            Content
         </EditorContainer>
     );
 };
