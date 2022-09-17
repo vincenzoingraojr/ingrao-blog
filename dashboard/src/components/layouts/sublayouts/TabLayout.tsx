@@ -103,20 +103,24 @@ const TabLayout: FunctionComponent<TabLayoutProps> = ({ tabData, content }) => {
     return (
         <TabLayoutContainer>
             <TabLayoutHeader>
-                {tabData.map((tabElement: { url: string, text: string }, i: number) => (
-                    <TabElement key={i}>
-                        <NavLink
-                            className={(navData: any) =>
-                                navData.isActive ? "active" : ""
-                            }
-                            to={`/${tabElement.url}`}
-                            title={tabElement.text}
-                            aria-label={tabElement.text}
-                        >
-                            <TabElementText>{tabElement.text}</TabElementText>
-                        </NavLink>
-                    </TabElement>
-                ))}
+                {tabData.map(
+                    (tabElement: { url: string; text: string }, i: number) => (
+                        <TabElement key={i}>
+                            <NavLink
+                                className={(navData: any) =>
+                                    navData.isActive ? "active" : ""
+                                }
+                                to={`/${tabElement.url}`}
+                                title={tabElement.text}
+                                aria-label={tabElement.text}
+                            >
+                                <TabElementText>
+                                    {tabElement.text}
+                                </TabElementText>
+                            </NavLink>
+                        </TabElement>
+                    )
+                )}
             </TabLayoutHeader>
             <TabLayoutContentContainer>{content}</TabLayoutContentContainer>
         </TabLayoutContainer>

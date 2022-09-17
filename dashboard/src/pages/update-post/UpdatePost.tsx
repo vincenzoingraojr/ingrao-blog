@@ -200,7 +200,6 @@ function UpdatePost() {
                                                                 />
                                                                 <EditorField
                                                                     field="content"
-                                                                    placeholder="Post content"
                                                                     errors={
                                                                         errors
                                                                     }
@@ -212,7 +211,8 @@ function UpdatePost() {
                                                                         role="button"
                                                                         aria-label="Update post"
                                                                     >
-                                                                        Update post
+                                                                        Update
+                                                                        post
                                                                     </UpdatePostButton>
                                                                 </PageBlock>
                                                             </FlexContainer24>
