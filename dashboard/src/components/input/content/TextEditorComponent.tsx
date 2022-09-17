@@ -1,3 +1,4 @@
+import "./editor.css";
 import type { ChangeEvent, HTMLProps, KeyboardEvent } from "react";
 import {
     FunctionComponent,
@@ -9,7 +10,6 @@ import {
     useState,
 } from "react";
 import styled from "styled-components";
-import "./editor.css";
 import {
     BoldExtension,
     CalloutExtension,
@@ -32,7 +32,6 @@ import {
     FloatingToolbar,
     FloatingWrapper,
     Remirror,
-    ThemeProvider,
     useActive,
     useAttrs,
     useChainedCommands,
@@ -73,10 +72,10 @@ const BoldButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleBold()}
-            className={cx(active.bold() ? "remirror-button active" : "remirror-button")}
+            className={cx(active.bold() ? "remirror-button remirror-button-active" : "remirror-button")}
             type="button"
         >
-            B
+            <b>B</b>
         </button>
     );
 };
@@ -88,10 +87,10 @@ const ItalicButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleItalic()}
-            className={cx(active.italic() ? "remirror-button active" : "remirror-button")}
+            className={cx(active.italic() ? "remirror-button remirror-button-active" : "remirror-button")}
             type="button"
         >
-            Italic
+            <i>I</i>
         </button>
     );
 };
@@ -103,10 +102,10 @@ const UnderlineButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleUnderline()}
-            className={cx(active.underline() ? "remirror-button active" : "remirror-button")}
+            className={cx(active.underline() ? "remirror-button remirror-button-active" : "remirror-button")}
             type="button"
         >
-            Underline
+            <u>U</u>
         </button>
     );
 };
@@ -118,10 +117,10 @@ const StrikeButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleStrike()}
-            className={cx(active.strike() ? "remirror-button active" : "remirror-button")}
+            className={cx(active.strike() ? "remirror-button remirror-button-active" : "remirror-button")}
             type="button"
         >
-            Strike
+            <s>S</s>
         </button>
     );
 };
@@ -135,7 +134,7 @@ const SupButton = () => {
             className="remirror-button"
             type="button"
         >
-            Toggle Superscript
+            X<sup>2</sup>
         </button>
     );
 };
@@ -149,7 +148,7 @@ const SubButton = () => {
             className="remirror-button"
             type="button"
         >
-            Toggle Subscript
+            X<sub>2</sub>
         </button>
     );
 };
@@ -161,7 +160,7 @@ const HorizontalRuleButton = () => {
             type="button"
             className="remirror-button"
         >
-            Horizontal rule
+            &mdash;
         </button>
     );
 };
@@ -176,7 +175,7 @@ const HeadingButtons = () => {
                     key={level}
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => commands.toggleHeading({ level })}
-                    className={cx(active.heading({ level }) ? "remirror-button active" : "remirror-button")}
+                    className={cx(active.heading({ level }) ? "remirror-button remirror-button-active" : "remirror-button")}
                     type="button"
                 >
                     H{level}
@@ -341,12 +340,14 @@ const FloatingLinkToolbar = () => {
                 commandName="updateLink"
                 onSelect={handleClickEdit}
                 icon="pencilLine"
+                className="link-edit-button"
                 enabled
             />
             <CommandButton
                 commandName="removeLink"
                 onSelect={onRemove}
                 icon="linkUnlink"
+                className="link-edit-button"
                 enabled
             />
         </>
@@ -355,6 +356,7 @@ const FloatingLinkToolbar = () => {
             commandName="updateLink"
             onSelect={handleClickEdit}
             icon="link"
+            className="link-edit-button"
             enabled
         />
     );
@@ -425,7 +427,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
 
     return (
         <EditorComponentContainer>
-            <ThemeProvider>
+            <div className="remirror-theme">
                 <EditorContainer>
                     <Remirror
                         manager={manager}
@@ -446,7 +448,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                         <FloatingLinkToolbar />
                     </Remirror>
                 </EditorContainer>
-            </ThemeProvider>
+            </div>
         </EditorComponentContainer>
     );
 };

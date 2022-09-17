@@ -20,13 +20,11 @@
     line-height: 1.5;
     border-radius: var(--rmr-radius-border);
     text-decoration: none;
-    border: 1px solid var(--rmr-color-border);
+    border: none;
     cursor: pointer;
     white-space: nowrap;
     color: var(--rmr-color-text);
     background-color: var(--rmr-color-background);
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     font-size: 100%;
 }
 
@@ -131,7 +129,7 @@ input[type="radio"] + .remirror-form-label {
 .remirror-form-group {
     display: block;
     color: var(--rmr-color-text);
-    border: 1px solid var(--rmr-color-border);
+    border: 2px solid var(--rmr-color-border);
     border-radius: var(--rmr-radius-border);
     padding: 0.5rem 1rem 1rem;
 }
@@ -372,10 +370,11 @@ button:active .remirror-menu-pane-shortcut,
 }
 
 .remirror-floating-popover {
-    /* padding: var(--rmr-space-2); */
     padding: 0;
+    margin-left: 32px;
     border: none;
     max-height: calc(100vh - 56px);
+    background-color: var(--rmr-color-background);
 }
 
 .remirror-popover [data-arrow] {
@@ -577,7 +576,7 @@ button:active .remirror-menu-pane-shortcut,
     position: relative;
     font-variant-ligatures: none;
     font-feature-settings: "liga" 0;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .remirror-editor.ProseMirror pre {
@@ -3784,10 +3783,10 @@ button:active .remirror-menu-pane-shortcut,
  */
 .remirror-is-empty:first-of-type::before {
     position: absolute;
-    color: #aaa;
+    color: #000000;
     pointer-events: none;
     height: 0;
-    font-style: italic;
+    font-style: normal;
     content: attr(data-placeholder);
 }
 
@@ -4273,40 +4272,40 @@ button:active .remirror-menu-pane-shortcut,
 
 .remirror-theme {
     --rmr-color-background: #ffffff;
-    --rmr-color-border: rgba(0, 0, 0, 0.25);
+    --rmr-color-border: #000000;
     --rmr-color-foreground: #000000;
-    --rmr-color-muted: #f1f3f5;
-    --rmr-color-primary: #7963d2;
-    --rmr-color-secondary: #bcd263;
-    --rmr-color-primary-text: #fff;
-    --rmr-color-secondary-text: #fff;
-    --rmr-color-text: #252103;
-    --rmr-color-faded: hsla(0, 0%, 13%, 0.9);
-    --rmr-color-active-background: hsla(0, 0%, 85%, 1);
-    --rmr-color-active-border: hsla(0, 0%, 0%, 0.25);
-    --rmr-color-active-foreground: hsla(0, 0%, 0%, 1);
-    --rmr-color-active-muted: hsla(210, 17%, 80%, 1);
-    --rmr-color-active-primary: hsla(252, 55%, 46%, 1);
-    --rmr-color-active-secondary: hsla(72, 55%, 46%, 1);
-    --rmr-color-active-primary-text: #fff;
-    --rmr-color-active-secondary-text: #000;
-    --rmr-color-active-text: #000;
-    --rmr-color-active-faded: hsla(0, 0%, 13%, 0.9);
-    --rmr-color-hover-background: hsla(0, 0%, 93%, 1);
-    --rmr-color-hover-border: hsla(0, 0%, 0%, 0.25);
-    --rmr-color-hover-foreground: hsla(0, 0%, 0%, 1);
-    --rmr-color-hover-muted: hsla(210, 17%, 88%, 1);
-    --rmr-color-hover-primary: hsla(252, 55%, 53%, 1);
-    --rmr-color-hover-secondary: hsla(72, 55%, 53%, 1);
-    --rmr-color-hover-primary-text: #fff;
-    --rmr-color-hover-secondary-text: #000;
-    --rmr-color-hover-text: #000;
+    --rmr-color-muted: #c0c0c0;
+    --rmr-color-primary: #000000;
+    --rmr-color-secondary: #0000ff;
+    --rmr-color-primary-text: #ffffff;
+    --rmr-color-secondary-text: #ffffff;
+    --rmr-color-text: #000000;
+    --rmr-color-faded: #c0c0c0;
+    --rmr-color-active-background: #ffffff;
+    --rmr-color-active-border: #000000;
+    --rmr-color-active-foreground: #000000;
+    --rmr-color-active-muted: #c0c0c0;
+    --rmr-color-active-primary: #000000;
+    --rmr-color-active-secondary: #0000ff;
+    --rmr-color-active-primary-text: #ffffff;
+    --rmr-color-active-secondary-text: #000000;
+    --rmr-color-active-text: #000000;
+    --rmr-color-active-faded: #c0c0c0;
+    --rmr-color-hover-background: #c0c0c0;
+    --rmr-color-hover-border: #000000;
+    --rmr-color-hover-foreground: #000000;
+    --rmr-color-hover-muted: #c0c0c0;
+    --rmr-color-hover-primary: #000000;
+    --rmr-color-hover-secondary: #0000ff;
+    --rmr-color-hover-primary-text: #ffffff;
+    --rmr-color-hover-secondary-text: #000000;
+    --rmr-color-hover-text: #000000;
     --rmr-color-hover-faded: hsla(0, 0%, 13%, 0.9);
     --rmr-color-shadow-1: rgba(10, 31, 68, 0.08);
     --rmr-color-shadow-2: rgba(10, 31, 68, 0.1);
     --rmr-color-shadow-3: rgba(10, 31, 68, 0.12);
     --rmr-color-backdrop: rgba(0, 0, 0, 0.9);
-    --rmr-color-outline: rgba(121, 99, 210, 0.4);
+    --rmr-color-outline: #000000;
     --rmr-color-table-default-border: hsla(0, 0%, 80%, 1);
     --rmr-color-table-default-cell: hsla(0, 0%, 40%, 1);
     --rmr-color-table-default-controller: #dee2e6;
@@ -4453,16 +4452,15 @@ button:active .remirror-menu-pane-shortcut,
     --rmr-radius-border: 0px;
     --rmr-radius-extra: 0px;
     --rmr-radius-circle: 50%;
-    --rmr-font-family-default: system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --rmr-font-family-default: inherit;
     --rmr-font-family-heading: inherit;
-    --rmr-font-family-mono: Menlo, monospace;
-    --rmr-font-size-0: 12px;
-    --rmr-font-size-1: 14px;
-    --rmr-font-size-2: 16px;
-    --rmr-font-size-3: 20px;
-    --rmr-font-size-4: 24px;
-    --rmr-font-size-5: 32px;
+    --rmr-font-family-mono: monospace;
+    --rmr-font-size-0: 18px;
+    --rmr-font-size-1: 20px;
+    --rmr-font-size-2: 22px;
+    --rmr-font-size-3: 28px;
+    --rmr-font-size-4: 32px;
+    --rmr-font-size-5: 36px;
     --rmr-font-size-6: 48px;
     --rmr-font-size-7: 64px;
     --rmr-font-size-8: 96px;
@@ -4531,15 +4529,10 @@ button:active .remirror-menu-pane-shortcut,
 
 .remirror-theme .ProseMirror {
     min-height: var(--rmr-space-6);
-    box-shadow: var(--rmr-color-border) 0px 0px 0px 0.1em;
+    max-height: var(--rmr-space-7);
     padding: var(--rmr-space-3);
     border-radius: var(--rmr-radius-border);
     outline: none;
-}
-
-.remirror-theme .ProseMirror:active,
-.remirror-theme .ProseMirror:focus {
-    box-shadow: var(--rmr-color-outline) 0px 0px 0px 0.2em;
 }
 
 .remirror-theme .ProseMirror p,
@@ -4553,4 +4546,10 @@ button:active .remirror-menu-pane-shortcut,
 .remirror-theme .ProseMirror span {
     margin: 0;
     /* margin-bottom: var(--rmr-space-2); */
+}
+
+.link-edit-button {
+    border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
+    border-radius: 0px !important;
 }
