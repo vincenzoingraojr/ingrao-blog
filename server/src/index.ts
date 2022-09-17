@@ -80,9 +80,9 @@ async function main() {
         url: process.env.DATABASE_URL,
         synchronize: true,
         logging: false,
-        entities: ["src/entities/**/*.ts"],
-        migrations: ["src/migrations/**/*.ts"],
-        subscribers: ["src/subscribers/**/*.ts"],
+        entities: ["src/entities/*.ts"],
+        migrations: ["src/migrations/*.ts"],
+        subscribers: ["src/subscribers/*.ts"],
         cli: {
             entitiesDir: "src/entities",
             migrationsDir: "src/migrations",

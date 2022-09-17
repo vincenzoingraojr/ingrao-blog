@@ -160,7 +160,6 @@ export class PostResolver {
                             slogan: slogan,
                             postCover: postCover,
                             content: content,
-                            authorId: payload.id,
                             author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
                         });
     
@@ -261,7 +260,6 @@ export class PostResolver {
                         slogan: slogan,
                         postCover: postCover,
                         content: content,
-                        authorId: payload.id,
                         draft: false,
                         author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
                     });
