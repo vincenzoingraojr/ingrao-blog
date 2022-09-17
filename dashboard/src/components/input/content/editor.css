@@ -371,7 +371,7 @@ button:active .remirror-menu-pane-shortcut,
 
 .remirror-floating-popover {
     padding: 0;
-    margin-left: 32px;
+    padding-left: 32px;
     border: none;
     max-height: calc(100vh - 56px);
     background-color: var(--rmr-color-background);
