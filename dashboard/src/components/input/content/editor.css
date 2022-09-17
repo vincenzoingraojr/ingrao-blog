@@ -1,9 +1,6 @@
 /**
  * Styles extracted from: packages/remirror__theme/src/components-theme.ts
  */
-.remirror-editor-wrapper {
-    padding-top: var(--rmr-space-3);
-}
 
 .remirror-button-active {
     color: var(--rmr-color-primary-text) !important;
@@ -568,12 +565,6 @@ button:active .remirror-menu-pane-shortcut,
     font-family: var(--rmr-font-family-default);
     font-size: var(--rmr-font-size-1);
     padding: var(--rmr-space-2) var(--rmr-space-3);
-}
-
-.remirror-color-picker-cell {
-}
-
-.remirror-color-picker-cell-selected {
 }
 
 /**
@@ -2780,10 +2771,6 @@ button:active .remirror-menu-pane-shortcut,
     background-color: white;
 }
 
-.remirror-gh-colors :not(pre) > code[class*="language-"],
-.remirror-gh-colors pre[class*="language-"] {
-}
-
 /* Inline code */
 
 .remirror-gh-colors :not(pre) > code[class*="language-"] {
@@ -3793,12 +3780,6 @@ button:active .remirror-menu-pane-shortcut,
 }
 
 /**
- * Styles extracted from: packages/remirror__theme/src/extension-node-formatting-theme.ts
- */
-.remirror-editor.ProseMirror {
-}
-
-/**
  * Styles extracted from: packages/remirror__theme/src/extension-placeholder-theme.ts
  */
 .remirror-is-empty:first-of-type::before {
@@ -3839,10 +3820,7 @@ button:active .remirror-menu-pane-shortcut,
 /**
  * Styles extracted from: packages/remirror__theme/src/extension-tables-theme.ts
  */
-.remirror-editor.ProseMirror {
-    /* Give selected cells a blue overlay */
-    /* We don't need this anymore -- 2021-04-03 ocavue */
-}
+
 .remirror-editor.ProseMirror .tableWrapper {
     overflow-x: auto;
 }
@@ -4180,9 +4158,6 @@ button:active .remirror-menu-pane-shortcut,
     background-color: var(--rmr-color-table-selected-controller);
 }
 
-.remirror-table-preselect-all {
-}
-
 /* Styles for predelete */
 
 .remirror-table-show-predelete th.selectedCell.remirror-table-controller,
@@ -4475,8 +4450,8 @@ button:active .remirror-menu-pane-shortcut,
     --rmr-hue-orange-7: #f76707;
     --rmr-hue-orange-8: #e8590c;
     --rmr-hue-orange-9: #d9480f;
-    --rmr-radius-border: 0.25rem;
-    --rmr-radius-extra: 0.5rem;
+    --rmr-radius-border: 0px;
+    --rmr-radius-extra: 0px;
     --rmr-radius-circle: 50%;
     --rmr-font-family-default: system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
@@ -4491,7 +4466,7 @@ button:active .remirror-menu-pane-shortcut,
     --rmr-font-size-6: 48px;
     --rmr-font-size-7: 64px;
     --rmr-font-size-8: 96px;
-    --rmr-font-size-default: 16px;
+    --rmr-font-size-default: 18px;
     --rmr-space-1: 4px;
     --rmr-space-2: 8px;
     --rmr-space-3: 16px;

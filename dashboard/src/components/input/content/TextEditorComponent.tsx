@@ -73,7 +73,7 @@ const BoldButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleBold()}
-            className={cx(active.bold() && "active")}
+            className={cx(active.bold() ? "remirror-button active" : "remirror-button")}
             type="button"
         >
             B
@@ -88,7 +88,7 @@ const ItalicButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleItalic()}
-            className={cx(active.italic() && "active")}
+            className={cx(active.italic() ? "remirror-button active" : "remirror-button")}
             type="button"
         >
             Italic
@@ -103,7 +103,7 @@ const UnderlineButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleUnderline()}
-            className={cx(active.underline() && "active")}
+            className={cx(active.underline() ? "remirror-button active" : "remirror-button")}
             type="button"
         >
             Underline
@@ -118,7 +118,7 @@ const StrikeButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleStrike()}
-            className={cx(active.strike() && "active")}
+            className={cx(active.strike() ? "remirror-button active" : "remirror-button")}
             type="button"
         >
             Strike
@@ -132,6 +132,7 @@ const SupButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleSuperscript()}
+            className="remirror-button"
             type="button"
         >
             Toggle Superscript
@@ -145,6 +146,7 @@ const SubButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleSubscript()}
+            className="remirror-button"
             type="button"
         >
             Toggle Subscript
@@ -157,6 +159,7 @@ const HorizontalRuleButton = () => {
     return (
         <button onClick={() => commands.insertHorizontalRule()}
             type="button"
+            className="remirror-button"
         >
             Horizontal rule
         </button>
@@ -173,7 +176,7 @@ const HeadingButtons = () => {
                     key={level}
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => commands.toggleHeading({ level })}
-                    className={cx(active.heading({ level }) && "active")}
+                    className={cx(active.heading({ level }) ? "remirror-button active" : "remirror-button")}
                     type="button"
                 >
                     H{level}
@@ -374,7 +377,7 @@ const FloatingLinkToolbar = () => {
                 <DelayAutoFocusInput
                     style={{ zIndex: 20 }}
                     autoFocus
-                    placeholder="Enter link..."
+                    placeholder="Enter a valid link"
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
                         setHref(event.target.value)
                     }
