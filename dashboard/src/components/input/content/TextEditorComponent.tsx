@@ -1,5 +1,6 @@
 import "./editor.css";
 import type { ChangeEvent, HTMLProps, KeyboardEvent } from "react";
+import type { RemirrorJSON } from "remirror";
 import {
     FunctionComponent,
     useCallback,
@@ -40,6 +41,7 @@ import {
     useExtensionEvent,
     useRemirror,
     useUpdateReason,
+    OnChangeJSON
 } from "@remirror/react";
 import { cx, htmlToProsemirrorNode } from "remirror";
 
@@ -405,7 +407,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
     field,
     form,
 }) => {
-    const { manager, state, onChange } = useRemirror({
+    const { manager, state } = useRemirror({
         extensions: () => [
             new BoldExtension(),
             new ItalicExtension(),
@@ -425,16 +427,25 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
         stringHandler: htmlToProsemirrorNode,
     });
 
+    const [initialContent] = useState<RemirrorJSON | undefined>(() => {
+        const content = field.value;
+        return content ? JSON.parse(content) : state;
+    });
+
+    const handleEditorChange = useCallback((json: RemirrorJSON) => {
+        form.setFieldValue(field.name, JSON.stringify(json));
+    }, [form, field.name]);
+
     return (
         <EditorComponentContainer>
             <div className="remirror-theme">
                 <EditorContainer>
                     <Remirror
                         manager={manager}
-                        initialContent={state}
-                        onChange={onChange}
+                        initialContent={initialContent}
                         autoRender="end"
                     >
+                        <OnChangeJSON onChange={handleEditorChange} />
                         <EditorToolbar>
                             <BoldButton />
                             <ItalicButton />
