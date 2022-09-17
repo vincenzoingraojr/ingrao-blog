@@ -1,7 +1,6 @@
+import type { ChangeEvent, HTMLProps, KeyboardEvent } from "react";
 import {
-    ChangeEvent,
     FunctionComponent,
-    HTMLProps,
     useCallback,
     useEffect,
     useLayoutEffect,
@@ -43,7 +42,6 @@ import {
     useRemirror,
     useUpdateReason,
 } from "@remirror/react";
-import "./editor.css";
 import { cx, htmlToProsemirrorNode } from "remirror";
 
 export interface TextEditorComponentProps {
@@ -208,7 +206,6 @@ function useFloatingLinkState() {
     const url = (useAttrs().link()?.href as string) ?? "";
     const [href, setHref] = useState<string>(url);
 
-    // A positioner which only shows for links.
     const linkPositioner = useMemo(
         () => createMarkPositioner({ type: "link" }),
         []
@@ -424,6 +421,8 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                         onChange={onChange}
                         autoRender="end"
                     >
+                        <EditorComponent />
+                        <FloatingLinkToolbar />
                         <EditorToolbar>
                             <BoldButton />
                             <ItalicButton />
@@ -434,8 +433,6 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                             <HorizontalRuleButton />
                             <HeadingButtons />
                         </EditorToolbar>
-                        <EditorComponent />
-                        <FloatingLinkToolbar />
                     </Remirror>
                 </EditorContainer>
             </ThemeProvider>
