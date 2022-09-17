@@ -9,6 +9,7 @@ import {
     useState,
 } from "react";
 import styled from "styled-components";
+import "./editor.css";
 import {
     BoldExtension,
     CalloutExtension,
@@ -371,7 +372,7 @@ const FloatingLinkToolbar = () => {
                 renderOutsideEditor
             >
                 <DelayAutoFocusInput
-                    style={{ zIndex: 1000 }}
+                    style={{ zIndex: 20 }}
                     autoFocus
                     placeholder="Enter link..."
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
