@@ -28,7 +28,6 @@ import {
 } from "remirror/extensions";
 import {
     CommandButton,
-    EditorComponent,
     FloatingToolbar,
     FloatingWrapper,
     Remirror,
@@ -74,6 +73,7 @@ const BoldButton = () => {
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleBold()}
             className={cx(active.bold() && "active")}
+            type="button"
         >
             B
         </button>
@@ -88,6 +88,7 @@ const ItalicButton = () => {
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleItalic()}
             className={cx(active.italic() && "active")}
+            type="button"
         >
             Italic
         </button>
@@ -102,6 +103,7 @@ const UnderlineButton = () => {
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleUnderline()}
             className={cx(active.underline() && "active")}
+            type="button"
         >
             Underline
         </button>
@@ -116,6 +118,7 @@ const StrikeButton = () => {
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleStrike()}
             className={cx(active.strike() && "active")}
+            type="button"
         >
             Strike
         </button>
@@ -128,6 +131,7 @@ const SupButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleSuperscript()}
+            type="button"
         >
             Toggle Superscript
         </button>
@@ -140,6 +144,7 @@ const SubButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleSubscript()}
+            type="button"
         >
             Toggle Subscript
         </button>
@@ -149,7 +154,9 @@ const SubButton = () => {
 const HorizontalRuleButton = () => {
     const commands = useCommands();
     return (
-        <button onClick={() => commands.insertHorizontalRule()}>
+        <button onClick={() => commands.insertHorizontalRule()}
+            type="button"
+        >
             Horizontal rule
         </button>
     );
@@ -166,6 +173,7 @@ const HeadingButtons = () => {
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => commands.toggleHeading({ level })}
                     className={cx(active.heading({ level }) && "active")}
+                    type="button"
                 >
                     H{level}
                 </button>
@@ -363,7 +371,7 @@ const FloatingLinkToolbar = () => {
                 renderOutsideEditor
             >
                 <DelayAutoFocusInput
-                    style={{ zIndex: 20 }}
+                    style={{ zIndex: 1000 }}
                     autoFocus
                     placeholder="Enter link..."
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -421,8 +429,6 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                         onChange={onChange}
                         autoRender="end"
                     >
-                        <EditorComponent />
-                        <FloatingLinkToolbar />
                         <EditorToolbar>
                             <BoldButton />
                             <ItalicButton />
@@ -433,6 +439,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                             <HorizontalRuleButton />
                             <HeadingButtons />
                         </EditorToolbar>
+                        <FloatingLinkToolbar />
                     </Remirror>
                 </EditorContainer>
             </ThemeProvider>
