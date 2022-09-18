@@ -14,6 +14,7 @@ import CreatePostPage from "./pages/create-post/CreatePostPage";
 import Modal from "./components/utils/modal/Modal";
 import NewPost from "./pages/create-post/NewPost";
 import UpdatePost from "./pages/update-post/UpdatePost";
+import PublishPost from "./pages/update-post/PublishPost";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -125,6 +126,20 @@ function App() {
                     }
                 />
                 <Route
+                    path="/publish-post/:id"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Publish this post"
+                                    modalContent={<PublishPost />}
+                                />
+                            }
+                        />
+                    }
+                />
+                <Route
                     path="/update-post/:id"
                     element={
                         <IsAuthenticated
@@ -145,6 +160,20 @@ function App() {
                                     <Modal
                                         headerText="Create a new post"
                                         modalContent={<NewPost />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                    <Route
+                        path="/publish-post/:id"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Publish this post"
+                                        modalContent={<PublishPost />}
                                     />
                                 }
                             />

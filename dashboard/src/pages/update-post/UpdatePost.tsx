@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import { useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import Head from "../../components/Head";
 import InputField from "../../components/input/InputField";
 import FocusPageLayout from "../../components/layouts/FocusPageLayout";
@@ -13,6 +13,8 @@ import {
 import {
     Button,
     FlexContainer24,
+    FlexRow24,
+    LinkButton,
     LoadingContainer,
     PageBlock,
     Status,
@@ -22,7 +24,7 @@ import UpdatePostComponent from "./UpdatePostComponent";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
 import EditorField from "../../components/input/content/EditorField";
-import { debounceAsync } from "../../utils/asyncDebounce";
+import { debounceAsync } from "../../utils/debounceAsync";
 import AutoSave from "../../components/input/content/AutoSave";
 
 const PostFormContainer = styled.div`
@@ -40,8 +42,14 @@ const UpdatePostButton = styled(Button)`
     color: #ffffff;
 `;
 
+const PublishPostButton = styled(LinkButton)`
+    color: #ffffff;
+    background-color: #000000;
+`;
+
 function UpdatePost() {
     const navigate = useNavigate();
+    const location = useLocation();
     const params = useParams();
     const { data, loading, error } = useFindPostQuery({
         fetchPolicy: "network-only",
@@ -203,15 +211,31 @@ function UpdatePost() {
                                                                     }
                                                                 />
                                                                 <PageBlock>
-                                                                    <UpdatePostButton
-                                                                        type="submit"
-                                                                        title="Update post"
-                                                                        role="button"
-                                                                        aria-label="Update post"
-                                                                    >
-                                                                        Update
-                                                                        post
-                                                                    </UpdatePostButton>
+                                                                    <FlexRow24>
+                                                                        <PageBlock>
+                                                                            <UpdatePostButton
+                                                                                type="submit"
+                                                                                title="Update post"
+                                                                                role="button"
+                                                                                aria-label="Update post"
+                                                                            >
+                                                                                Update
+                                                                                post
+                                                                            </UpdatePostButton>
+                                                                        </PageBlock>
+                                                                        <PageBlock>
+                                                                            <PublishPostButton
+                                                                                to={`/publish-post/${params.id}`}
+                                                                                title="Publish post"
+                                                                                state={{
+                                                                                    backgroundLocation: location,
+                                                                                }}
+                                                                            >
+                                                                                Publish post
+                                                                            </PublishPostButton>
+                                                                        </PageBlock>
+                                                                    </FlexRow24>
+                                                                    <Outlet />
                                                                 </PageBlock>
                                                             </FlexContainer24>
                                                         </PageBlock>

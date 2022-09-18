@@ -54,7 +54,7 @@ const FocusPageHeader = styled.div`
     height: 60px;
     gap: 16px;
     width: 100%;
-    z-index: 10000;
+    z-index: 1000;
     overflow: hidden;
     background-color: #ffffff;
 `;

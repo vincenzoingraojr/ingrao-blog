@@ -21,7 +21,6 @@ const AutoSave: FunctionComponent<AutoSaveProps> = ({
         if (onSubmit && !(await isSameValueAsInitialValue(v))) onSubmit(v);
     }, [values, errors, onSubmit]);
 
-    // add delay of 300ms by default, or whatever delay prop is
     useEffect(() => {
         const timer = setTimeout(() => onFormSubmit(), delay);
         return () => clearTimeout(timer);

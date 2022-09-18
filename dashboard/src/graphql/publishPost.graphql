@@ -1,0 +1,9 @@
+mutation publishPost($postId: Int!) {
+    publishPost(postId: $postId) {
+        errors {
+            field
+            message
+        }
+        status
+    }
+}

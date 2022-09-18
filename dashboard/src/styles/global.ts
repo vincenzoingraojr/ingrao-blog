@@ -256,6 +256,12 @@ export const FlexContainer24 = styled.div`
     gap: 24px;
 `;
 
+export const FlexRow24 = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+`;
+
 export const ControlContainer = styled.div.attrs(
     (props: { size?: number }) => props
 )`

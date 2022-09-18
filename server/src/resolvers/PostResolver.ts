@@ -185,6 +185,85 @@ export class PostResolver {
 
     @Mutation(() => PostResponse)
     @UseMiddleware(isAuth)
+    async publishPost(
+        @Arg("postId", () => Int) postId: number,
+        @Ctx() { payload }: MyContext
+    ): Promise<PostResponse> {
+        let errors = [];
+        let post;
+        let status = "";
+
+        if (!payload || (payload && payload.role === "user")) {
+            status = "You are not authorizated to publish a post.";
+        } else {
+            post = await Post.findOne({
+                id: postId,
+                authorId: payload.id,
+            });
+
+            if (!post) {
+                status = "Post not found.";
+            } else {
+                if (post.slug === "" || post.slug === null) {
+                    errors.push({
+                        field: "Slug",
+                        message: "you can't publish a post without a slug",
+                    });
+                }
+                if (post.title === "" || post.title === null) {
+                    errors.push({
+                        field: "Title",
+                        message: "the title field cannot be empty",
+                    });
+                }
+                if (post.description === "" || post.description === null) {
+                    errors.push({
+                        field: "Description",
+                        message: "the description field cannot be empty",
+                    });
+                }
+                if (post.slogan === "" || post.slogan === null) {
+                    errors.push({
+                        field: "Slogan",
+                        message: "the slogan field cannot be empty",
+                    });
+                }
+                if (post.postCover === "" || post.postCover === null) {
+                    errors.push({
+                        field: "Post cover",
+                        message: "you can't publish a post without a cover image",
+                    });
+                }
+                if (post.content === "" || post.content === null) {
+                    errors.push({
+                        field: "Content",
+                        message: "you can't publish a post without content",
+                    });
+                }
+
+                if (errors.length === 0) {
+                    await Post.update(
+                    {
+                        id: postId,
+                        authorId: payload.id,
+                    },
+                    {
+                        draft: false,
+                    });
+
+                    status = "Your post is now online.";
+                }
+            }
+        }
+
+        return {
+            errors,
+            status,
+        };
+    }
+
+    @Mutation(() => PostResponse)
+    @UseMiddleware(isAuth)
     async editPublishedPost(
         @Arg("postId", () => Int) postId: number,
         @Arg("slug") slug: string,
