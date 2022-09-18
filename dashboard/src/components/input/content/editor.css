@@ -3660,9 +3660,8 @@ button:active .remirror-menu-pane-shortcut,
 }
 
 .remirror-list-item-checkbox {
-    /* change the checkbox color from blue (default on Chrome) to purple. */
-    -webkit-filter: hue-rotate(60deg);
-    filter: hue-rotate(60deg);
+    -webkit-filter: hue-rotate(0deg);
+    filter: hue-rotate(0deg);
 }
 
 .remirror-collapsible-list-item-closed li {
@@ -4552,4 +4551,6 @@ button:active .remirror-menu-pane-shortcut,
     border: 2px solid #000000 !important;
     background-color: #ffffff !important;
     border-radius: 0px !important;
+    font-size: 16px !important;
+    color: #000000 !important;
 }

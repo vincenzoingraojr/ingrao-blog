@@ -27,6 +27,9 @@ import {
     HeadingExtension,
     createMarkPositioner,
     ShortcutHandlerProps,
+    BulletListExtension,
+    HardBreakExtension,
+    OrderedListExtension,
 } from "remirror/extensions";
 import {
     CommandButton,
@@ -41,7 +44,7 @@ import {
     useExtensionEvent,
     useRemirror,
     useUpdateReason,
-    OnChangeJSON
+    OnChangeJSON,
 } from "@remirror/react";
 import { cx, htmlToProsemirrorNode } from "remirror";
 
@@ -74,7 +77,11 @@ const BoldButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleBold()}
-            className={cx(active.bold() ? "remirror-button remirror-button-active" : "remirror-button")}
+            className={cx(
+                active.bold()
+                    ? "remirror-button remirror-button-active"
+                    : "remirror-button"
+            )}
             type="button"
         >
             <b>B</b>
@@ -89,7 +96,11 @@ const ItalicButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleItalic()}
-            className={cx(active.italic() ? "remirror-button remirror-button-active" : "remirror-button")}
+            className={cx(
+                active.italic()
+                    ? "remirror-button remirror-button-active"
+                    : "remirror-button"
+            )}
             type="button"
         >
             <i>I</i>
@@ -104,7 +115,11 @@ const UnderlineButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleUnderline()}
-            className={cx(active.underline() ? "remirror-button remirror-button-active" : "remirror-button")}
+            className={cx(
+                active.underline()
+                    ? "remirror-button remirror-button-active"
+                    : "remirror-button"
+            )}
             type="button"
         >
             <u>U</u>
@@ -119,7 +134,11 @@ const StrikeButton = () => {
         <button
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => commands.toggleStrike()}
-            className={cx(active.strike() ? "remirror-button remirror-button-active" : "remirror-button")}
+            className={cx(
+                active.strike()
+                    ? "remirror-button remirror-button-active"
+                    : "remirror-button"
+            )}
             type="button"
         >
             <s>S</s>
@@ -158,7 +177,8 @@ const SubButton = () => {
 const HorizontalRuleButton = () => {
     const commands = useCommands();
     return (
-        <button onClick={() => commands.insertHorizontalRule()}
+        <button
+            onClick={() => commands.insertHorizontalRule()}
             type="button"
             className="remirror-button"
         >
@@ -177,12 +197,49 @@ const HeadingButtons = () => {
                     key={level}
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => commands.toggleHeading({ level })}
-                    className={cx(active.heading({ level }) ? "remirror-button remirror-button-active" : "remirror-button")}
+                    className={cx(
+                        active.heading({ level })
+                            ? "remirror-button remirror-button-active"
+                            : "remirror-button"
+                    )}
                     type="button"
                 >
                     H{level}
                 </button>
             ))}
+        </>
+    );
+};
+
+const ListButtons = () => {
+    const commands = useCommands();
+
+    return (
+        <>
+            <button
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => commands.toggleBulletList()}
+                type="button"
+                className="remirror-button"
+            >
+                BL
+            </button>
+            <button
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => commands.toggleOrderedList()}
+                type="button"
+                className="remirror-button"
+            >
+                OL
+            </button>
+            <button
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => commands.liftListItemOutOfList()}
+                type="button"
+                className="remirror-button"
+            >
+                LIOF
+            </button>
         </>
     );
 };
@@ -421,6 +478,9 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
             new HistoryExtension(),
             new HorizontalRuleExtension(),
             new HeadingExtension(),
+            new BulletListExtension(),
+            new HardBreakExtension(),
+            new OrderedListExtension(),
             new CalloutExtension({ defaultType: "warn" }),
         ],
         selection: "start",
@@ -432,9 +492,12 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
         return content ? JSON.parse(content) : state;
     });
 
-    const handleEditorChange = useCallback((json: RemirrorJSON) => {
-        form.setFieldValue(field.name, JSON.stringify(json));
-    }, [form, field.name]);
+    const handleEditorChange = useCallback(
+        (json: RemirrorJSON) => {
+            form.setFieldValue(field.name, JSON.stringify(json));
+        },
+        [form, field.name]
+    );
 
     return (
         <EditorComponentContainer>
@@ -455,6 +518,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                             <SubButton />
                             <HorizontalRuleButton />
                             <HeadingButtons />
+                            <ListButtons />
                         </EditorToolbar>
                         <FloatingLinkToolbar />
                     </Remirror>
