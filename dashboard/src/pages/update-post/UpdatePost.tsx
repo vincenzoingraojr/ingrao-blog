@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Head from "../../components/Head";
 import InputField from "../../components/input/InputField";
@@ -22,6 +22,8 @@ import UpdatePostComponent from "./UpdatePostComponent";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
 import EditorField from "../../components/input/content/EditorField";
+import { debounceAsync } from "../../utils/asyncDebounce";
+import AutoSave from "../../components/input/content/AutoSave";
 
 const PostFormContainer = styled.div`
     display: grid;
@@ -59,6 +61,30 @@ function UpdatePost() {
             console.log("Loading...");
         }
     }, [navigate, data, loading, error]);
+
+    const submitPost = useCallback(
+        async (values: any, { setErrors, setStatus }: any) => {
+            const response = await updatePost({
+                variables: values,
+            });
+
+            if (response.data?.editUnpublishedPost.status) {
+                setStatus(response.data.editUnpublishedPost.status);
+            } else if (
+                response.data?.editUnpublishedPost.errors?.length !== 0
+            ) {
+                setStatus(null);
+                setErrors(
+                    toErrorMap(response.data?.editUnpublishedPost?.errors!)
+                );
+            }
+        },
+        [updatePost]
+    );
+
+    const onSubmitDebounced = useMemo(() => {
+        return debounceAsync(submitPost, 400);
+    }, [submitPost]);
 
     return (
         <>
@@ -102,46 +128,13 @@ function UpdatePost() {
                                                     content:
                                                         data?.findPost?.content,
                                                 }}
-                                                onSubmit={async (
-                                                    values,
-                                                    { setErrors, setStatus }
-                                                ) => {
-                                                    const response =
-                                                        await updatePost({
-                                                            variables: values,
-                                                        });
-
-                                                    if (
-                                                        response.data
-                                                            ?.editUnpublishedPost
-                                                            .status
-                                                    ) {
-                                                        setStatus(
-                                                            response.data
-                                                                .editUnpublishedPost
-                                                                .status
-                                                        );
-                                                    } else if (
-                                                        response.data
-                                                            ?.editUnpublishedPost
-                                                            .errors?.length !==
-                                                        0
-                                                    ) {
-                                                        setStatus(null);
-                                                        setErrors(
-                                                            toErrorMap(
-                                                                response.data
-                                                                    ?.editUnpublishedPost
-                                                                    ?.errors!
-                                                            )
-                                                        );
-                                                    }
-                                                }}
+                                                onSubmit={onSubmitDebounced}
                                             >
                                                 {({
                                                     errors,
                                                     status,
                                                     values,
+                                                    submitForm,
                                                 }) => (
                                                     <Form>
                                                         <PageBlock>
@@ -202,6 +195,11 @@ function UpdatePost() {
                                                                     field="content"
                                                                     errors={
                                                                         errors
+                                                                    }
+                                                                />
+                                                                <AutoSave
+                                                                    onSubmit={
+                                                                        submitForm
                                                                     }
                                                                 />
                                                                 <PageBlock>

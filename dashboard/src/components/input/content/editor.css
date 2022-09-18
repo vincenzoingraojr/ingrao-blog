@@ -377,6 +377,10 @@ button:active .remirror-menu-pane-shortcut,
     background-color: var(--rmr-color-background);
 }
 
+.remirror-floating-popover input {
+    border: 2px solid var(--rmr-color-border);
+}
+
 .remirror-popover [data-arrow] {
     background-color: transparent;
 }
