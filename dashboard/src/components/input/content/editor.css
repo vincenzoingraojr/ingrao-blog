@@ -4551,6 +4551,9 @@ button:active .remirror-menu-pane-shortcut,
     border: 2px solid #000000 !important;
     background-color: #ffffff !important;
     border-radius: 0px !important;
-    font-size: 16px !important;
-    color: #000000 !important;
+}
+
+.link-edit-button svg {
+    fill: #000000;
+    stroke: #000000;
 }
