@@ -17,6 +17,7 @@ import {
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Head from "../../components/Head";
 
 const PublishPostButton = styled(Button)`
     background-color: #000000;
@@ -60,7 +61,11 @@ function PublishPost() {
     const [errors, setErrors] = useState<any>(null);
 
     return (
-        <div>
+        <>
+            <Head
+                title="Publish this post | dashboard.ingrao.blog"
+                description="In this page you can publish this post."
+            />
             {(meLoading && !meData) || meError ? (
                 <ModalLoading />
             ) : (
@@ -129,7 +134,7 @@ function PublishPost() {
                     </Formik>
                 </ModalContentContainer>
             )}
-        </div>
+        </>
     );
 }
 

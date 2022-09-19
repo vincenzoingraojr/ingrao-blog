@@ -37,7 +37,7 @@ function NewPost() {
     const [createPost] = useCreatePostMutation();
 
     return (
-        <div>
+        <>
             {(loading && !data) || error ? (
                 <ModalLoading />
             ) : (
@@ -112,7 +112,7 @@ function NewPost() {
                     </Formik>
                 </ModalContentContainer>
             )}
-        </div>
+        </>
     );
 }
 

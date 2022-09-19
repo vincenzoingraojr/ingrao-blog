@@ -26,6 +26,8 @@ import { devices } from "../../styles/devices";
 import EditorField from "../../components/input/content/EditorField";
 import { debounceAsync } from "../../utils/debounceAsync";
 import AutoSave from "../../components/input/content/AutoSave";
+import aws from "aws-sdk";
+import postCover from "../../images/post-cover.svg";
 
 const PostFormContainer = styled.div`
     display: grid;
@@ -94,6 +96,13 @@ function UpdatePost() {
         return debounceAsync(submitPost, 400);
     }, [submitPost]);
 
+    const s3bucket = new aws.S3({
+        accessKeyId: process.env.REACT_APP_STORAGE_KEY_ID,
+        secretAccessKey: process.env.REACT_APP_STORAGE_SECRET_KEY,
+        signatureVersion: "v4",
+        region: "eu-south-1",
+    });
+
     return (
         <>
             <Head
@@ -117,6 +126,95 @@ function UpdatePost() {
                                             Update post {params.id}
                                         </TabLayoutTitle>
                                         <PostFormContainer>
+                                            <CoverImageContainer>
+                                                <CoverImageButtonsContainer>
+                                                    <UploadCoverImageButton
+                                                        role="button"
+                                                        title="Upload your post cover image"
+                                                        aria-label="Upload your profile banner"
+                                                        onClick={() => {
+                                                            if (uploadProfileBannerRef.current) {
+                                                                uploadProfileBannerRef.current.click();
+                                                            }
+                                                        }}
+                                                    >
+                                                        <input
+                                                            type="file"
+                                                            name="profile-banner"
+                                                            ref={uploadProfileBannerRef}
+                                                            onChange={(event) => {
+                                                                let localProfileBanner = null;
+                                                                localProfileBanner =
+                                                                    event.target.files![0];
+                                                                setSelectedProfileBanner(
+                                                                    localProfileBanner
+                                                                );
+                                                                setDeleteProfileBanner(false);
+                                                                setIsProfileBannerUploaded(true);
+                                                                if (
+                                                                    profileBannerRef &&
+                                                                    profileBannerRef.current
+                                                                ) {
+                                                                    profileBannerRef.current.src =
+                                                                        URL.createObjectURL(
+                                                                            localProfileBanner
+                                                                        );
+                                                                }
+                                                            }}
+                                                            accept="image/png , image/jpeg, image/webp"
+                                                        />
+                                                        <ImageButtonContainer>
+                                                            <AddImage />
+                                                        </ImageButtonContainer>
+                                                    </UploadBannerImageButton>
+                                                    {selectedProfileBanner ||
+                                                    (data?.me?.profile?.profileBanner !== "" &&
+                                                        data?.me?.profile?.profileBanner !==
+                                                            null) ? (
+                                                        <PageBlock>
+                                                            <ImageButtonContainer
+                                                                role="button"
+                                                                title="Remove image"
+                                                                aria-label="Remove image"
+                                                                onClick={() => {
+                                                                    if (
+                                                                        uploadProfileBannerRef &&
+                                                                        uploadProfileBannerRef.current
+                                                                    ) {
+                                                                        uploadProfileBannerRef.current.value =
+                                                                            "";
+                                                                    }
+                                                                    if (
+                                                                        profileBannerRef &&
+                                                                        profileBannerRef.current
+                                                                    ) {
+                                                                        profileBannerRef.current.src =
+                                                                            profileBanner;
+                                                                    }
+                                                                    setSelectedProfileBanner(null);
+                                                                    setDeleteProfileBanner(true);
+                                                                    setIsProfileBannerUploaded(
+                                                                        false
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <Close type="small" />
+                                                            </ImageButtonContainer>
+                                                        </PageBlock>
+                                                    ) : null}
+                                                </CoverImageButtonsContainer>
+                                                <img
+                                                    src={
+                                                        data?.me?.profile?.profileBanner !== "" &&
+                                                        data?.me?.profile?.profileBanner !== null
+                                                            ? data?.me?.profile?.profileBanner
+                                                            : postCover
+                                                    }
+                                                    ref={postCoverRef}
+                                                    title={`${data?.me?.firstName} ${data?.me?.lastName}'s profile banner.`}
+                                                    alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
+                                                />
+                                            </CoverImageContainer>
                                             <Formik
                                                 initialValues={{
                                                     postId: parseInt(

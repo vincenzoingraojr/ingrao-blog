@@ -374,11 +374,11 @@ button:active .remirror-menu-pane-shortcut,
     padding-left: 32px;
     border: none;
     max-height: calc(100vh - 56px);
-    background-color: var(--rmr-color-background);
 }
 
 .remirror-floating-popover input {
     border: 2px solid var(--rmr-color-border);
+    background-color: var(--rmr-color-background);
 }
 
 .remirror-popover [data-arrow] {
