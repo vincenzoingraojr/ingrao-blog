@@ -20,7 +20,7 @@ const ModalWrapper = styled.div`
     align-items: center;
     background-color: transparent;
     justify-content: center;
-    z-index: 1000;
+    z-index: 10000;
 `;
 
 const ModalOverlay = styled.div`

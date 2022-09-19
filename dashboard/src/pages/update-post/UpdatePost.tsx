@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import Head from "../../components/Head";
 import InputField from "../../components/input/InputField";
@@ -14,6 +14,7 @@ import {
     Button,
     FlexContainer24,
     FlexRow24,
+    ImageButtonContainer,
     LinkButton,
     LoadingContainer,
     PageBlock,
@@ -28,6 +29,8 @@ import { debounceAsync } from "../../utils/debounceAsync";
 import AutoSave from "../../components/input/content/AutoSave";
 import aws from "aws-sdk";
 import postCover from "../../images/post-cover.svg";
+import Close from "../../components/icons/Close";
+import Upload from "../../components/icons/Upload";
 
 const PostFormContainer = styled.div`
     display: grid;
@@ -47,6 +50,51 @@ const UpdatePostButton = styled(Button)`
 const PublishPostButton = styled(LinkButton)`
     color: #ffffff;
     background-color: #000000;
+`;
+
+const CoverImageContainer = styled.div`
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    background-color: #151414;
+    width: 100%;
+    height: 240px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+
+    img {
+        width: 100%;
+        height: 240px;
+        opacity: 0.6;
+        object-fit: cover;
+        object-position: center;
+    }
+`;
+
+const CoverImageButtonsContainer = styled.div`
+    display: flex;
+    position: absolute;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    gap: 24px;
+    z-index: 1000;
+`;
+
+const UploadCoverImageButton = styled.div`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1000;
+
+    input[type="file"] {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        visibility: hidden;
+    }
 `;
 
 function UpdatePost() {
@@ -74,6 +122,70 @@ function UpdatePost() {
 
     const submitPost = useCallback(
         async (values: any, { setErrors, setStatus }: any) => {
+            const containerClient = blobServiceClient.getContainerClient(
+                process.env.REACT_APP_ENV === "development"
+                    ? `local-users/${data?.me?.id}`
+                    : `users/${data?.me?.id}`
+            );
+
+            let profilePictureName = "";
+            let existingProfilePictureName = "";
+            if (data && data.me && data.me.profile?.profilePicture !== "") {
+                existingProfilePictureName =
+                    data.me.profile?.profilePicture?.replace(
+                        `https://cdn.revolunce.com/${
+                            process.env.REACT_APP_ENV === "development"
+                                ? "local-users"
+                                : "users"
+                        }/${data.me.id}/`,
+                        ""
+                    )!;
+            }
+
+            if (selectedProfilePicture !== null) {
+                profilePictureName = `profile-picture-${new Date().getTime()}.jpeg`;
+                const profilePictureBlobClient =
+                    containerClient.getBlockBlobClient(profilePictureName);
+
+                if (existingProfilePictureName !== "") {
+                    await containerClient
+                        .getBlockBlobClient(existingProfilePictureName)
+                        .deleteIfExists();
+                }
+
+                await profilePictureBlobClient.upload(
+                    selectedProfilePicture,
+                    selectedProfilePicture.size,
+                    {
+                        blobHTTPHeaders: {
+                            blobContentType: "image/jpeg",
+                        },
+                        onProgress: (progress) => {
+                            setStatus(
+                                "Uploading profile picture: " +
+                                    (
+                                        (progress.loadedBytes /
+                                            selectedProfilePicture.size) *
+                                        100
+                                    ).toPrecision(3) +
+                                    "%."
+                            );
+                        },
+                    }
+                );
+            } else if (
+                data?.me?.profile?.profilePicture !== "" &&
+                data?.me?.profile?.profilePicture !== null &&
+                deleteProfilePicture
+            ) {
+                await containerClient
+                    .getBlockBlobClient(existingProfilePictureName)
+                    .deleteIfExists();
+            } else {
+                profilePictureName = existingProfilePictureName;
+            }
+            setSelectedPostCover(null);
+
             const response = await updatePost({
                 variables: values,
             });
@@ -103,6 +215,17 @@ function UpdatePost() {
         region: "eu-south-1",
     });
 
+    const [selectedPostCover, setSelectedPostCover] = useState<File | null>(
+        null
+    );
+
+    const uploadPostCoverRef = useRef<HTMLInputElement>(null);
+    const postCoverRef = useRef<HTMLImageElement>(null);
+    const [deletePostCover, setDeletePostCover] = useState<boolean>(false);
+
+    const [isPostCoverUploaded, setIsPostCoverUploaded] =
+        useState<boolean>(false);
+
     return (
         <>
             <Head
@@ -126,95 +249,6 @@ function UpdatePost() {
                                             Update post {params.id}
                                         </TabLayoutTitle>
                                         <PostFormContainer>
-                                            <CoverImageContainer>
-                                                <CoverImageButtonsContainer>
-                                                    <UploadCoverImageButton
-                                                        role="button"
-                                                        title="Upload your post cover image"
-                                                        aria-label="Upload your profile banner"
-                                                        onClick={() => {
-                                                            if (uploadProfileBannerRef.current) {
-                                                                uploadProfileBannerRef.current.click();
-                                                            }
-                                                        }}
-                                                    >
-                                                        <input
-                                                            type="file"
-                                                            name="profile-banner"
-                                                            ref={uploadProfileBannerRef}
-                                                            onChange={(event) => {
-                                                                let localProfileBanner = null;
-                                                                localProfileBanner =
-                                                                    event.target.files![0];
-                                                                setSelectedProfileBanner(
-                                                                    localProfileBanner
-                                                                );
-                                                                setDeleteProfileBanner(false);
-                                                                setIsProfileBannerUploaded(true);
-                                                                if (
-                                                                    profileBannerRef &&
-                                                                    profileBannerRef.current
-                                                                ) {
-                                                                    profileBannerRef.current.src =
-                                                                        URL.createObjectURL(
-                                                                            localProfileBanner
-                                                                        );
-                                                                }
-                                                            }}
-                                                            accept="image/png , image/jpeg, image/webp"
-                                                        />
-                                                        <ImageButtonContainer>
-                                                            <AddImage />
-                                                        </ImageButtonContainer>
-                                                    </UploadBannerImageButton>
-                                                    {selectedProfileBanner ||
-                                                    (data?.me?.profile?.profileBanner !== "" &&
-                                                        data?.me?.profile?.profileBanner !==
-                                                            null) ? (
-                                                        <PageBlock>
-                                                            <ImageButtonContainer
-                                                                role="button"
-                                                                title="Remove image"
-                                                                aria-label="Remove image"
-                                                                onClick={() => {
-                                                                    if (
-                                                                        uploadProfileBannerRef &&
-                                                                        uploadProfileBannerRef.current
-                                                                    ) {
-                                                                        uploadProfileBannerRef.current.value =
-                                                                            "";
-                                                                    }
-                                                                    if (
-                                                                        profileBannerRef &&
-                                                                        profileBannerRef.current
-                                                                    ) {
-                                                                        profileBannerRef.current.src =
-                                                                            profileBanner;
-                                                                    }
-                                                                    setSelectedProfileBanner(null);
-                                                                    setDeleteProfileBanner(true);
-                                                                    setIsProfileBannerUploaded(
-                                                                        false
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <Close type="small" />
-                                                            </ImageButtonContainer>
-                                                        </PageBlock>
-                                                    ) : null}
-                                                </CoverImageButtonsContainer>
-                                                <img
-                                                    src={
-                                                        data?.me?.profile?.profileBanner !== "" &&
-                                                        data?.me?.profile?.profileBanner !== null
-                                                            ? data?.me?.profile?.profileBanner
-                                                            : postCover
-                                                    }
-                                                    ref={postCoverRef}
-                                                    title={`${data?.me?.firstName} ${data?.me?.lastName}'s profile banner.`}
-                                                    alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
-                                                />
-                                            </CoverImageContainer>
                                             <Formik
                                                 initialValues={{
                                                     postId: parseInt(
@@ -243,6 +277,129 @@ function UpdatePost() {
                                                     submitForm,
                                                 }) => (
                                                     <Form>
+                                                        <CoverImageContainer>
+                                                            <CoverImageButtonsContainer>
+                                                                <UploadCoverImageButton
+                                                                    role="button"
+                                                                    title="Upload your post cover image"
+                                                                    aria-label="Upload your post cover image"
+                                                                    onClick={() => {
+                                                                        if (
+                                                                            uploadPostCoverRef.current
+                                                                        ) {
+                                                                            uploadPostCoverRef.current.click();
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <input
+                                                                        type="file"
+                                                                        name="post-cover"
+                                                                        ref={
+                                                                            uploadPostCoverRef
+                                                                        }
+                                                                        onChange={(
+                                                                            event
+                                                                        ) => {
+                                                                            let localPostCover =
+                                                                                null;
+                                                                            localPostCover =
+                                                                                event
+                                                                                    .target
+                                                                                    .files![0];
+                                                                            setSelectedPostCover(
+                                                                                localPostCover
+                                                                            );
+                                                                            setDeletePostCover(
+                                                                                false
+                                                                            );
+                                                                            setIsPostCoverUploaded(
+                                                                                true
+                                                                            );
+                                                                            if (
+                                                                                postCoverRef &&
+                                                                                postCoverRef.current
+                                                                            ) {
+                                                                                postCoverRef.current.src =
+                                                                                    URL.createObjectURL(
+                                                                                        localPostCover
+                                                                                    );
+                                                                            }
+                                                                        }}
+                                                                        accept="image/png , image/jpeg, image/webp"
+                                                                    />
+                                                                    <ImageButtonContainer>
+                                                                        <Upload color="#ffffff" />
+                                                                    </ImageButtonContainer>
+                                                                </UploadCoverImageButton>
+                                                                {selectedPostCover ||
+                                                                (data?.findPost
+                                                                    ?.postCover !==
+                                                                    "" &&
+                                                                    data
+                                                                        ?.findPost
+                                                                        ?.postCover !==
+                                                                        null) ? (
+                                                                    <PageBlock>
+                                                                        <ImageButtonContainer
+                                                                            role="button"
+                                                                            title="Remove image"
+                                                                            aria-label="Remove image"
+                                                                            onClick={() => {
+                                                                                if (
+                                                                                    uploadPostCoverRef &&
+                                                                                    uploadPostCoverRef.current
+                                                                                ) {
+                                                                                    uploadPostCoverRef.current.value =
+                                                                                        "";
+                                                                                }
+                                                                                if (
+                                                                                    postCoverRef &&
+                                                                                    postCoverRef.current
+                                                                                ) {
+                                                                                    postCoverRef.current.src =
+                                                                                        postCover;
+                                                                                }
+                                                                                setSelectedPostCover(
+                                                                                    null
+                                                                                );
+                                                                                setDeletePostCover(
+                                                                                    true
+                                                                                );
+                                                                                setIsPostCoverUploaded(
+                                                                                    false
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <Close
+                                                                                type="normal"
+                                                                                color="#ffffff"
+                                                                            />
+                                                                        </ImageButtonContainer>
+                                                                    </PageBlock>
+                                                                ) : null}
+                                                            </CoverImageButtonsContainer>
+                                                            <img
+                                                                src={
+                                                                    data
+                                                                        ?.findPost
+                                                                        ?.postCover !==
+                                                                        "" &&
+                                                                    data
+                                                                        ?.findPost
+                                                                        ?.postCover !==
+                                                                        null
+                                                                        ? data
+                                                                              ?.findPost
+                                                                              ?.postCover
+                                                                        : postCover
+                                                                }
+                                                                ref={
+                                                                    postCoverRef
+                                                                }
+                                                                title={`Post cover of post ${data?.findPost?.id}`}
+                                                                alt={`Post cover of post ${data?.findPost?.id}`}
+                                                            />
+                                                        </CoverImageContainer>
                                                         <PageBlock>
                                                             {status ? (
                                                                 <Status>
@@ -326,10 +483,12 @@ function UpdatePost() {
                                                                                 to={`/publish-post/${params.id}`}
                                                                                 title="Publish post"
                                                                                 state={{
-                                                                                    backgroundLocation: location,
+                                                                                    backgroundLocation:
+                                                                                        location,
                                                                                 }}
                                                                             >
-                                                                                Publish post
+                                                                                Publish
+                                                                                post
                                                                             </PublishPostButton>
                                                                         </PageBlock>
                                                                     </FlexRow24>

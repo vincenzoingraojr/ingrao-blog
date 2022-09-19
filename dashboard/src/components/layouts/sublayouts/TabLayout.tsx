@@ -25,7 +25,7 @@ const TabLayoutHeader = styled.div`
     position: sticky;
     top: 60px;
     background-color: #ffffff;
-    z-index: 100;
+    z-index: 10000;
     width: 100%;
     height: 48px;
     align-items: center;

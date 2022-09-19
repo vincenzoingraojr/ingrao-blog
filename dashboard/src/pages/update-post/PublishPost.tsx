@@ -2,7 +2,8 @@ import { Form, Formik } from "formik";
 import ModalLoading from "../../components/utils/modal/ModalLoading";
 import {
     useFindPostQuery,
-    useMeQuery, usePublishPostMutation,
+    useMeQuery,
+    usePublishPostMutation,
 } from "../../generated/graphql";
 import {
     Button,
@@ -32,7 +33,11 @@ const EditPostButton = styled(LinkButton)`
 function PublishPost() {
     const navigate = useNavigate();
 
-    const { data: meData, loading: meLoading, error: meError } = useMeQuery({
+    const {
+        data: meData,
+        loading: meLoading,
+        error: meError,
+    } = useMeQuery({
         fetchPolicy: "network-only",
         variables: { origin: "dash" },
     });
@@ -71,13 +76,13 @@ function PublishPost() {
             ) : (
                 <ModalContentContainer>
                     <PageTextMB24>
-                        Publish this post. Before publishing the post, make sure that every field is compiled, otherwise you won't be able to publish the post.
+                        Publish this post. Before publishing the post, make sure
+                        that every field is compiled, otherwise you won't be
+                        able to publish the post.
                     </PageTextMB24>
                     <Formik
                         initialValues={{
-                            postId: parseInt(
-                                params.id!
-                            ),
+                            postId: parseInt(params.id!),
                         }}
                         onSubmit={async (values, { setStatus }) => {
                             const response = await publishPost({
@@ -91,9 +96,7 @@ function PublishPost() {
                                 setErrors(null);
                             } else {
                                 setStatus(null);
-                                setErrors(
-                                    response.data?.publishPost?.errors!
-                                );
+                                setErrors(response.data?.publishPost?.errors!);
                             }
                         }}
                     >
@@ -101,11 +104,21 @@ function PublishPost() {
                             <Form>
                                 {status ? <Status>{status}</Status> : null}
                                 <FlexContainer24>
-                                    {errors && (
-                                        errors.map((error: { field: string, message: string }, i: React.Key | number | null) => (
-                                            <PageBlock key={i}>{error.field}:{" "}{error.message}.</PageBlock>
-                                        ))
-                                    )}
+                                    {errors &&
+                                        errors.map(
+                                            (
+                                                error: {
+                                                    field: string;
+                                                    message: string;
+                                                },
+                                                i: React.Key | number | null
+                                            ) => (
+                                                <PageBlock key={i}>
+                                                    {error.field}:{" "}
+                                                    {error.message}.
+                                                </PageBlock>
+                                            )
+                                        )}
                                     <FlexRow24>
                                         <PageBlock>
                                             <PublishPostButton
