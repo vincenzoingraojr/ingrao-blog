@@ -27,7 +27,6 @@ import { devices } from "../../styles/devices";
 import EditorField from "../../components/input/content/EditorField";
 import { debounceAsync } from "../../utils/debounceAsync";
 import AutoSave from "../../components/input/content/AutoSave";
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import postCover from "../../images/post-cover.svg";
 import Close from "../../components/icons/Close";
 import Upload from "../../components/icons/Upload";
@@ -120,14 +119,6 @@ function UpdatePost() {
         }
     }, [navigate, data, loading, error]);
 
-    const storageClient = new S3Client({
-        credentials: {
-            accessKeyId: process.env.REACT_APP_STORAGE_KEY_ID!,
-            secretAccessKey: process.env.REACT_APP_STORAGE_SECRET_KEY!,
-        },
-        region: "eu-south-1",
-    });
-
     const [selectedPostCover, setSelectedPostCover] = useState<File | null>(
         null
     );
@@ -139,59 +130,10 @@ function UpdatePost() {
     const [isPostCoverUploaded, setIsPostCoverUploaded] =
         useState<boolean>(false);
 
+    console.log(deletePostCover, isPostCoverUploaded);
 
     const submitPost = useCallback(
         async (values: any, { setErrors, setStatus }: any) => {
-            let postCoverName = "";
-            let existingPostCoverName = "";
-            if (data && data.findPost && data.findPost.postCover !== "") {
-                existingPostCoverName =
-                    data.findPost?.postCover?.replace(
-                        `https://storage.ingrao.blog/${
-                            process.env.REACT_APP_ENV === "development"
-                                ? "local-post"
-                                : "post"
-                        }/${data.findPost.id}/`,
-                        ""
-                    )!;
-            }
-
-            if (selectedPostCover !== null) {
-                postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
-
-                if (existingPostCoverName !== "") {
-                    await storageClient.send(new DeleteObjectCommand({
-                        Bucket: "storage-ingrao-blog",
-                        Key: process.env.REACT_APP_ENV === "development"
-                        ? `local-post/${data?.findPost?.id}`
-                        : `post/${data?.findPost?.id}` + "/" + existingPostCoverName,
-                    }));
-                }
-
-                await storageClient.send(new PutObjectCommand({
-                    Bucket: "storage-ingrao-blog",
-                    Key: process.env.REACT_APP_ENV === "development"
-                    ? `local-post/${data?.findPost?.id}`
-                    : `post/${data?.findPost?.id}` + "/" + postCoverName,
-                    Body: selectedPostCover,
-                    ContentType: "image/*",
-                }));
-            } else if (
-                data?.findPost?.postCover !== "" &&
-                data?.findPost?.postCover !== null &&
-                deletePostCover
-            ) {
-                await storageClient.send(new DeleteObjectCommand({
-                    Bucket: "storage-ingrao-blog",
-                    Key: process.env.REACT_APP_ENV === "development"
-                    ? `local-post/${data?.findPost?.id}`
-                    : `post/${data?.findPost?.id}` + "/" + existingPostCoverName,
-                }));
-            } else {
-                postCoverName = existingPostCoverName;
-            }
-            setSelectedPostCover(null);
-
             const response = await updatePost({
                 variables: {
                     postId: parseInt(params.id!),
@@ -200,13 +142,7 @@ function UpdatePost() {
                     description: values.description,
                     slogan: values.slogan,
                     content: values.content,
-                    postCover:
-                        (!isPostCoverUploaded &&
-                            !deletePostCover &&
-                            data?.findPost?.postCover !== "") ||
-                        isPostCoverUploaded
-                            ? `https://storage.ingrao.blog/${process.env.REACT_APP_ENV === "development" ? "local-post" : "post"}/${data?.findPost?.id}/${postCoverName}`
-                            : "",
+                    postCover: values.postCover,
                 }
             });
 

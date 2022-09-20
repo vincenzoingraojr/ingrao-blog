@@ -7,7 +7,6 @@
     "license": "CC-BY-NC-ND-1.0",
     "dependencies": {
         "@apollo/client": "^3.5.7",
-        "@aws-sdk/client-s3": "^3.171.0",
         "@remirror/pm": "^2.0.0",
         "@remirror/react": "^2.0.0",
         "@testing-library/jest-dom": "^5.16.1",
