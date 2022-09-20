@@ -7,6 +7,7 @@
     "license": "CC-BY-NC-ND-1.0",
     "dependencies": {
         "@apollo/client": "^3.5.7",
+        "@aws-sdk/client-s3": "^3.171.0",
         "@remirror/pm": "^2.0.0",
         "@remirror/react": "^2.0.0",
         "@testing-library/jest-dom": "^5.16.1",
@@ -14,7 +15,6 @@
         "@testing-library/user-event": "^13.5.0",
         "apollo-link-error": "^1.1.13",
         "apollo-link-token-refresh": "^0.3.3",
-        "aws-sdk": "^2.1218.0",
         "formik": "^2.2.9",
         "graphql": "^16.2.0",
         "jwt-decode": "^3.1.2",

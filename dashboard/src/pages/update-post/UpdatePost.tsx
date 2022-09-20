@@ -27,7 +27,7 @@ import { devices } from "../../styles/devices";
 import EditorField from "../../components/input/content/EditorField";
 import { debounceAsync } from "../../utils/debounceAsync";
 import AutoSave from "../../components/input/content/AutoSave";
-import aws from "aws-sdk";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import postCover from "../../images/post-cover.svg";
 import Close from "../../components/icons/Close";
 import Upload from "../../components/icons/Upload";
@@ -58,14 +58,14 @@ const CoverImageContainer = styled.div`
     flex-direction: column;
     background-color: #151414;
     width: 100%;
-    height: 240px;
+    height: 360px;
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
 
     img {
         width: 100%;
-        height: 240px;
+        height: 360px;
         opacity: 0.6;
         object-fit: cover;
         object-position: center;
@@ -120,74 +120,94 @@ function UpdatePost() {
         }
     }, [navigate, data, loading, error]);
 
+    const storageClient = new S3Client({
+        credentials: {
+            accessKeyId: process.env.REACT_APP_STORAGE_KEY_ID!,
+            secretAccessKey: process.env.REACT_APP_STORAGE_SECRET_KEY!,
+        },
+        region: "eu-south-1",
+    });
+
+    const [selectedPostCover, setSelectedPostCover] = useState<File | null>(
+        null
+    );
+
+    const uploadPostCoverRef = useRef<HTMLInputElement>(null);
+    const postCoverRef = useRef<HTMLImageElement>(null);
+    const [deletePostCover, setDeletePostCover] = useState<boolean>(false);
+
+    const [isPostCoverUploaded, setIsPostCoverUploaded] =
+        useState<boolean>(false);
+
+
     const submitPost = useCallback(
         async (values: any, { setErrors, setStatus }: any) => {
-            const containerClient = blobServiceClient.getContainerClient(
-                process.env.REACT_APP_ENV === "development"
-                    ? `local-users/${data?.me?.id}`
-                    : `users/${data?.me?.id}`
-            );
-
-            let profilePictureName = "";
-            let existingProfilePictureName = "";
-            if (data && data.me && data.me.profile?.profilePicture !== "") {
-                existingProfilePictureName =
-                    data.me.profile?.profilePicture?.replace(
-                        `https://cdn.revolunce.com/${
+            let postCoverName = "";
+            let existingPostCoverName = "";
+            if (data && data.findPost && data.findPost.postCover !== "") {
+                existingPostCoverName =
+                    data.findPost?.postCover?.replace(
+                        `https://storage.ingrao.blog/${
                             process.env.REACT_APP_ENV === "development"
-                                ? "local-users"
-                                : "users"
-                        }/${data.me.id}/`,
+                                ? "local-post"
+                                : "post"
+                        }/${data.findPost.id}/`,
                         ""
                     )!;
             }
 
-            if (selectedProfilePicture !== null) {
-                profilePictureName = `profile-picture-${new Date().getTime()}.jpeg`;
-                const profilePictureBlobClient =
-                    containerClient.getBlockBlobClient(profilePictureName);
+            if (selectedPostCover !== null) {
+                postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
 
-                if (existingProfilePictureName !== "") {
-                    await containerClient
-                        .getBlockBlobClient(existingProfilePictureName)
-                        .deleteIfExists();
+                if (existingPostCoverName !== "") {
+                    await storageClient.send(new DeleteObjectCommand({
+                        Bucket: "storage-ingrao-blog",
+                        Key: process.env.REACT_APP_ENV === "development"
+                        ? `local-post/${data?.findPost?.id}`
+                        : `post/${data?.findPost?.id}` + "/" + existingPostCoverName,
+                    }));
                 }
 
-                await profilePictureBlobClient.upload(
-                    selectedProfilePicture,
-                    selectedProfilePicture.size,
-                    {
-                        blobHTTPHeaders: {
-                            blobContentType: "image/jpeg",
-                        },
-                        onProgress: (progress) => {
-                            setStatus(
-                                "Uploading profile picture: " +
-                                    (
-                                        (progress.loadedBytes /
-                                            selectedProfilePicture.size) *
-                                        100
-                                    ).toPrecision(3) +
-                                    "%."
-                            );
-                        },
-                    }
-                );
+                await storageClient.send(new PutObjectCommand({
+                    Bucket: "storage-ingrao-blog",
+                    Key: process.env.REACT_APP_ENV === "development"
+                    ? `local-post/${data?.findPost?.id}`
+                    : `post/${data?.findPost?.id}` + "/" + postCoverName,
+                    Body: selectedPostCover,
+                    ContentType: "image/*",
+                }));
             } else if (
-                data?.me?.profile?.profilePicture !== "" &&
-                data?.me?.profile?.profilePicture !== null &&
-                deleteProfilePicture
+                data?.findPost?.postCover !== "" &&
+                data?.findPost?.postCover !== null &&
+                deletePostCover
             ) {
-                await containerClient
-                    .getBlockBlobClient(existingProfilePictureName)
-                    .deleteIfExists();
+                await storageClient.send(new DeleteObjectCommand({
+                    Bucket: "storage-ingrao-blog",
+                    Key: process.env.REACT_APP_ENV === "development"
+                    ? `local-post/${data?.findPost?.id}`
+                    : `post/${data?.findPost?.id}` + "/" + existingPostCoverName,
+                }));
             } else {
-                profilePictureName = existingProfilePictureName;
+                postCoverName = existingPostCoverName;
             }
             setSelectedPostCover(null);
 
             const response = await updatePost({
-                variables: values,
+                variables: {
+                    postId: parseInt(params.id!),
+                    slug: values.slug,
+                    title: values.title,
+                    description: values.description,
+                    slogan: values.slogan,
+                    content: values.content,
+                    postCover:
+                        (!isPostCoverUploaded &&
+                            !deletePostCover &&
+                            data?.findPost?.postCover !== "") ||
+                        isPostCoverUploaded
+                            ? `https://storage.ingrao.blog/${process.env.REACT_APP_ENV === "development" ? "local-post" : "post"}/${data?.findPost?.id}/${postCoverName}`
+                            : "",
+                }
             });
 
             if (response.data?.editUnpublishedPost.status) {
@@ -207,24 +227,6 @@ function UpdatePost() {
     const onSubmitDebounced = useMemo(() => {
         return debounceAsync(submitPost, 400);
     }, [submitPost]);
-
-    const s3bucket = new aws.S3({
-        accessKeyId: process.env.REACT_APP_STORAGE_KEY_ID,
-        secretAccessKey: process.env.REACT_APP_STORAGE_SECRET_KEY,
-        signatureVersion: "v4",
-        region: "eu-south-1",
-    });
-
-    const [selectedPostCover, setSelectedPostCover] = useState<File | null>(
-        null
-    );
-
-    const uploadPostCoverRef = useRef<HTMLInputElement>(null);
-    const postCoverRef = useRef<HTMLImageElement>(null);
-    const [deletePostCover, setDeletePostCover] = useState<boolean>(false);
-
-    const [isPostCoverUploaded, setIsPostCoverUploaded] =
-        useState<boolean>(false);
 
     return (
         <>
