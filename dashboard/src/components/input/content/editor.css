@@ -28,6 +28,11 @@
     font-size: 100%;
 }
 
+.remirror-button.heading {
+    font-family: "Source Serif Pro", serif;
+    font-weight: 700;
+}
+
 .remirror-button[aria-disabled="true"] {
     cursor: auto;
 }
@@ -374,6 +379,7 @@ button:active .remirror-menu-pane-shortcut,
     padding-left: 32px;
     border: none;
     max-height: calc(100vh - 56px);
+    z-index: 1;
 }
 
 .remirror-floating-popover input {

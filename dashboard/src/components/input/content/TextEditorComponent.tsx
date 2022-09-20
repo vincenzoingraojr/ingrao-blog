@@ -199,8 +199,8 @@ const HeadingButtons = () => {
                     onClick={() => commands.toggleHeading({ level })}
                     className={cx(
                         active.heading({ level })
-                            ? "remirror-button remirror-button-active"
-                            : "remirror-button"
+                            ? "remirror-button remirror-button-active heading"
+                            : "remirror-button heading"
                     )}
                     type="button"
                 >
