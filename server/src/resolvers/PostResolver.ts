@@ -87,9 +87,11 @@ export class PostResolver {
                         slug: slug,
                         draft: true,
                         authorId: payload.id,
-                        author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
+                        author: await User.findOne({
+                            where: { id: payload.id, role: payload.role },
+                        }),
                     }).save();
-                    
+
                     status = "Post created successfully.";
                 } catch (error) {
                     console.log(error);
@@ -148,25 +150,31 @@ export class PostResolver {
                 } else {
                     try {
                         await Post.update(
-                        {
-                            id: postId,
-                            authorId: payload.id,
-                        },
-                        {
-                            slug: slug,
-                            draft: true,
-                            title: title,
-                            description: description,
-                            slogan: slogan,
-                            postCover: postCover,
-                            content: content,
-                            author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
-                        });
-    
+                            {
+                                id: postId,
+                                authorId: payload.id,
+                            },
+                            {
+                                slug: slug,
+                                draft: true,
+                                title: title,
+                                description: description,
+                                slogan: slogan,
+                                postCover: postCover,
+                                content: content,
+                                author: await User.findOne({
+                                    where: {
+                                        id: payload.id,
+                                        role: payload.role,
+                                    },
+                                }),
+                            }
+                        );
+
                         status = "Your changes have been saved.";
                     } catch (error) {
                         console.log(error);
-    
+
                         errors.push({
                             field: "slug",
                             message:
@@ -231,7 +239,8 @@ export class PostResolver {
                 if (post.postCover === "" || post.postCover === null) {
                     errors.push({
                         field: "Post cover",
-                        message: "you can't publish a post without a cover image",
+                        message:
+                            "you can't publish a post without a cover image",
                     });
                 }
                 if (post.content === "" || post.content === null) {
@@ -243,13 +252,14 @@ export class PostResolver {
 
                 if (errors.length === 0) {
                     await Post.update(
-                    {
-                        id: postId,
-                        authorId: payload.id,
-                    },
-                    {
-                        draft: false,
-                    });
+                        {
+                            id: postId,
+                            authorId: payload.id,
+                        },
+                        {
+                            draft: false,
+                        }
+                    );
 
                     status = "Your post is now online.";
                 }
@@ -316,7 +326,8 @@ export class PostResolver {
                 if (postCover === "" || postCover === null) {
                     errors.push({
                         field: "postCover",
-                        message: "You can't publish a post without a cover image",
+                        message:
+                            "You can't publish a post without a cover image",
                     });
                 }
                 if (content === "" || content === null) {
@@ -328,20 +339,23 @@ export class PostResolver {
 
                 if (errors.length === 0) {
                     await Post.update(
-                    {
-                        id: postId,
-                        authorId: payload.id,
-                    },
-                    {
-                        slug: slug,
-                        title: title,
-                        description: description,
-                        slogan: slogan,
-                        postCover: postCover,
-                        content: content,
-                        draft: false,
-                        author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
-                    });
+                        {
+                            id: postId,
+                            authorId: payload.id,
+                        },
+                        {
+                            slug: slug,
+                            title: title,
+                            description: description,
+                            slogan: slogan,
+                            postCover: postCover,
+                            content: content,
+                            draft: false,
+                            author: await User.findOne({
+                                where: { id: payload.id, role: payload.role },
+                            }),
+                        }
+                    );
 
                     status = "Your changes are now online.";
                 }
@@ -366,13 +380,14 @@ export class PostResolver {
         }
 
         await Post.update(
-        {
-            id: postId,
-            authorId: payload.id,
-        },
-        {
-            draft: true,
-        });
+            {
+                id: postId,
+                authorId: payload.id,
+            },
+            {
+                draft: true,
+            }
+        );
 
         return true;
     }
@@ -387,10 +402,12 @@ export class PostResolver {
             return false;
         }
 
-        await Post.delete({ id: postId, authorId: payload.id }).catch((error) => {
-            console.error(error);
-            return false;
-        });
+        await Post.delete({ id: postId, authorId: payload.id }).catch(
+            (error) => {
+                console.error(error);
+                return false;
+            }
+        );
 
         return true;
     }

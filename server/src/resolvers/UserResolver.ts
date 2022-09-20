@@ -41,10 +41,7 @@ export class UserResponse {
 @Resolver(User)
 export class UserResolver {
     @Query(() => User, { nullable: true })
-    me(
-        @Arg("origin") origin: string,
-        @Ctx() context: MyContext
-    ) {
+    me(@Arg("origin") origin: string, @Ctx() context: MyContext) {
         const authorization = context.req.headers["authorization"];
 
         let user;
@@ -70,7 +67,7 @@ export class UserResolver {
                     where: { id: payload.id },
                 });
             }
-            
+
             return user;
         } catch (error) {
             console.error(error);
@@ -85,8 +82,14 @@ export class UserResolver {
         @Arg("origin") origin: string,
         @Ctx() { res }: MyContext
     ): Promise<UserResponse> {
-        const ses = new aws.SES({ credentials: { accessKeyId: process.env.SES_KEY_ID!, secretAccessKey: process.env.SES_SECRET_KEY! }, region: "eu-south-1" });
-        
+        const ses = new aws.SES({
+            credentials: {
+                accessKeyId: process.env.SES_KEY_ID!,
+                secretAccessKey: process.env.SES_SECRET_KEY!,
+            },
+            region: "eu-south-1",
+        });
+
         let errors = [];
         let user;
         let accessToken;
@@ -109,7 +112,10 @@ export class UserResolver {
                 message: "Sorry, but we can't find your account",
             });
         } else {
-            if ((user.password === "" || user.password === null) && origin === "dash") {
+            if (
+                (user.password === "" || user.password === null) &&
+                origin === "dash"
+            ) {
                 const token = createAccessToken(user);
                 const link = `${process.env.DASHBOARD_ORIGIN}/complete-account/${token}`;
 
@@ -130,7 +136,7 @@ export class UserResolver {
                                 Message: {
                                     Body: {
                                         Html: {
-                                            Data: data
+                                            Data: data,
                                         },
                                     },
                                     Subject: {
@@ -139,13 +145,16 @@ export class UserResolver {
                                 },
                                 Source: "noreply@ingrao.blog",
                             };
-            
-                            ses.sendEmail(params).promise().then(() => {
-                                status =
-                                    "You should now receive an email containing the instructions to set up a password.";
-                            }).catch((error) => {
-                                console.error(error);
-                            });
+
+                            ses.sendEmail(params)
+                                .promise()
+                                .then(() => {
+                                    status =
+                                        "You should now receive an email containing the instructions to set up a password.";
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                });
                         }
                     }
                 );
@@ -370,7 +379,11 @@ export class UserResolver {
                 sendVerificationEmail(user.email, origin, verifyToken);
             } else {
                 const token = createAccessToken(user);
-                const link = `${origin === "dash" ? process.env.DASHBOARD_ORIGIN : process.env.CLIENT_ORIGIN}/modify-password/${token}`;
+                const link = `${
+                    origin === "dash"
+                        ? process.env.DASHBOARD_ORIGIN
+                        : process.env.CLIENT_ORIGIN
+                }/modify-password/${token}`;
 
                 try {
                     ejs.renderFile(
@@ -489,7 +502,13 @@ export class UserResolver {
         @Arg("birthDate") birthDate: Date,
         @Ctx() { payload }: MyContext
     ): Promise<UserResponse> {
-        const ses = new aws.SES({ credentials: { accessKeyId: process.env.SES_KEY_ID!, secretAccessKey: process.env.SES_SECRET_KEY! }, region: "eu-south-1" });
+        const ses = new aws.SES({
+            credentials: {
+                accessKeyId: process.env.SES_KEY_ID!,
+                secretAccessKey: process.env.SES_SECRET_KEY!,
+            },
+            region: "eu-south-1",
+        });
 
         let errors = [];
         let user;
@@ -538,7 +557,7 @@ export class UserResolver {
                     message: "The birthdate field cannot take this value",
                 });
             }
-    
+
             if (errors.length === 0) {
                 try {
                     const result = await getConnection()
@@ -578,7 +597,7 @@ export class UserResolver {
                                     Message: {
                                         Body: {
                                             Html: {
-                                                Data: data
+                                                Data: data,
                                             },
                                         },
                                         Subject: {
@@ -587,19 +606,22 @@ export class UserResolver {
                                     },
                                     Source: "noreply@ingrao.blog",
                                 };
-                
-                                ses.sendEmail(params).promise().then(() => {
-                                    status =
-                                        "The new user should now receive an email containing the instructions to set up a password.";
-                                }).catch((error) => {
-                                    console.error(error);
-                                });
+
+                                ses.sendEmail(params)
+                                    .promise()
+                                    .then(() => {
+                                        status =
+                                            "The new user should now receive an email containing the instructions to set up a password.";
+                                    })
+                                    .catch((error) => {
+                                        console.error(error);
+                                    });
                             }
                         }
                     );
                 } catch (error) {
                     console.log(error);
-    
+
                     if (error.detail.includes("email")) {
                         errors.push({
                             field: "email",
@@ -609,7 +631,8 @@ export class UserResolver {
                 }
             }
         } else {
-            status = "You are not authorized to add new users to the dashboard.";
+            status =
+                "You are not authorized to add new users to the dashboard.";
         }
 
         return {
@@ -673,7 +696,8 @@ export class UserResolver {
                     }
                 );
 
-                status = "You have set up your account password, now you can log in.";
+                status =
+                    "You have set up your account password, now you can log in.";
             } catch (error) {
                 status =
                     "An error has occurred. Please repeat the password setup operation.";

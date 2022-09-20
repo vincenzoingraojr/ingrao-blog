@@ -134,6 +134,37 @@ function UpdatePost() {
 
     const submitPost = useCallback(
         async (values: any, { setErrors, setStatus }: any) => {
+            if (selectedPostCover !== null) {
+                if (data?.findPost?.postCover !== "" || data.findPost?.postCover !== null) {
+                    let existingPostCoverName =
+                    data?.findPost?.postCover?.replace(
+                        `https://storage.ingrao.blog/${
+                            process.env.REACT_APP_ENV === "development"
+                                ? "local-post"
+                                : "post"
+                        }/${data?.findPost?.id}/`,
+                        ""
+                    )!;
+
+                    await fetch(existingPostCoverName, {
+                        method: "DELETE",
+                    });
+                }
+
+                let directory = process.env.REACT_APP_ENV === "development" ? `local-post/${data?.findPost?.id}` : `post/${data?.findPost?.id}`;
+                let postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
+
+                const { url } = await fetch(`${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`, {
+                    method: "GET",
+                    body: JSON.stringify({
+                        directory: directory,
+                        fileName: postCoverName,
+                    }),
+                });
+
+                console.log(url);
+            }
+
             const response = await updatePost({
                 variables: {
                     postId: parseInt(params.id!),
@@ -257,10 +288,15 @@ function UpdatePost() {
                                                                                 postCoverRef &&
                                                                                 postCoverRef.current
                                                                             ) {
-                                                                                postCoverRef.current.src =
-                                                                                    URL.createObjectURL(
-                                                                                        localPostCover
-                                                                                    );
+                                                                                if (localPostCover !== undefined) {
+                                                                                    postCoverRef.current.src =
+                                                                                        URL.createObjectURL(
+                                                                                            localPostCover
+                                                                                        );
+                                                                                } else {
+                                                                                    postCoverRef.current.src =
+                                                                                        postCover;
+                                                                                }
                                                                             }
                                                                         }}
                                                                         accept="image/png , image/jpeg, image/webp"

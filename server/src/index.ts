@@ -15,13 +15,17 @@ import { createAccessToken, createRefreshToken } from "./auth/auth";
 import { sendRefreshToken } from "./auth/sendRefreshToken";
 import { PostResolver } from "./resolvers/PostResolver";
 import { initAdmin } from "./helpers/initAdmin";
+import { getPresignedUrl } from "./helpers/getPresignedUrl";
 
 async function main() {
     const app = express();
 
     app.use(cookieParser());
 
-    const allowList = [process.env.CLIENT_ORIGIN!, process.env.DASHBOARD_ORIGIN!];
+    const allowList = [
+        process.env.CLIENT_ORIGIN!,
+        process.env.DASHBOARD_ORIGIN!,
+    ];
 
     app.use(
         cors({
@@ -107,6 +111,11 @@ async function main() {
 
     app.listen({ port: process.env.PORT || 4000 }, () => {
         console.log("Express server started.");
+    });
+
+    app.get('/presigned-url', async (req, res) => {
+        const url = await getPresignedUrl(req.body.directory, req.body.fileName);
+        res.send({ url });
     });
 
     await initAdmin();

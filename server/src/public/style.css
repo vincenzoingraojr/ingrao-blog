@@ -35,7 +35,8 @@ a {
     text-decoration: none;
 }
 
-a:hover, a:active {
+a:hover,
+a:active {
     text-decoration: underline;
 }
 
@@ -55,7 +56,8 @@ header.page-header a {
     text-decoration: none;
 }
 
-header.page-header a:hover, header.page-header a:active {
+header.page-header a:hover,
+header.page-header a:active {
     text-decoration: none;
 }
 

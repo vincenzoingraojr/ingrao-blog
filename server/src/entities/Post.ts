@@ -28,7 +28,7 @@ export class Post extends BaseEntity {
     @Field(() => Number, { nullable: false })
     @Column({ nullable: false })
     authorId: number;
-    
+
     @Field(() => String, { nullable: true, defaultValue: "" })
     @Column({ nullable: true, default: "" })
     title: string;

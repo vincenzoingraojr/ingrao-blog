@@ -6,9 +6,17 @@ import ejs from "ejs";
 import path from "path";
 
 export async function initAdmin() {
-    const ses = new aws.SES({ credentials: { accessKeyId: process.env.SES_KEY_ID!, secretAccessKey: process.env.SES_SECRET_KEY! }, region: "eu-south-1" });
-    
-    let adminUser = await User.findOne({ where: { email: "vincent@ingrao.blog" } });
+    const ses = new aws.SES({
+        credentials: {
+            accessKeyId: process.env.SES_KEY_ID!,
+            secretAccessKey: process.env.SES_SECRET_KEY!,
+        },
+        region: "eu-south-1",
+    });
+
+    let adminUser = await User.findOne({
+        where: { email: "vincent@ingrao.blog" },
+    });
 
     if (!adminUser) {
         const result = await getConnection()
@@ -32,10 +40,7 @@ export async function initAdmin() {
         const link = `${process.env.DASHBOARD_ORIGIN}/complete-account/${token}`;
 
         ejs.renderFile(
-            path.join(
-                __dirname,
-                "./templates/CompleteAccount.ejs"
-            ),
+            path.join(__dirname, "./templates/CompleteAccount.ejs"),
             { link: link },
             function (error, data) {
                 if (error) {
@@ -48,7 +53,7 @@ export async function initAdmin() {
                         Message: {
                             Body: {
                                 Html: {
-                                    Data: data
+                                    Data: data,
                                 },
                             },
                             Subject: {
@@ -57,12 +62,15 @@ export async function initAdmin() {
                         },
                         Source: "noreply@ingrao.blog",
                     };
-    
-                    ses.sendEmail(params).promise().then(() => {
-                        console.log("Admin user initialized.");
-                    }).catch((error) => {
-                        console.error(error);
-                    });
+
+                    ses.sendEmail(params)
+                        .promise()
+                        .then(() => {
+                            console.log("Admin user initialized.");
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        });
                 }
             }
         );
