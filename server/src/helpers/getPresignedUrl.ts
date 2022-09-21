@@ -8,14 +8,13 @@ const storageHelper = new aws.S3({
     region: "eu-south-1",
 });
 
-export async function getPresignedUrl(directory: string, fileName: string) {
-    const key = `${directory}/${fileName}`;
+export async function getPresignedUrl(key: string) {
     const url = storageHelper
-        .getSignedUrl("putObject", {
-            Bucket: process.env.STORAGE_BUCKET_NAME,
+        .getSignedUrlPromise("putObject", {
+            Bucket: process.env.STORAGE_BUCKET_NAME!,
             Key: key,
             ContentType: "image/*",
             Expires: 300,
         });
-    return url as string;
+    return url;
 }

@@ -135,7 +135,7 @@ function UpdatePost() {
     const submitPost = useCallback(
         async (values: any, { setErrors, setStatus }: any) => {
             if (selectedPostCover !== null) {
-                if (data?.findPost?.postCover !== "" || data.findPost?.postCover !== null) {
+                if (data?.findPost?.postCover !== "" && data?.findPost?.postCover !== null) {
                     let existingPostCoverName =
                     data?.findPost?.postCover?.replace(
                         `https://storage.ingrao.blog/${
@@ -146,7 +146,7 @@ function UpdatePost() {
                         ""
                     )!;
 
-                    await fetch(existingPostCoverName, {
+                    await fetch(`https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${process.env.REACT_APP_ENV === "development" ? "local-post" : "post"}/${data?.findPost?.id}/${existingPostCoverName}`, {
                         method: "DELETE",
                     });
                 }
@@ -154,15 +154,24 @@ function UpdatePost() {
                 let directory = process.env.REACT_APP_ENV === "development" ? `local-post/${data?.findPost?.id}` : `post/${data?.findPost?.id}`;
                 let postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
 
+                let key = `${directory}/${postCoverName}`;
+
                 const { url } = await fetch(`${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`, {
-                    method: "GET",
+                    method: "POST",
                     body: JSON.stringify({
-                        directory: directory,
-                        fileName: postCoverName,
+                        key: key,
                     }),
                 });
 
                 console.log(url);
+
+                await fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    },
+                    body: selectedPostCover,
+                });
             }
 
             const response = await updatePost({
@@ -188,7 +197,7 @@ function UpdatePost() {
                 );
             }
         },
-        [updatePost]
+        [updatePost, selectedPostCover, data?.findPost?.postCover]
     );
 
     const onSubmitDebounced = useMemo(() => {

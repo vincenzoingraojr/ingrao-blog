@@ -113,8 +113,8 @@ async function main() {
         console.log("Express server started.");
     });
 
-    app.get('/presigned-url', async (req, res) => {
-        const url = await getPresignedUrl(req.body.directory, req.body.fileName);
+    app.post("/presigned-url", async (req, res) => {
+        const url = await getPresignedUrl(req.body.key);
         res.send({ url });
     });
 
