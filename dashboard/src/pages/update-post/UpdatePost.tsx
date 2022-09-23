@@ -130,53 +130,88 @@ function UpdatePost() {
     const [isPostCoverUploaded, setIsPostCoverUploaded] =
         useState<boolean>(false);
 
-    console.log(deletePostCover, isPostCoverUploaded);
-
     const submitPost = useCallback(
         async (values: any, { setErrors, setStatus }: any) => {
+            let postCoverName = "";
+            let existingPostCoverName = "";
+            let directory = "";
+
+            if (
+                data?.findPost?.postCover !== "" &&
+                data?.findPost?.postCover !== null
+            ) {
+                existingPostCoverName = data?.findPost?.postCover?.replace(
+                    `https://storage.ingrao.blog/${
+                        process.env.REACT_APP_ENV === "development"
+                            ? "local-post"
+                            : "post"
+                    }/${data?.findPost?.id}/`,
+                    ""
+                )!;
+            }
+
             if (selectedPostCover !== null) {
-                if (data?.findPost?.postCover !== "" && data?.findPost?.postCover !== null) {
-                    let existingPostCoverName =
-                    data?.findPost?.postCover?.replace(
-                        `https://storage.ingrao.blog/${
+                if (existingPostCoverName !== "") {
+                    await fetch(
+                        `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
                             process.env.REACT_APP_ENV === "development"
                                 ? "local-post"
                                 : "post"
-                        }/${data?.findPost?.id}/`,
-                        ""
-                    )!;
-
-                    await fetch(`https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${process.env.REACT_APP_ENV === "development" ? "local-post" : "post"}/${data?.findPost?.id}/${existingPostCoverName}`, {
-                        method: "DELETE",
-                    });
+                        }/${data?.findPost?.id}/${existingPostCoverName}`,
+                        {
+                            method: "DELETE",
+                        }
+                    );
                 }
 
-                let directory = process.env.REACT_APP_ENV === "development" ? `local-post/${data?.findPost?.id}` : `post/${data?.findPost?.id}`;
-                let postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
+                postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
+                directory =
+                    process.env.REACT_APP_ENV === "development"
+                        ? `local-post/${data?.findPost?.id}`
+                        : `post/${data?.findPost?.id}`;
 
                 let key = `${directory}/${postCoverName}`;
 
-                const { url } = await fetch(`${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`, {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        key: key,
-                    }),
-                }).then(res => res.json());
-
-                console.log(url);
+                const { url } = await fetch(
+                    `${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            key: key,
+                        }),
+                    }
+                ).then((res) => res.json());
 
                 await fetch(url, {
                     method: "PUT",
                     headers: {
-                        "Content-Type": "multipart/form-data"
+                        "Content-Type": "multipart/form-data",
                     },
                     body: selectedPostCover,
                 });
+            } else if (
+                data?.findPost?.postCover !== "" &&
+                data?.findPost?.postCover !== null &&
+                deletePostCover
+            ) {
+                await fetch(
+                    `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
+                        process.env.REACT_APP_ENV === "development"
+                            ? "local-post"
+                            : "post"
+                    }/${data?.findPost?.id}/${existingPostCoverName}`,
+                    {
+                        method: "DELETE",
+                    }
+                );
+            } else {
+                postCoverName = existingPostCoverName;
             }
+            setSelectedPostCover(null);
 
             const response = await updatePost({
                 variables: {
@@ -186,8 +221,18 @@ function UpdatePost() {
                     description: values.description,
                     slogan: values.slogan,
                     content: values.content,
-                    postCover: values.postCover,
-                }
+                    postCover:
+                        (!isPostCoverUploaded &&
+                            !deletePostCover &&
+                            data?.findPost?.postCover !== "") ||
+                        isPostCoverUploaded
+                            ? `https://storage.ingrao.blog/${
+                                  process.env.REACT_APP_ENV === "development"
+                                      ? "local-post"
+                                      : "post"
+                              }/${data?.findPost?.id}/${postCoverName}`
+                            : "",
+                },
             });
 
             if (response.data?.editUnpublishedPost.status) {
@@ -201,7 +246,7 @@ function UpdatePost() {
                 );
             }
         },
-        [updatePost, selectedPostCover, data?.findPost?.postCover]
+        [updatePost, selectedPostCover, data?.findPost?.postCover, isPostCoverUploaded, deletePostCover]
     );
 
     const onSubmitDebounced = useMemo(() => {
@@ -301,7 +346,10 @@ function UpdatePost() {
                                                                                 postCoverRef &&
                                                                                 postCoverRef.current
                                                                             ) {
-                                                                                if (localPostCover !== undefined) {
+                                                                                if (
+                                                                                    localPostCover !==
+                                                                                    undefined
+                                                                                ) {
                                                                                     postCoverRef.current.src =
                                                                                         URL.createObjectURL(
                                                                                             localPostCover
