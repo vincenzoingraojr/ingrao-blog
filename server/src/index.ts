@@ -48,6 +48,8 @@ async function main() {
         });
     });
 
+    app.use(express.json());
+
     app.post("/", async (req, res) => {
         const token = req.cookies.cke;
 
@@ -114,8 +116,9 @@ async function main() {
     });
 
     app.post("/presigned-url", async (req, res) => {
-        const url = await getPresignedUrl(req.body.key);
-        res.send({ url });
+        const { key } = req.body;
+        const url = await getPresignedUrl(key);
+        res.send({ url: url });
     });
 
     await initAdmin();

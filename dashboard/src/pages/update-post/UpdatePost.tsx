@@ -158,10 +158,14 @@ function UpdatePost() {
 
                 const { url } = await fetch(`${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`, {
                     method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                    },
                     body: JSON.stringify({
                         key: key,
                     }),
-                });
+                }).then(res => res.json());
 
                 console.log(url);
 
