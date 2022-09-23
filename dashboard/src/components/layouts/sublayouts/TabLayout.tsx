@@ -113,6 +113,7 @@ const TabLayout: FunctionComponent<TabLayoutProps> = ({ tabData, content }) => {
                                 to={`/${tabElement.url}`}
                                 title={tabElement.text}
                                 aria-label={tabElement.text}
+                                end
                             >
                                 <TabElementText>
                                     {tabElement.text}

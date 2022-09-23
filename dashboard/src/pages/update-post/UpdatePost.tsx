@@ -431,8 +431,8 @@ function UpdatePost() {
                                                                 ref={
                                                                     postCoverRef
                                                                 }
-                                                                title={`Post cover of post ${data?.findPost?.id}`}
-                                                                alt={`Post cover of post ${data?.findPost?.id}`}
+                                                                title={`Cover of post ${data?.findPost?.id}`}
+                                                                alt={`Cover of post ${data?.findPost?.id}`}
                                                             />
                                                         </CoverImageContainer>
                                                         <PageBlock>
@@ -505,12 +505,11 @@ function UpdatePost() {
                                                                         <PageBlock>
                                                                             <UpdatePostButton
                                                                                 type="submit"
-                                                                                title="Update post"
+                                                                                title="Save changes"
                                                                                 role="button"
-                                                                                aria-label="Update post"
+                                                                                aria-label="Save changes"
                                                                             >
-                                                                                Update
-                                                                                post
+                                                                                Save changes
                                                                             </UpdatePostButton>
                                                                         </PageBlock>
                                                                         <PageBlock>

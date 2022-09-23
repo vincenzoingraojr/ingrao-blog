@@ -181,6 +181,7 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                                 aria-label="View post"
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    navigate(`/update-post/${post.id}/preview`);
                                 }}
                             >
                                 View post
