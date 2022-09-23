@@ -5,6 +5,8 @@ import { PageText } from "../styles/global";
 import Add from "./icons/Add";
 import Home from "./icons/Home";
 import Logo from "./icons/Logo";
+import profilePicture from "../images/profile-picture.svg";
+import { useMeQuery } from "../generated/graphql";
 
 const NavContainer = styled.div`
     display: grid;
@@ -178,7 +180,64 @@ const NavEntryText = styled(PageText)`
     color: inherit;
 `;
 
+const ProfileContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    cursor: pointer;
+`;
+
+const ProfileInfoContainer = styled.div`
+    display: none;
+
+    @media ${devices.tablet} {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+`;
+
+const ProfileName = styled.div`
+    display: block;
+    font-weight: 700;
+    font-size: 18px;
+    text-decoration: none;
+    text-align: right;
+
+    &:hover {
+        text-decoration: underline;
+    }
+`;
+
+const ProfileRole = styled(PageText)`
+    text-align: right;
+    font-size: 16px;
+    text-transform: capitalize;
+`;
+
+const ProfileImageContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 21px;
+
+    img {
+        width: inherit;
+        height: inherit;
+        border-radius: inherit;
+        object-fit: cover;
+        object-position: center;
+    }
+`;
+
 function Nav() {
+    const { data } = useMeQuery({
+        fetchPolicy: "cache-and-network",
+        variables: { origin: "dash" },
+    });
+
     return (
         <NavContainer>
             <NavTopContainer>
@@ -196,6 +255,28 @@ function Nav() {
                         </SiteBrandText>
                     </Link>
                 </SiteBrand>
+                <ProfileContainer>
+                    <ProfileInfoContainer>
+                        <ProfileName>
+                            {data?.me?.firstName}{" "}{data?.me?.lastName}
+                        </ProfileName>
+                        <ProfileRole>
+                            {data?.me?.role}
+                        </ProfileRole>
+                    </ProfileInfoContainer>
+                    <ProfileImageContainer>
+                        <img
+                            src={
+                                data?.me?.profilePicture !== "" &&
+                                data?.me?.profilePicture !== null
+                                    ? data?.me?.profilePicture!
+                                    : profilePicture
+                            }
+                            title={`${data?.me?.firstName}'s profile picture`}
+                            alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
+                        />
+                    </ProfileImageContainer>
+                </ProfileContainer>
             </NavTopContainer>
             <NavInnerContainer>
                 <NavPrimaryContent>
