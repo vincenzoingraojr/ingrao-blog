@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Head from "../../components/Head";
 import FocusPageLayout from "../../components/layouts/FocusPageLayout";
@@ -10,8 +10,9 @@ import postCover from "../../images/post-cover.svg";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
 import { processDate } from "../../utils/processDate";
-import { htmlToProsemirrorNode } from "remirror";
 import { Remirror, useRemirror } from "@remirror/react";
+import type { RemirrorJSON } from "remirror";
+import { BoldExtension, ItalicExtension, LinkExtension, ShortcutsExtension, StrikeExtension, SubExtension, SupExtension, UnderlineExtension, HistoryExtension, HorizontalRuleExtension, HeadingExtension, BulletListExtension, HardBreakExtension, OrderedListExtension, CalloutExtension } from "remirror/extensions";
 
 const PostPreviewImage = styled.div`
     display: block;
@@ -109,9 +110,39 @@ function PostPreview() {
     }, [navigate, data, loading, error]);
 
     const { manager } = useRemirror({
-        selection: "start",
-        stringHandler: htmlToProsemirrorNode,
+        extensions: () => [
+            new BoldExtension(),
+            new ItalicExtension(),
+            new LinkExtension({ autoLink: true }),
+            new ShortcutsExtension(),
+            new StrikeExtension(),
+            new SubExtension(),
+            new SupExtension(),
+            new UnderlineExtension(),
+            new HistoryExtension(),
+            new HorizontalRuleExtension(),
+            new HeadingExtension(),
+            new BulletListExtension(),
+            new HardBreakExtension(),
+            new OrderedListExtension(),
+            new CalloutExtension({ defaultType: "warn" }),
+        ],
     });
+
+    const [postContent, setPostContent] = useState<RemirrorJSON | undefined>(undefined);
+    const [contentReady, setContentReady] = useState(false);
+
+    useEffect(() => {
+        const content = data?.findPost?.content;
+
+        if (content) {
+            setContentReady(true);
+            setPostContent(JSON.parse(content));
+        } else {
+            setContentReady(false);
+            setPostContent(undefined);
+        }
+    }, [data?.findPost?.content]);
 
     return (
         <>
@@ -166,9 +197,9 @@ function PostPreview() {
                                                 alt={`Cover of post ${data?.findPost?.id}`}
                                             />
                                         </PostPreviewImage>
-                                        {data?.findPost?.content && (
+                                        {contentReady && (
                                             <PostPreviewContent>
-                                                <Remirror editable={false} manager={manager} initialContent={JSON.parse(data?.findPost?.content!)} />
+                                                <Remirror editable={false} manager={manager} initialContent={postContent} />
                                             </PostPreviewContent>
                                         )}
                                     </PostPreviewContainer>
