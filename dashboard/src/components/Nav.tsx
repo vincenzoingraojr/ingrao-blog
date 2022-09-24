@@ -314,7 +314,6 @@ const MenuContentContainer = styled.div`
 const MenuTitle = styled.div`
     display: block;
     margin-bottom: 48px;
-    text-transform: lowercase;
     font-weight: 700;
     font-size: 32px;
 

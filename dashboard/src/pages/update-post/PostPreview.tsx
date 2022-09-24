@@ -49,7 +49,7 @@ const PostPreviewTitle = styled.div`
 `;
 
 const PostPreviewSlogan = styled.div`
-    display: block;
+    display: inline-block;
     font-weight: 700;
     text-transform: uppercase;
     border-bottom: 2px solid #000000;
@@ -163,9 +163,11 @@ function PostPreview() {
                                     </LoadingContainer>
                                 ) : (
                                     <PostPreviewContainer>
-                                        <PostPreviewSlogan>
-                                            {data?.findPost?.slogan !== "" ? data?.findPost?.slogan : "Slogan"}
-                                        </PostPreviewSlogan>
+                                        <PageBlock>
+                                            <PostPreviewSlogan>
+                                                {data?.findPost?.slogan !== "" ? data?.findPost?.slogan : "Slogan"}
+                                            </PostPreviewSlogan>
+                                        </PageBlock>
                                         <PostPreviewTitle>
                                             {data?.findPost?.title !== "" ? data?.findPost?.title : "Title"}
                                         </PostPreviewTitle>
