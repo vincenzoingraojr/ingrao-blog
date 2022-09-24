@@ -1,12 +1,14 @@
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { devices } from "../styles/devices";
-import { PageText } from "../styles/global";
+import { ControlContainer, PageText } from "../styles/global";
 import Add from "./icons/Add";
 import Home from "./icons/Home";
 import Logo from "./icons/Logo";
 import profilePicture from "../images/profile-picture.svg";
 import { useMeQuery } from "../generated/graphql";
+import { useEffect, useState } from "react";
+import Close from "./icons/Close";
 
 const NavContainer = styled.div`
     display: grid;
@@ -232,11 +234,127 @@ const ProfileImageContainer = styled.div`
     }
 `;
 
+const MenuOuterContainer = styled.div`
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    background-color: #ffffff;
+    overflow: auto;
+`;
+
+const MenuContainer = styled.div`
+    display: grid;
+    grid-template-columns: none;
+    grid-template-rows: 60px auto;
+    width: 100%;
+
+    @media ${devices.mobileL} {
+        width: 86vw;
+    }
+
+    @media ${devices.tablet} {
+        grid-template-rows: 92px auto;
+        width: 78vw;
+    }
+
+    @media ${devices.laptopM} {
+        width: 72vw;
+    }
+
+    @media ${devices.laptopL} {
+        width: 64vw;
+    }
+
+    @media ${devices.desktop} {
+        width: 56vw;
+    }
+`;
+
+const MenuNav = styled.div`
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 10001;
+    height: 60px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 36px;
+    width: 100%;
+    background-color: #ffffff;
+    padding-left: 16px;
+    padding-right: 16px;
+
+    @media ${devices.tablet} {
+        height: 92px;
+    }
+`;
+
+const MenuBrandIcon = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const MenuContentContainer = styled.div`
+    display: block;
+    min-height: 100%;
+    padding-top: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 48px;
+
+    @media ${devices.tablet} {
+        min-height: calc(100vh - 152px);
+    }
+`;
+
+const MenuTitle = styled.div`
+    display: block;
+    margin-bottom: 48px;
+    text-transform: lowercase;
+    font-weight: 700;
+    font-size: 32px;
+
+    @media ${devices.mobileS} {
+        font-size: 44px;
+    }
+
+    @media ${devices.mobileL} {
+        font-size: 50px;
+    }
+
+    @media ${devices.tablet} {
+        font-size: 60px;
+    }
+`;
+
+const MenuContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+`;
+
 function Nav() {
     const { data } = useMeQuery({
         fetchPolicy: "cache-and-network",
         variables: { origin: "dash" },
     });
+
+    const [menu, setMenu] = useState(false);
+
+    useEffect(() => {
+        if (menu) {
+            document.body.classList.add("not-scrolling");
+        } else {
+            document.body.classList.remove("not-scrolling");
+        }
+    }, [menu]);
 
     return (
         <NavContainer>
@@ -255,7 +373,15 @@ function Nav() {
                         </SiteBrandText>
                     </Link>
                 </SiteBrand>
-                <ProfileContainer>
+                <ProfileContainer
+                    title="Open menu"
+                    role="button"
+                    aria-label="Open menu"
+                    onClick={() => {
+                        setMenu(true);
+                        document.body.classList.add("not-scrolling");
+                    }}
+                >
                     <ProfileInfoContainer>
                         <ProfileName>
                             {data?.me?.firstName}{" "}{data?.me?.lastName}
@@ -324,6 +450,36 @@ function Nav() {
                     </NavEntry>
                 </NavPrimaryContent>
             </NavInnerContainer>
+            {menu && (
+                <MenuOuterContainer>
+                    <MenuContainer>
+                        <MenuNav>                                
+                            <MenuBrandIcon>
+                                <Logo type="logo" />
+                            </MenuBrandIcon>
+                            <ControlContainer
+                                title="Close menu"
+                                role="button"
+                                aria-label="Close menu"
+                                onClick={() => {
+                                    setMenu(false);
+                                    document.body.classList.remove("not-scrolling");
+                                }}
+                            >
+                                <Close type="normal" />
+                            </ControlContainer>
+                        </MenuNav>
+                        <MenuContentContainer>
+                            <MenuTitle>
+                                Menu
+                            </MenuTitle>
+                            <MenuContent>
+                                {/* Tra un po' questa sezione sarà completata. */}
+                            </MenuContent>
+                        </MenuContentContainer>
+                    </MenuContainer>
+                </MenuOuterContainer>
+            )}
         </NavContainer>
     );
 }
