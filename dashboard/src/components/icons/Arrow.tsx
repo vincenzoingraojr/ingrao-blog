@@ -21,6 +21,6 @@ const Arrow: FunctionComponent<ArrowProps> = ({ color }) => {
             </svg>
         </ArrowIcon>
     );
-}
+};
 
 export default Arrow;

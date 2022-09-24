@@ -12,7 +12,23 @@ import { devices } from "../../styles/devices";
 import { processDate } from "../../utils/processDate";
 import { Remirror, useRemirror } from "@remirror/react";
 import type { RemirrorJSON } from "remirror";
-import { BoldExtension, ItalicExtension, LinkExtension, ShortcutsExtension, StrikeExtension, SubExtension, SupExtension, UnderlineExtension, HistoryExtension, HorizontalRuleExtension, HeadingExtension, BulletListExtension, HardBreakExtension, OrderedListExtension, CalloutExtension } from "remirror/extensions";
+import {
+    BoldExtension,
+    ItalicExtension,
+    LinkExtension,
+    ShortcutsExtension,
+    StrikeExtension,
+    SubExtension,
+    SupExtension,
+    UnderlineExtension,
+    HistoryExtension,
+    HorizontalRuleExtension,
+    HeadingExtension,
+    BulletListExtension,
+    HardBreakExtension,
+    OrderedListExtension,
+    CalloutExtension,
+} from "remirror/extensions";
 
 const PostPreviewImage = styled.div`
     display: block;
@@ -91,7 +107,7 @@ const PostPreviewContent = styled.div`
 function PostPreview() {
     const navigate = useNavigate();
     const params = useParams();
-    
+
     const { data, loading, error } = useFindPostQuery({
         fetchPolicy: "network-only",
         variables: { id: parseInt(params.id!) },
@@ -129,7 +145,9 @@ function PostPreview() {
         ],
     });
 
-    const [postContent, setPostContent] = useState<RemirrorJSON | undefined>(undefined);
+    const [postContent, setPostContent] = useState<RemirrorJSON | undefined>(
+        undefined
+    );
     const [contentReady, setContentReady] = useState(false);
 
     useEffect(() => {
@@ -165,34 +183,62 @@ function PostPreview() {
                                     <PostPreviewContainer>
                                         <PageBlock>
                                             <PostPreviewSlogan>
-                                                {data?.findPost?.slogan !== "" ? data?.findPost?.slogan : "Slogan"}
+                                                {data?.findPost?.slogan !== ""
+                                                    ? data?.findPost?.slogan
+                                                    : "Slogan"}
                                             </PostPreviewSlogan>
                                         </PageBlock>
                                         <PostPreviewTitle>
-                                            {data?.findPost?.title !== "" ? data?.findPost?.title : "Title"}
+                                            {data?.findPost?.title !== ""
+                                                ? data?.findPost?.title
+                                                : "Title"}
                                         </PostPreviewTitle>
                                         <PageText>
-                                            {data?.findPost?.description !== "" ? data?.findPost?.description : "Post description."}
+                                            {data?.findPost?.description !== ""
+                                                ? data?.findPost?.description
+                                                : "Post description."}
                                         </PageText>
                                         <PostPreviewInfo>
-                                            <PageBlock>By <strong>{data?.findPost?.author.firstName}{" "}{data?.findPost?.author.lastName}</strong></PageBlock>
+                                            <PageBlock>
+                                                By{" "}
+                                                <strong>
+                                                    {
+                                                        data?.findPost?.author
+                                                            .firstName
+                                                    }{" "}
+                                                    {
+                                                        data?.findPost?.author
+                                                            .lastName
+                                                    }
+                                                </strong>
+                                            </PageBlock>
                                             <PageText>|</PageText>
-                                            <PostPreviewDate>{new Date(parseInt(data?.findPost?.updatedAt!)).toLocaleString("en-us", { month: "long", day: "numeric", year: "numeric" })},{" "}updated{" "}{processDate(data?.findPost?.updatedAt!)}</PostPreviewDate>
+                                            <PostPreviewDate>
+                                                {new Date(
+                                                    parseInt(
+                                                        data?.findPost
+                                                            ?.updatedAt!
+                                                    )
+                                                ).toLocaleString("en-us", {
+                                                    month: "long",
+                                                    day: "numeric",
+                                                    year: "numeric",
+                                                })}
+                                                , updated{" "}
+                                                {processDate(
+                                                    data?.findPost?.updatedAt!
+                                                )}
+                                            </PostPreviewDate>
                                         </PostPreviewInfo>
                                         <PostPreviewImage>
                                             <img
                                                 src={
-                                                    data
-                                                        ?.findPost
-                                                        ?.postCover !==
-                                                        "" &&
-                                                    data
-                                                        ?.findPost
-                                                        ?.postCover !==
-                                                        null
-                                                        ? data
-                                                                ?.findPost
-                                                                ?.postCover
+                                                    data?.findPost
+                                                        ?.postCover !== "" &&
+                                                    data?.findPost
+                                                        ?.postCover !== null
+                                                        ? data?.findPost
+                                                              ?.postCover
                                                         : postCover
                                                 }
                                                 title={`Cover of post ${data?.findPost?.id}`}
@@ -201,7 +247,11 @@ function PostPreview() {
                                         </PostPreviewImage>
                                         {contentReady && (
                                             <PostPreviewContent>
-                                                <Remirror editable={false} manager={manager} initialContent={postContent} />
+                                                <Remirror
+                                                    editable={false}
+                                                    manager={manager}
+                                                    initialContent={postContent}
+                                                />
                                             </PostPreviewContent>
                                         )}
                                     </PostPreviewContainer>

@@ -17,6 +17,7 @@ import UpdatePost from "./pages/update-post/UpdatePost";
 import PublishPost from "./pages/update-post/PublishPost";
 import PostPreview from "./pages/update-post/PostPreview";
 import Logout from "./pages/Logout";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -165,6 +166,15 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={<PostPreview />}
+                        />
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<ProfilePage />}
                         />
                     }
                 />

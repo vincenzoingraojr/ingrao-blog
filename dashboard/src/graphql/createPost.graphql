@@ -16,6 +16,8 @@ mutation createPost($slug: String!) {
                 verified
                 role
                 profilePicture
+                createdAt
+                updatedAt
             }
             title
             description

@@ -1,5 +1,17 @@
-mutation Login($email: String!, $password: String!, $origin: String!) {
-    login(email: $email, password: $password, origin: $origin) {
+mutation editProfile(
+    $firstName: String!
+    $lastName: String!
+    $profilePicture: String!
+    $title: String!
+    $gender: String!
+) {
+    editProfile(
+        firstName: $firstName
+        lastName: $lastName
+        profilePicture: $profilePicture
+        title: $title
+        gender: $gender
+    ) {
         user {
             id
             firstName
@@ -31,7 +43,6 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
             field
             message
         }
-        accessToken
         status
     }
 }

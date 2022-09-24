@@ -91,7 +91,10 @@ function Logout() {
     const navigate = useNavigate();
     const navigationType = useNavigationType();
 
-    const { data, loading } = useMeQuery({ fetchPolicy: "network-only", variables: { origin: "dash" } });
+    const { data, loading } = useMeQuery({
+        fetchPolicy: "network-only",
+        variables: { origin: "dash" },
+    });
     const [logout, { client }] = useLogoutMutation();
 
     if (loading || !data?.me) {
@@ -121,7 +124,11 @@ function Logout() {
                         >
                             <Arrow />
                         </ControlContainer>
-                        <Link to="/" title="dashboard.ingrao.blog" aria-label="dashboard.ingrao.blog">
+                        <Link
+                            to="/"
+                            title="dashboard.ingrao.blog"
+                            aria-label="dashboard.ingrao.blog"
+                        >
                             <Logo type="inline" />
                         </Link>
                         <LogoText>Log out</LogoText>

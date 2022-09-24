@@ -6,6 +6,7 @@ import {
     CreateDateColumn,
     BaseEntity,
     OneToMany,
+    UpdateDateColumn,
 } from "typeorm";
 import { Post } from "./Post";
 
@@ -58,6 +59,14 @@ export class User extends BaseEntity {
     @Field(() => String, { nullable: true })
     @Column({ nullable: true })
     profilePicture: string;
+
+    @Field(() => String)
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @Field(() => String)
+    @UpdateDateColumn()
+    updatedAt: Date;
 
     @Column("int", { default: 0 })
     tokenVersion: number;

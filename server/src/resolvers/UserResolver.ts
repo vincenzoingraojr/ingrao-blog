@@ -234,7 +234,7 @@ export class UserResolver {
         if (gender === "Gender" || gender === "") {
             errors.push({
                 field: "gender",
-                message: "The gender field cannot take this value",
+                message: "The title field cannot take this value",
             });
         }
         if (birthDate === null) {
@@ -707,6 +707,81 @@ export class UserResolver {
         return {
             status,
             errors,
+        };
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async editProfile(
+        @Arg("firstName") firstName: string,
+        @Arg("lastName") lastName: string,
+        @Arg("profilePicture") profilePicture: string,
+        @Arg("title") title: string,
+        @Arg("gender") gender: string,
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let errors = [];
+        let user;
+        let status = "";
+
+        if (firstName === "" || firstName === null) {
+            errors.push({
+                field: "firstName",
+                message: "The first name field cannot be empty",
+            });
+        }
+        if (lastName === "" || lastName === null) {
+            errors.push({
+                field: "lastName",
+                message: "The last name field cannot be empty",
+            });
+        }
+        if (title === "Title" || title === "") {
+            errors.push({
+                field: "title",
+                message: "The title field cannot take this value",
+            });
+        }
+        if (gender === "Gender" || gender === "") {
+            errors.push({
+                field: "gender",
+                message: "The title field cannot take this value",
+            });
+        }
+
+        if (!payload) {
+            status = "You are not authenticated.";
+        } else if (errors.length === 0) {
+            try {
+                await User.update(
+                    {
+                        id: payload.id,
+                    },
+                    {
+                        firstName: firstName,
+                        lastName: lastName,
+                        profilePicture: profilePicture,
+                        title: title,
+                        gender: gender,
+                    },
+                );
+
+                user = await User.findOne({
+                    where: { id: payload.id },
+                    relations: ["posts"],
+                });
+                status = "Your profile has been updated.";
+            } catch (error) {
+                console.log(error);
+                status =
+                    "An error has occurred. Please try again later to edit your profile.";
+            }
+        }
+
+        return {
+            errors,
+            user,
+            status,
         };
     }
 }

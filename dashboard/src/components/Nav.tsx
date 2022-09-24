@@ -16,7 +16,7 @@ const NavContainer = styled.div`
     position: sticky;
     top: 0;
     background-color: #ffffff;
-    z-index: 100;
+    z-index: 10000;
     grid-template-columns: auto;
     grid-template-rows: 60px;
     width: 100%;
@@ -373,7 +373,8 @@ const MenuDirectionEntryText = styled(PageText)`
     color: #000000;
     border-bottom: 2px solid transparent;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
         color: #000000;
         border-bottom: 2px solid blue;
     }
@@ -428,11 +429,9 @@ function Nav() {
                 >
                     <ProfileInfoContainer>
                         <ProfileName>
-                            {data?.me?.firstName}{" "}{data?.me?.lastName}
+                            {data?.me?.firstName} {data?.me?.lastName}
                         </ProfileName>
-                        <ProfileRole>
-                            {data?.me?.role}
-                        </ProfileRole>
+                        <ProfileRole>{data?.me?.role}</ProfileRole>
                     </ProfileInfoContainer>
                     <ProfileImageContainer>
                         <img
@@ -497,7 +496,7 @@ function Nav() {
             {menu && (
                 <MenuOuterContainer>
                     <MenuContainer>
-                        <MenuNav>                                
+                        <MenuNav>
                             <MenuBrandIcon>
                                 <Logo type="logo" />
                             </MenuBrandIcon>
@@ -507,16 +506,16 @@ function Nav() {
                                 aria-label="Close menu"
                                 onClick={() => {
                                     setMenu(false);
-                                    document.body.classList.remove("not-scrolling");
+                                    document.body.classList.remove(
+                                        "not-scrolling"
+                                    );
                                 }}
                             >
                                 <Close type="normal" />
                             </ControlContainer>
                         </MenuNav>
                         <MenuContentContainer>
-                            <MenuTitle>
-                                Menu
-                            </MenuTitle>
+                            <MenuTitle>Menu</MenuTitle>
                             <MenuContent>
                                 <MenuDirectionContainer>
                                     <MenuDirectionEntry>
@@ -541,7 +540,7 @@ function Nav() {
                                             className={(navData: any) =>
                                                 navData.isActive ? "active" : ""
                                             }
-                                            to="/profile/settings"
+                                            to="/settings/profile"
                                             title="Go to the account settings page"
                                             aria-label="Go to the account settings page"
                                         >
@@ -558,7 +557,7 @@ function Nav() {
                                             className={(navData: any) =>
                                                 navData.isActive ? "active" : ""
                                             }
-                                            to="/platform/settings"
+                                            to="/settings/platform"
                                             title="Go to the platform settings page"
                                             aria-label="Go to the platform settings page"
                                         >

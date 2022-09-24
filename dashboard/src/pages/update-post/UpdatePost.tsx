@@ -246,7 +246,13 @@ function UpdatePost() {
                 );
             }
         },
-        [updatePost, selectedPostCover, data?.findPost?.postCover, isPostCoverUploaded, deletePostCover]
+        [
+            updatePost,
+            selectedPostCover,
+            data?.findPost?.postCover,
+            isPostCoverUploaded,
+            deletePostCover,
+        ]
     );
 
     const onSubmitDebounced = useMemo(() => {
@@ -509,7 +515,8 @@ function UpdatePost() {
                                                                                 role="button"
                                                                                 aria-label="Save changes"
                                                                             >
-                                                                                Save changes
+                                                                                Save
+                                                                                changes
                                                                             </UpdatePostButton>
                                                                         </PageBlock>
                                                                         <PageBlock>

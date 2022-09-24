@@ -10,6 +10,8 @@ query Me($origin: String!) {
         verified
         role
         profilePicture
+        createdAt
+        updatedAt
         posts {
             id
             slug
