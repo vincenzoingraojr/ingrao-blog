@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import Back from "../icons/Back";
+import Arrow from "../icons/Arrow";
 import { Link, useNavigate, useNavigationType } from "react-router-dom";
 import Logo from "../icons/Logo";
 import styled from "styled-components";
@@ -130,7 +130,7 @@ const AuthLayout: FunctionComponent<AuthLayoutProps> = ({ content }) => {
                         }
                     }}
                 >
-                    <Back />
+                    <Arrow />
                 </ControlContainer>
                 <AuthPageLogo>
                     <Link to="/" title="ingrao.blog" aria-label="ingrao.blog">

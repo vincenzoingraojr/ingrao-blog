@@ -3,7 +3,7 @@ import { useNavigate, useNavigationType } from "react-router-dom";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
 import { ControlContainer } from "../../styles/global";
-import Back from "../icons/Back";
+import Arrow from "../icons/Arrow";
 
 interface FocusPageLayoutProps {
     title: string;
@@ -97,7 +97,7 @@ const FocusPageLayout: FunctionComponent<FocusPageLayoutProps> = ({
                             }
                         }}
                     >
-                        <Back />
+                        <Arrow />
                     </ControlContainer>
                     <FocusPageHeaderText>{title}</FocusPageHeaderText>
                 </FocusPageHeader>

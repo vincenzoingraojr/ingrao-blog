@@ -9,6 +9,7 @@ import profilePicture from "../images/profile-picture.svg";
 import { useMeQuery } from "../generated/graphql";
 import { useEffect, useState } from "react";
 import Close from "./icons/Close";
+import Arrow from "./icons/Arrow";
 
 const NavContainer = styled.div`
     display: grid;
@@ -303,15 +304,10 @@ const MenuBrandIcon = styled.div`
 
 const MenuContentContainer = styled.div`
     display: block;
-    min-height: 100%;
     padding-top: 16px;
     padding-left: 16px;
     padding-right: 16px;
     padding-bottom: 48px;
-
-    @media ${devices.tablet} {
-        min-height: calc(100vh - 152px);
-    }
 `;
 
 const MenuTitle = styled.div`
@@ -338,6 +334,54 @@ const MenuContent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 24px;
+`;
+
+const MenuDirectionContainer = styled.nav`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+`;
+
+const MenuDirectionEntry = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    a {
+        display: flex;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+    a:hover,
+    a:active {
+        text-decoration: none;
+    }
+`;
+
+const MenuDirectionEntryIcon = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(180deg);
+    transform-origin: center;
+`;
+
+const MenuDirectionEntryText = styled(PageText)`
+    font-weight: 700;
+    font-size: 24px;
+    color: #000000;
+    border-bottom: 2px solid transparent;
+
+    &:hover, &:active {
+        color: #000000;
+        border-bottom: 2px solid blue;
+    }
+
+    a.active & {
+        color: #000000;
+        border-bottom: 2px solid blue;
+    }
 `;
 
 function Nav() {
@@ -474,7 +518,73 @@ function Nav() {
                                 Menu
                             </MenuTitle>
                             <MenuContent>
-                                {/* Tra un po' questa sezione sarà completata. */}
+                                <MenuDirectionContainer>
+                                    <MenuDirectionEntry>
+                                        <NavLink
+                                            className={(navData: any) =>
+                                                navData.isActive ? "active" : ""
+                                            }
+                                            to="/profile"
+                                            title="Go to your profile"
+                                            aria-label="Go to your profile"
+                                        >
+                                            <MenuDirectionEntryIcon>
+                                                <Arrow color="blue" />
+                                            </MenuDirectionEntryIcon>
+                                            <MenuDirectionEntryText>
+                                                Profile
+                                            </MenuDirectionEntryText>
+                                        </NavLink>
+                                    </MenuDirectionEntry>
+                                    <MenuDirectionEntry>
+                                        <NavLink
+                                            className={(navData: any) =>
+                                                navData.isActive ? "active" : ""
+                                            }
+                                            to="/profile/settings"
+                                            title="Go to the account settings page"
+                                            aria-label="Go to the account settings page"
+                                        >
+                                            <MenuDirectionEntryIcon>
+                                                <Arrow color="blue" />
+                                            </MenuDirectionEntryIcon>
+                                            <MenuDirectionEntryText>
+                                                Account settings
+                                            </MenuDirectionEntryText>
+                                        </NavLink>
+                                    </MenuDirectionEntry>
+                                    <MenuDirectionEntry>
+                                        <NavLink
+                                            className={(navData: any) =>
+                                                navData.isActive ? "active" : ""
+                                            }
+                                            to="/platform/settings"
+                                            title="Go to the platform settings page"
+                                            aria-label="Go to the platform settings page"
+                                        >
+                                            <MenuDirectionEntryIcon>
+                                                <Arrow color="blue" />
+                                            </MenuDirectionEntryIcon>
+                                            <MenuDirectionEntryText>
+                                                Platform settings
+                                            </MenuDirectionEntryText>
+                                        </NavLink>
+                                    </MenuDirectionEntry>
+                                    <MenuDirectionEntry>
+                                        <NavLink
+                                            to="/logout"
+                                            title="Log out"
+                                            aria-label="Log out"
+                                        >
+                                            <MenuDirectionEntryIcon>
+                                                <Arrow color="blue" />
+                                            </MenuDirectionEntryIcon>
+                                            <MenuDirectionEntryText>
+                                                Log out
+                                            </MenuDirectionEntryText>
+                                        </NavLink>
+                                    </MenuDirectionEntry>
+                                </MenuDirectionContainer>
                             </MenuContent>
                         </MenuContentContainer>
                     </MenuContainer>

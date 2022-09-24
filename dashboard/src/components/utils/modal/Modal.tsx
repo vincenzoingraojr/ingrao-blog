@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { FunctionComponent } from "react";
 import { useNavigate, useNavigationType } from "react-router-dom";
 import { devices } from "../../../styles/devices";
-import Back from "../../icons/Back";
+import Arrow from "../../icons/Arrow";
 import { ControlContainer } from "../../../styles/global";
 
 interface ModalProps {
@@ -158,7 +158,7 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                             }
                         }}
                     >
-                        <Back />
+                        <Arrow />
                     </ControlContainer>
                     <ModalTitle>{headerText}</ModalTitle>
                 </ModalHeader>

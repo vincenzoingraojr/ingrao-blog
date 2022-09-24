@@ -16,6 +16,7 @@ import NewPost from "./pages/create-post/NewPost";
 import UpdatePost from "./pages/update-post/UpdatePost";
 import PublishPost from "./pages/update-post/PublishPost";
 import PostPreview from "./pages/update-post/PostPreview";
+import Logout from "./pages/Logout";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -100,6 +101,15 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={<HomePage />}
+                        />
+                    }
+                />
+                <Route
+                    path="/logout"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<Logout />}
                         />
                     }
                 />
