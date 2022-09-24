@@ -30,7 +30,7 @@ export class PostResponse {
 @Resolver(Post)
 export class PostResolver {
     @Query(() => [Post])
-    postFeed() {
+    blogFeed() {
         return Post.find({
             order: {
                 createdAt: "DESC",
@@ -43,12 +43,42 @@ export class PostResolver {
     }
 
     @Query(() => [Post])
-    draftPostFeed() {
+    @UseMiddleware(isAuth)
+    postFeed(@Ctx() { payload }: MyContext) {
+        return Post.find({
+            order: {
+                createdAt: "DESC",
+            },
+            where: {
+                authorId: payload?.id,
+                draft: false,
+            },
+            relations: ["author"],
+        });
+    }
+
+    @Query(() => [Post])
+    draftAllPostFeed() {
         return Post.find({
             order: {
                 updatedAt: "DESC",
             },
             where: {
+                draft: true,
+            },
+            relations: ["author"],
+        });
+    }
+
+    @Query(() => [Post])
+    @UseMiddleware(isAuth)
+    draftPostFeed(@Ctx() { payload }: MyContext) {
+        return Post.find({
+            order: {
+                updatedAt: "DESC",
+            },
+            where: {
+                authorId: payload?.id,
                 draft: true,
             },
             relations: ["author"],

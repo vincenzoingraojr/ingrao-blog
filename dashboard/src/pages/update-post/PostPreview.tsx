@@ -68,7 +68,7 @@ const PostPreviewSlogan = styled.div`
     display: inline-block;
     font-weight: 700;
     text-transform: uppercase;
-    border-bottom: 2px solid #000000;
+    border-bottom: 4px solid #000000;
 `;
 
 const PostPreviewInfo = styled.div`
