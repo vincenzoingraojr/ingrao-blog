@@ -85,9 +85,10 @@ const NavInnerContainer = styled.div`
 
     @media ${devices.tablet} {
         display: flex;
-        align-items: center;
+        align-items: stretch;
         justify-content: flex-start;
         height: 48px;
+        border-bottom: 2px solid black;
     }
 `;
 
@@ -163,11 +164,11 @@ const NavEntry = styled.div`
             height: 48px;
             gap: 16px;
             font-size: 18px;
-            border-bottom: 2px solid transparent;
+            border-bottom: 4px solid transparent;
         }
 
         a.active {
-            border-bottom: 2px solid blue;
+            border-bottom: 4px solid blue;
         }
     }
 `;

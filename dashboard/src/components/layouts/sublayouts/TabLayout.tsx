@@ -28,8 +28,9 @@ const TabLayoutHeader = styled.div`
     z-index: 10000;
     width: 100%;
     height: 48px;
-    align-items: center;
+    align-items: stretch;
     justify-content: flex-start;
+    border-bottom: 2px solid black;
 `;
 
 const TabLayoutContentContainer = styled.div`
@@ -57,7 +58,7 @@ const TabElement = styled.div`
         font-size: 18px;
         padding-left: 16px;
         padding-right: 16px;
-        border-bottom: 2px solid transparent;
+        border-bottom: 4px solid transparent;
         background-color: transparent;
         transition: background-color ease 0.2s;
     }
@@ -71,7 +72,7 @@ const TabElement = styled.div`
     a.active {
         font-weight: 700;
         color: blue;
-        border-bottom: 2px solid blue;
+        border-bottom: 4px solid blue;
     }
 `;
 
