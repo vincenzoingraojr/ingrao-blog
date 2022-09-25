@@ -280,3 +280,58 @@ export const ControlContainer = styled.div.attrs(
         background-color: #c0c0c0;
     }
 `;
+
+export const PostFormContainer = styled.div`
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: auto;
+
+    @media ${devices.tablet} {
+        grid-template-columns: 600px auto;
+    }
+`;
+
+export const CoverImageContainer = styled.div`
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    background-color: #151414;
+    width: 100%;
+    height: 360px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+
+    img {
+        width: 100%;
+        height: 360px;
+        opacity: 0.6;
+        object-fit: cover;
+        object-position: center;
+    }
+`;
+
+export const CoverImageButtonsContainer = styled.div`
+    display: flex;
+    position: absolute;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    gap: 24px;
+    z-index: 1000;
+`;
+
+export const UploadCoverImageButton = styled.div`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1000;
+
+    input[type="file"] {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        visibility: hidden;
+    }
+`;

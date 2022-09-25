@@ -19,6 +19,8 @@ import PostPreview from "./pages/update-post/PostPreview";
 import Logout from "./pages/Logout";
 import ProfilePage from "./pages/profile/ProfilePage";
 import PostsPage from "./pages/profile/PostsPage";
+import ViewPost from "./pages/ViewPost";
+import EditPost from "./pages/EditPost";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -116,6 +118,15 @@ function App() {
                     }
                 />
                 <Route
+                    path="/post/:slug"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<ViewPost />}
+                        />
+                    }
+                />
+                <Route
                     path="/create-post"
                     element={
                         <IsAuthenticated
@@ -167,6 +178,15 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={<PostPreview />}
+                        />
+                    }
+                />
+                <Route
+                    path="/edit-post/:id"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<EditPost />}
                         />
                     }
                 />

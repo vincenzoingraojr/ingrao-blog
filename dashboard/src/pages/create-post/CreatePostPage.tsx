@@ -106,7 +106,6 @@ function CreatePostPage() {
                                                                         post.id
                                                                     }
                                                                     post={post}
-                                                                    draft={true}
                                                                 />
                                                             )
                                                         )}

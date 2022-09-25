@@ -90,6 +90,11 @@ export class PostResolver {
         return Post.findOne({ where: { id }, relations: ["author"] });
     }
 
+    @Query(() => Post, { nullable: true })
+    findPostBySlug(@Arg("slug", () => String, { nullable: true }) slug: string) {
+        return Post.findOne({ where: { slug }, relations: ["author"] });
+    }
+
     @Mutation(() => PostResponse)
     @UseMiddleware(isAuth)
     async createPost(
@@ -111,10 +116,15 @@ export class PostResolver {
                     field: "slug",
                     message: "You can't create a new post without a slug",
                 });
+            } else if (slug.includes("/") || (/\s/).test(slug)) {
+                errors.push({
+                    field: "slug",
+                    message: "The slug field cannot accept this value",
+                });
             } else {
                 try {
                     post = await Post.create({
-                        slug: slug,
+                        slug: slug.toLowerCase(),
                         draft: true,
                         authorId: payload.id,
                         author: await User.findOne({
@@ -176,6 +186,11 @@ export class PostResolver {
                     errors.push({
                         field: "slug",
                         message: "You can't update a post by deleting its slug",
+                    });
+                } else if (slug.includes("/") || (/\s/).test(slug)) {
+                    errors.push({
+                        field: "slug",
+                        message: "The slug field cannot accept this value",
                     });
                 } else {
                     try {
@@ -335,6 +350,12 @@ export class PostResolver {
                         message: "You can't publish a post without a slug",
                     });
                 }
+                if (slug.includes("/") || (/\s/).test(slug)) {
+                    errors.push({
+                        field: "slug",
+                        message: "The slug field cannot accept this value",
+                    });
+                }
                 if (title === "" || title === null) {
                     errors.push({
                         field: "title",
@@ -393,7 +414,6 @@ export class PostResolver {
         }
 
         return {
-            post,
             errors,
             status,
         };

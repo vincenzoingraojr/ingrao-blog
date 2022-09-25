@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useDeletePostMutation } from "../../../generated/graphql";
+import { useDeletePostMutation, useUnpublishPostMutation } from "../../../generated/graphql";
 import postCover from "../../../images/post-cover.svg";
 import { PageText, TextButton } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
@@ -19,6 +19,7 @@ const SmallPostContainer = styled.div`
 const SmallPostInnerContainer = styled.div`
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 16px;
 `;
 
@@ -52,7 +53,7 @@ const HeadText = styled.div`
     display: inline-block;
     font-weight: 700;
     text-transform: uppercase;
-    border-bottom: 2px solid #000000;
+    border-bottom: 4px solid #000000;
 `;
 
 const SmallPostTitle = styled(PageText)`
@@ -89,6 +90,10 @@ const DeletePostButton = styled(TextButton)`
     color: red;
 `;
 
+const UnpublishPostButton = styled(TextButton)`
+    color: #000000;
+`;
+
 const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
     post,
 }) => {
@@ -107,6 +112,7 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
     }
 
     const [deletePost] = useDeletePostMutation();
+    const [unpublishPost] = useUnpublishPostMutation();
 
     return (
         <SmallPostContainer
@@ -161,8 +167,8 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
                     <PostSmallText>
                         {post.draft ? <>Updated</> : <>Published on</>} {date}
                     </PostSmallText>
-                    {post.draft && (
-                        <PostButtonsContainer>
+                    <PostButtonsContainer>
+                        {post.draft ? (
                             <ViewPostButton
                                 type="button"
                                 role="button"
@@ -175,14 +181,15 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
                             >
                                 View post
                             </ViewPostButton>
-                            <DeletePostButton
+                        ) : (
+                            <UnpublishPostButton
                                 type="button"
                                 role="button"
-                                title="Delete post"
-                                aria-label="Delete post"
+                                title="Unpublish post"
+                                aria-label="Unpublish post"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    deletePost({
+                                    unpublishPost({
                                         variables: {
                                             postId: post.id,
                                         },
@@ -191,10 +198,28 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
                                     });
                                 }}
                             >
-                                Delete post
-                            </DeletePostButton>
-                        </PostButtonsContainer>
-                    )}
+                                Unpublish post
+                            </UnpublishPostButton>
+                        )}
+                        <DeletePostButton
+                            type="button"
+                            role="button"
+                            title="Delete post"
+                            aria-label="Delete post"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                deletePost({
+                                    variables: {
+                                        postId: post.id,
+                                    },
+                                }).then(() => {
+                                    navigate(0);
+                                });
+                            }}
+                        >
+                            Delete post
+                        </DeletePostButton>
+                    </PostButtonsContainer>
                 </SmallPostBody>
             </SmallPostInnerContainer>
         </SmallPostContainer>

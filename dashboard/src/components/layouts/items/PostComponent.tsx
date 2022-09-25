@@ -8,7 +8,6 @@ import { processDate } from "../../../utils/processDate";
 
 interface PostComponentProps {
     post: any;
-    draft: boolean;
 }
 
 const PostContainer = styled.div`
@@ -33,7 +32,7 @@ const HeadText = styled.div`
     display: inline-block;
     font-weight: 700;
     text-transform: uppercase;
-    border-bottom: 2px solid #000000;
+    border-bottom: 4px solid #000000;
 `;
 
 const PostImage = styled.div`
@@ -92,13 +91,12 @@ const DeletePostButton = styled(TextButton)`
 
 const PostComponent: FunctionComponent<PostComponentProps> = ({
     post,
-    draft,
 }) => {
     const navigate = useNavigate();
 
     let date = "";
 
-    if (draft) {
+    if (post.draft) {
         date = processDate(post.updatedAt);
     } else {
         date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
@@ -114,19 +112,19 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
         <PostContainer
             onClick={() => {
                 navigate(
-                    draft ? `/update-post/${post.id}` : `/post/${post.slug}`
+                    post.draft ? `/update-post/${post.id}` : `/post/${post.slug}`
                 );
             }}
             role="link"
-            title={draft ? `Unpublished post: ${post.id}` : `${post.title}`}
+            title={post.draft ? `Unpublished post: ${post.id}` : `${post.title}`}
             aria-label={
-                draft ? `Unpublished post: ${post.id}` : `${post.title}`
+                post.draft ? `Unpublished post: ${post.id}` : `${post.title}`
             }
         >
             <PostInnerContainer>
                 <PostHeader>
                     <HeadText>
-                        {draft ? (
+                        {post.draft ? (
                             <>Unpublished post: {post.id}</>
                         ) : (
                             <>{post.slogan}</>
@@ -141,12 +139,12 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                                 : postCover
                         }
                         title={
-                            draft
+                            post.draft
                                 ? `Unpublished post (${post.id}) cover image`
                                 : `${post.title}`
                         }
                         alt={
-                            draft
+                            post.draft
                                 ? `Unpublished post (${post.id}) cover`
                                 : `${post.title}`
                         }
@@ -170,9 +168,9 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                         </b>
                     </PostSmallText>
                     <PostSmallText>
-                        {draft ? <>Updated</> : <>Published on</>} {date}
+                        {post.draft ? <>Updated</> : <>Published on</>} {date}
                     </PostSmallText>
-                    {draft && (
+                    {post.draft && (
                         <PostButtonsContainer>
                             <ViewPostButton
                                 type="button"

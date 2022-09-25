@@ -181,6 +181,7 @@ export type Query = {
   draftAllPostFeed: Array<Post>;
   draftPostFeed: Array<Post>;
   findPost?: Maybe<Post>;
+  findPostBySlug?: Maybe<Post>;
   me?: Maybe<User>;
   postFeed: Array<Post>;
 };
@@ -188,6 +189,11 @@ export type Query = {
 
 export type QueryFindPostArgs = {
   id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindPostBySlugArgs = {
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -250,6 +256,19 @@ export type EditProfileMutationVariables = Exact<{
 
 export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
 
+export type EditPublishedPostMutationVariables = Exact<{
+  postId: Scalars['Int'];
+  slug: Scalars['String'];
+  title?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  slogan?: InputMaybe<Scalars['String']>;
+  postCover?: InputMaybe<Scalars['String']>;
+  content?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EditPublishedPostMutation = { __typename?: 'Mutation', editPublishedPost: { __typename?: 'PostResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
 export type EditUnpublishedPostMutationVariables = Exact<{
   postId: Scalars['Int'];
   slug: Scalars['String'];
@@ -269,6 +288,13 @@ export type FindPostQueryVariables = Exact<{
 
 
 export type FindPostQuery = { __typename?: 'Query', findPost?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined };
+
+export type FindPostBySlugQueryVariables = Exact<{
+  slug?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type FindPostBySlugQuery = { __typename?: 'Query', findPostBySlug?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -328,6 +354,13 @@ export type SendRecoveryEmailMutationVariables = Exact<{
 
 
 export type SendRecoveryEmailMutation = { __typename?: 'Mutation', sendRecoveryEmail: { __typename?: 'UserResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
+export type UnpublishPostMutationVariables = Exact<{
+  postId: Scalars['Int'];
+}>;
+
+
+export type UnpublishPostMutation = { __typename?: 'Mutation', unpublishPost: boolean };
 
 
 export const CreatePostDocument = gql`
@@ -557,6 +590,57 @@ export function useEditProfileMutation(baseOptions?: Apollo.MutationHookOptions<
 export type EditProfileMutationHookResult = ReturnType<typeof useEditProfileMutation>;
 export type EditProfileMutationResult = Apollo.MutationResult<EditProfileMutation>;
 export type EditProfileMutationOptions = Apollo.BaseMutationOptions<EditProfileMutation, EditProfileMutationVariables>;
+export const EditPublishedPostDocument = gql`
+    mutation editPublishedPost($postId: Int!, $slug: String!, $title: String, $description: String, $slogan: String, $postCover: String, $content: String) {
+  editPublishedPost(
+    postId: $postId
+    slug: $slug
+    title: $title
+    description: $description
+    slogan: $slogan
+    postCover: $postCover
+    content: $content
+  ) {
+    errors {
+      field
+      message
+    }
+    status
+  }
+}
+    `;
+export type EditPublishedPostMutationFn = Apollo.MutationFunction<EditPublishedPostMutation, EditPublishedPostMutationVariables>;
+
+/**
+ * __useEditPublishedPostMutation__
+ *
+ * To run a mutation, you first call `useEditPublishedPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditPublishedPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editPublishedPostMutation, { data, loading, error }] = useEditPublishedPostMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *      slug: // value for 'slug'
+ *      title: // value for 'title'
+ *      description: // value for 'description'
+ *      slogan: // value for 'slogan'
+ *      postCover: // value for 'postCover'
+ *      content: // value for 'content'
+ *   },
+ * });
+ */
+export function useEditPublishedPostMutation(baseOptions?: Apollo.MutationHookOptions<EditPublishedPostMutation, EditPublishedPostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditPublishedPostMutation, EditPublishedPostMutationVariables>(EditPublishedPostDocument, options);
+      }
+export type EditPublishedPostMutationHookResult = ReturnType<typeof useEditPublishedPostMutation>;
+export type EditPublishedPostMutationResult = Apollo.MutationResult<EditPublishedPostMutation>;
+export type EditPublishedPostMutationOptions = Apollo.BaseMutationOptions<EditPublishedPostMutation, EditPublishedPostMutationVariables>;
 export const EditUnpublishedPostDocument = gql`
     mutation editUnpublishedPost($postId: Int!, $slug: String!, $title: String, $description: String, $slogan: String, $postCover: String, $content: String) {
   editUnpublishedPost(
@@ -667,6 +751,65 @@ export function useFindPostLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<F
 export type FindPostQueryHookResult = ReturnType<typeof useFindPostQuery>;
 export type FindPostLazyQueryHookResult = ReturnType<typeof useFindPostLazyQuery>;
 export type FindPostQueryResult = Apollo.QueryResult<FindPostQuery, FindPostQueryVariables>;
+export const FindPostBySlugDocument = gql`
+    query findPostBySlug($slug: String) {
+  findPostBySlug(slug: $slug) {
+    id
+    slug
+    draft
+    authorId
+    author {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      createdAt
+      updatedAt
+    }
+    title
+    description
+    slogan
+    postCover
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFindPostBySlugQuery__
+ *
+ * To run a query within a React component, call `useFindPostBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindPostBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindPostBySlugQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useFindPostBySlugQuery(baseOptions?: Apollo.QueryHookOptions<FindPostBySlugQuery, FindPostBySlugQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindPostBySlugQuery, FindPostBySlugQueryVariables>(FindPostBySlugDocument, options);
+      }
+export function useFindPostBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindPostBySlugQuery, FindPostBySlugQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindPostBySlugQuery, FindPostBySlugQueryVariables>(FindPostBySlugDocument, options);
+        }
+export type FindPostBySlugQueryHookResult = ReturnType<typeof useFindPostBySlugQuery>;
+export type FindPostBySlugLazyQueryHookResult = ReturnType<typeof useFindPostBySlugLazyQuery>;
+export type FindPostBySlugQueryResult = Apollo.QueryResult<FindPostBySlugQuery, FindPostBySlugQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!, $origin: String!) {
   login(email: $email, password: $password, origin: $origin) {
@@ -1042,3 +1185,34 @@ export function useSendRecoveryEmailMutation(baseOptions?: Apollo.MutationHookOp
 export type SendRecoveryEmailMutationHookResult = ReturnType<typeof useSendRecoveryEmailMutation>;
 export type SendRecoveryEmailMutationResult = Apollo.MutationResult<SendRecoveryEmailMutation>;
 export type SendRecoveryEmailMutationOptions = Apollo.BaseMutationOptions<SendRecoveryEmailMutation, SendRecoveryEmailMutationVariables>;
+export const UnpublishPostDocument = gql`
+    mutation unpublishPost($postId: Int!) {
+  unpublishPost(postId: $postId)
+}
+    `;
+export type UnpublishPostMutationFn = Apollo.MutationFunction<UnpublishPostMutation, UnpublishPostMutationVariables>;
+
+/**
+ * __useUnpublishPostMutation__
+ *
+ * To run a mutation, you first call `useUnpublishPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnpublishPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unpublishPostMutation, { data, loading, error }] = useUnpublishPostMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useUnpublishPostMutation(baseOptions?: Apollo.MutationHookOptions<UnpublishPostMutation, UnpublishPostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnpublishPostMutation, UnpublishPostMutationVariables>(UnpublishPostDocument, options);
+      }
+export type UnpublishPostMutationHookResult = ReturnType<typeof useUnpublishPostMutation>;
+export type UnpublishPostMutationResult = Apollo.MutationResult<UnpublishPostMutation>;
+export type UnpublishPostMutationOptions = Apollo.BaseMutationOptions<UnpublishPostMutation, UnpublishPostMutationVariables>;

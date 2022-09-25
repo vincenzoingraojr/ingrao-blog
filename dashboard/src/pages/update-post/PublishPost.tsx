@@ -51,10 +51,10 @@ function PublishPost() {
 
     useEffect(() => {
         if (!loading && !error) {
-            if (data && data.findPost) {
+            if (data && data.findPost && data.findPost.draft) {
                 console.log("Post found.");
             } else {
-                navigate(-1);
+                navigate("/");
             }
         } else {
             console.log("Loading...");
@@ -94,6 +94,7 @@ function PublishPost() {
                             ) {
                                 setStatus(response.data?.publishPost?.status);
                                 setErrors(null);
+                                navigate(`/post/${data?.findPost?.slug}`);
                             } else {
                                 setStatus(null);
                                 setErrors(response.data?.publishPost?.errors!);

@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Head from "../../components/Head";
-import FocusPageLayout from "../../components/layouts/FocusPageLayout";
-import LoadingComponent from "../../components/utils/LoadingComponent";
-import { useFindPostQuery } from "../../generated/graphql";
-import { LoadingContainer, PageBlock, PageText } from "../../styles/global";
-import UpdatePostComponent from "./UpdatePostComponent";
-import postCover from "../../images/post-cover.svg";
+import { useNavigate, useNavigationType, useParams } from "react-router-dom";
+import Head from "../components/Head";
+import PageLayout from "../components/layouts/PageLayout";
+import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
+import { useFindPostBySlugQuery } from "../generated/graphql";
 import styled from "styled-components";
-import { devices } from "../../styles/devices";
-import { processDate } from "../../utils/processDate";
+import { ControlContainer, LoadingContainer, PageBlock, PageText, LinkButton } from "../styles/global";
+import LoadingComponent from "../components/utils/LoadingComponent";
 import { Remirror, useRemirror } from "@remirror/react";
 import type { RemirrorJSON } from "remirror";
 import {
@@ -29,8 +26,10 @@ import {
     OrderedListExtension,
     CalloutExtension,
 } from "remirror/extensions";
+import { devices } from "../styles/devices";
+import Arrow from "../components/icons/Arrow";
 
-const PostPreviewImage = styled.div`
+const PostCoverImage = styled.div`
     display: block;
 
     img {
@@ -39,13 +38,13 @@ const PostPreviewImage = styled.div`
     }
 `;
 
-const PostPreviewContainer = styled.div`
+const PostContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 24px;
 `;
 
-const PostPreviewTitle = styled.div`
+const PostTitle = styled.div`
     display: block;
     font-family: "Source Serif Pro", serif;
     font-weight: 700;
@@ -64,14 +63,14 @@ const PostPreviewTitle = styled.div`
     }
 `;
 
-const PostPreviewSlogan = styled.div`
+const PostSlogan = styled.div`
     display: inline-block;
     font-weight: 700;
     text-transform: uppercase;
     border-bottom: 4px solid #000000;
 `;
 
-const PostPreviewInfo = styled.div`
+const PostInfo = styled.div`
     display: flex;
     align-items: center;
     align-content: center;
@@ -82,12 +81,12 @@ const PostPreviewInfo = styled.div`
     row-gap: 4px;
 `;
 
-const PostPreviewDate = styled.div`
+const PostDate = styled.div`
     display: block;
     color: #c0c0c0;
 `;
 
-const PostPreviewContent = styled.div`
+const PostContent = styled.div`
     display: block;
     margin-left: 0px;
     margin-right: 0px;
@@ -104,18 +103,42 @@ const PostPreviewContent = styled.div`
     }
 `;
 
-function PostPreview() {
+const PostHeader = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+`;
+
+const GoBackButton = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+`;
+
+const GoBackButtonText = styled(PageText)`
+    font-weight: 700;
+`;
+
+const EditPostButton = styled(LinkButton)`
+    color: #ffffff;
+    background-color: #000000;
+`;
+
+function ViewPost() {
     const navigate = useNavigate();
     const params = useParams();
+    const navigationType = useNavigationType();
 
-    const { data, loading, error } = useFindPostQuery({
+    const { data, loading, error } = useFindPostBySlugQuery({
         fetchPolicy: "network-only",
-        variables: { id: parseInt(params.id!) },
+        variables: { slug: params.slug! },
     });
 
     useEffect(() => {
         if (!loading && !error) {
-            if (data && data.findPost && data.findPost.draft) {
+            if (data && data.findPostBySlug && !data.findPostBySlug.draft) {
                 console.log("Post found.");
             } else {
                 navigate("/");
@@ -151,7 +174,7 @@ function PostPreview() {
     const [contentReady, setContentReady] = useState(false);
 
     useEffect(() => {
-        const content = data?.findPost?.content;
+        const content = data?.findPostBySlug?.content;
 
         if (content) {
             setContentReady(true);
@@ -160,19 +183,17 @@ function PostPreview() {
             setContentReady(false);
             setPostContent(undefined);
         }
-    }, [data?.findPost?.content]);
-
+    }, [data?.findPostBySlug?.content]);
+    
     return (
         <>
             <Head
-                title={`${data?.findPost?.title} | Preview on dashboard.ingrao.blog`}
-                description="In this page you can view the post preview."
+                title={`${data?.findPostBySlug?.title} | dashboard.ingrao.blog`}
+                description={`In this page you can read "${data?.findPostBySlug?.title}", a post by ${data?.findPostBySlug?.author.firstName} ${data?.findPostBySlug?.author.lastName}.`}
             />
-            <FocusPageLayout
-                title={`Update post ${params.id}`}
+            <PageLayout
                 content={
-                    <UpdatePostComponent
-                        id={params.id!}
+                    <PageContentLayout
                         content={
                             <>
                                 {(loading && !data) || error ? (
@@ -180,43 +201,64 @@ function PostPreview() {
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
-                                    <PostPreviewContainer>
+                                    <PostContainer>
+                                        <PostHeader>
+                                            <GoBackButton>
+                                                <ControlContainer
+                                                    title="Go back"
+                                                    role="button"
+                                                    aria-label="Go back"
+                                                    onClick={() => {
+                                                        if (navigationType === "POP") {
+                                                            navigate("/");
+                                                        } else {
+                                                            navigate(-1);
+                                                        }
+                                                    }}
+                                                >
+                                                    <Arrow />
+                                                </ControlContainer>
+                                                <GoBackButtonText>
+                                                    Go back
+                                                </GoBackButtonText>
+                                            </GoBackButton>
+                                            <EditPostButton
+                                                to={`/edit-post/${data?.findPostBySlug?.id}`}
+                                                title="Edit post"
+                                            >
+                                                Edit post
+                                            </EditPostButton>
+                                        </PostHeader>
                                         <PageBlock>
-                                            <PostPreviewSlogan>
-                                                {data?.findPost?.slogan !== ""
-                                                    ? data?.findPost?.slogan
-                                                    : "Slogan"}
-                                            </PostPreviewSlogan>
+                                            <PostSlogan>
+                                                {data?.findPostBySlug?.slogan}
+                                            </PostSlogan>
                                         </PageBlock>
-                                        <PostPreviewTitle>
-                                            {data?.findPost?.title !== ""
-                                                ? data?.findPost?.title
-                                                : "Title"}
-                                        </PostPreviewTitle>
+                                        <PostTitle>
+                                            {data?.findPostBySlug?.title}
+                                        </PostTitle>
                                         <PageText>
-                                            {data?.findPost?.description !== ""
-                                                ? data?.findPost?.description
-                                                : "Post description."}
+                                            {data?.findPostBySlug?.description}
                                         </PageText>
-                                        <PostPreviewInfo>
+                                        <PostInfo>
                                             <PageBlock>
                                                 By{" "}
                                                 <strong>
                                                     {
-                                                        data?.findPost?.author
+                                                        data?.findPostBySlug?.author
                                                             .firstName
                                                     }{" "}
                                                     {
-                                                        data?.findPost?.author
+                                                        data?.findPostBySlug?.author
                                                             .lastName
                                                     }
                                                 </strong>
                                             </PageBlock>
                                             <PageText>|</PageText>
-                                            <PostPreviewDate>
+                                            <PostDate>
                                                 {new Date(
                                                     parseInt(
-                                                        data?.findPost
+                                                        data?.findPostBySlug
                                                             ?.updatedAt!
                                                     )
                                                 ).toLocaleString("en-us", {
@@ -224,37 +266,28 @@ function PostPreview() {
                                                     day: "numeric",
                                                     year: "numeric",
                                                 })}
-                                                , updated{" "}
-                                                {processDate(
-                                                    data?.findPost?.updatedAt!
-                                                )}
-                                            </PostPreviewDate>
-                                        </PostPreviewInfo>
-                                        <PostPreviewImage>
+                                            </PostDate>
+                                        </PostInfo>
+                                        <PostCoverImage>
                                             <img
                                                 src={
-                                                    data?.findPost
-                                                        ?.postCover !== "" &&
-                                                    data?.findPost
-                                                        ?.postCover !== null
-                                                        ? data?.findPost
-                                                              ?.postCover
-                                                        : postCover
+                                                    data?.findPostBySlug
+                                                        ?.postCover!
                                                 }
-                                                title={`Cover of post ${data?.findPost?.id}`}
-                                                alt={`Cover of post ${data?.findPost?.id}`}
+                                                title={`Cover of post ${data?.findPostBySlug?.id}: ${data?.findPostBySlug?.title}`}
+                                                alt={`Cover of post ${data?.findPostBySlug?.id}: ${data?.findPostBySlug?.title}`}
                                             />
-                                        </PostPreviewImage>
+                                        </PostCoverImage>
                                         {contentReady && (
-                                            <PostPreviewContent>
+                                            <PostContent>
                                                 <Remirror
                                                     editable={false}
                                                     manager={manager}
                                                     initialContent={postContent}
                                                 />
-                                            </PostPreviewContent>
+                                            </PostContent>
                                         )}
-                                    </PostPreviewContainer>
+                                    </PostContainer>
                                 )}
                             </>
                         }
@@ -265,4 +298,4 @@ function PostPreview() {
     );
 }
 
-export default PostPreview;
+export default ViewPost;

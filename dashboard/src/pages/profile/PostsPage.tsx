@@ -5,7 +5,7 @@ import PageLayout from "../../components/layouts/PageLayout";
 import PageContentLayout from "../../components/layouts/sublayouts/PageContentLayout";
 import { SidebarLayoutTitle } from "../../components/layouts/sublayouts/SidebarLayout";
 import LoadingComponent from "../../components/utils/LoadingComponent";
-import { useMeQuery, usePostFeedQuery } from "../../generated/graphql";
+import { useDraftPostFeedQuery, useMeQuery, usePostFeedQuery } from "../../generated/graphql";
 import { LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText } from "../../styles/global";
 import ProfilePageComponent from "./ProfilePageComponent";
 
@@ -28,6 +28,7 @@ function PostsPage() {
     });
 
     const { data: postData, loading: postLoading, error: postError } = usePostFeedQuery({ fetchPolicy: "cache-and-network" });
+    const { data: draftPostData, loading: draftPostLoading, error: draftPostError } = useDraftPostFeedQuery({ fetchPolicy: "cache-and-network" });
 
     return (
         <>
@@ -83,6 +84,43 @@ function PostsPage() {
                                                                                             post.id
                                                                                         }
                                                                                         post={post}
+                                                                                    />
+                                                                                )
+                                                                            )}
+                                                                        </PostFeed>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </PageBlock>
+                                                    </OptionContainer>
+                                                    <OptionContainer>
+                                                        <OptionTitle>
+                                                            Your drafts
+                                                        </OptionTitle>
+                                                        <PageText>
+                                                            Here you can view your unpublished posts.
+                                                        </PageText>
+                                                        <PageBlock>
+                                                            {(draftPostLoading && !draftPostData) || draftPostError ? (
+                                                                <LoadingContainer>
+                                                                    <LoadingComponent />
+                                                                </LoadingContainer>
+                                                            ) : (
+                                                                <>
+                                                                    {draftPostData?.draftPostFeed?.length ===
+                                                                    0 ? (
+                                                                        <PageText>
+                                                                            There are no unpublished posts.
+                                                                        </PageText>
+                                                                    ) : (
+                                                                        <PostFeed>
+                                                                            {draftPostData?.draftPostFeed?.map(
+                                                                                (draftPost) => (
+                                                                                    <SmallPostComponent
+                                                                                        key={
+                                                                                            draftPost.id
+                                                                                        }
+                                                                                        post={draftPost}
                                                                                     />
                                                                                 )
                                                                             )}

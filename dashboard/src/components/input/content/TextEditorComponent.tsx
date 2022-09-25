@@ -1,6 +1,6 @@
 import "./editor.css";
 import type { ChangeEvent, HTMLProps, KeyboardEvent } from "react";
-import type { RemirrorJSON } from "remirror";
+import { RemirrorJSON } from "remirror";
 import {
     FunctionComponent,
     useCallback,
