@@ -177,6 +177,8 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  blogFeed: Array<Post>;
+  draftAllPostFeed: Array<Post>;
   draftPostFeed: Array<Post>;
   findPost?: Maybe<Post>;
   me?: Maybe<User>;
@@ -306,6 +308,11 @@ export type PasswordSetupMutationVariables = Exact<{
 
 
 export type PasswordSetupMutation = { __typename?: 'Mutation', passwordSetup: { __typename?: 'UserResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
+export type PostFeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostFeedQuery = { __typename?: 'Query', postFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } }> };
 
 export type PublishPostMutationVariables = Exact<{
   postId: Scalars['Int'];
@@ -902,6 +909,64 @@ export function usePasswordSetupMutation(baseOptions?: Apollo.MutationHookOption
 export type PasswordSetupMutationHookResult = ReturnType<typeof usePasswordSetupMutation>;
 export type PasswordSetupMutationResult = Apollo.MutationResult<PasswordSetupMutation>;
 export type PasswordSetupMutationOptions = Apollo.BaseMutationOptions<PasswordSetupMutation, PasswordSetupMutationVariables>;
+export const PostFeedDocument = gql`
+    query postFeed {
+  postFeed {
+    id
+    slug
+    draft
+    authorId
+    author {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      createdAt
+      updatedAt
+    }
+    title
+    description
+    slogan
+    postCover
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __usePostFeedQuery__
+ *
+ * To run a query within a React component, call `usePostFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePostFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePostFeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePostFeedQuery(baseOptions?: Apollo.QueryHookOptions<PostFeedQuery, PostFeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PostFeedQuery, PostFeedQueryVariables>(PostFeedDocument, options);
+      }
+export function usePostFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PostFeedQuery, PostFeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PostFeedQuery, PostFeedQueryVariables>(PostFeedDocument, options);
+        }
+export type PostFeedQueryHookResult = ReturnType<typeof usePostFeedQuery>;
+export type PostFeedLazyQueryHookResult = ReturnType<typeof usePostFeedLazyQuery>;
+export type PostFeedQueryResult = Apollo.QueryResult<PostFeedQuery, PostFeedQueryVariables>;
 export const PublishPostDocument = gql`
     mutation publishPost($postId: Int!) {
   publishPost(postId: $postId) {
