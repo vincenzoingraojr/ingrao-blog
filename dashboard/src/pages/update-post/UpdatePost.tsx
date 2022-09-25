@@ -134,12 +134,18 @@ function UpdatePost() {
                     }
                 ).then((res) => res.json());
 
+                setStatus("Uploading the post cover...");
+
                 await fetch(url, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
                     body: selectedPostCover,
+                }).then(() => {
+                    setStatus("The post cover was uploaded successfully.");
+                }).catch((error) => {
+                    setStatus(`An error occurred while uploading the post cover. Error code: ${error.code}.`);
                 });
             } else if (
                 data?.findPost?.postCover !== "" &&

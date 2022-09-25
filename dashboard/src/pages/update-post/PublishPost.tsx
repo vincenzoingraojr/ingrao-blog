@@ -25,6 +25,11 @@ const PublishPostButton = styled(Button)`
     color: #ffffff;
 `;
 
+const ViewPostButton = styled(LinkButton)`
+    background-color: blue;
+    color: #ffffff;
+`;
+
 const EditPostButton = styled(LinkButton)`
     color: #ffffff;
     background-color: blue;
@@ -94,7 +99,6 @@ function PublishPost() {
                             ) {
                                 setStatus(response.data?.publishPost?.status);
                                 setErrors(null);
-                                navigate(`/post/${data?.findPost?.slug}`);
                             } else {
                                 setStatus(null);
                                 setErrors(response.data?.publishPost?.errors!);
@@ -139,6 +143,16 @@ function PublishPost() {
                                                 >
                                                     Update post
                                                 </EditPostButton>
+                                            </PageBlock>
+                                        )}
+                                        {status && (
+                                            <PageBlock>
+                                                <ViewPostButton
+                                                    to={`/post/${data?.findPost?.slug}`}
+                                                    title="View post"
+                                                >
+                                                    View post
+                                                </ViewPostButton>
                                             </PageBlock>
                                         )}
                                     </FlexRow24>

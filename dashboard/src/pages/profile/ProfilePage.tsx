@@ -297,6 +297,8 @@ function ProfilePage() {
                                                                             res.json()
                                                                     );
 
+                                                                    setStatus("Uploading the profile picture...");
+
                                                                     await fetch(
                                                                         url,
                                                                         {
@@ -308,7 +310,11 @@ function ProfilePage() {
                                                                                 },
                                                                             body: selectedProfilePicture,
                                                                         }
-                                                                    );
+                                                                    ).then(() => {
+                                                                        setStatus("Your profile picture was uploaded successfully.");
+                                                                    }).catch((error) => {
+                                                                        setStatus(`An error occurred while uploading your profile picture. Error code: ${error.code}.`);
+                                                                    });
                                                                 } else if (
                                                                     data?.me
                                                                         ?.profilePicture !==
