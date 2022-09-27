@@ -29,6 +29,7 @@ import { useRef, useState } from "react";
 import profilePicture from "../../images/profile-picture.svg";
 import Upload from "../../components/icons/Upload";
 import Close from "../../components/icons/Close";
+import { Link } from "react-router-dom";
 
 const ProfilePageContent = styled.div`
     display: block;
@@ -684,6 +685,9 @@ function ProfilePage() {
                                                                                 changes
                                                                             </EditProfileButton>
                                                                         </PageBlock>
+                                                                        <PageText>
+                                                                            Do you want to change the email address or password of your account? Go to the <Link to="/settings/account" title="Account settings" aria-label="Account settings">settings page</Link>.
+                                                                        </PageText>
                                                                     </EditProfileFormContent>
                                                                 </Form>
                                                             )}
