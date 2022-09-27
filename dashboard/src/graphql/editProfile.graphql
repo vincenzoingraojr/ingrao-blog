@@ -4,6 +4,7 @@ mutation editProfile(
     $profilePicture: String!
     $title: String!
     $gender: String!
+    $origin: String!
 ) {
     editProfile(
         firstName: $firstName
@@ -11,6 +12,7 @@ mutation editProfile(
         profilePicture: $profilePicture
         title: $title
         gender: $gender
+        origin: $origin
     ) {
         user {
             id

@@ -326,7 +326,7 @@ export class UserResolver {
                     verified: true,
                 }
             );
-            status = "Your email address is now verified, so you can log in.";
+            status = "Your email address is now verified.";
         } catch (error) {
             console.error(error);
             status =
@@ -718,6 +718,7 @@ export class UserResolver {
         @Arg("profilePicture") profilePicture: string,
         @Arg("title") title: string,
         @Arg("gender") gender: string,
+        @Arg("origin") origin: string,
         @Ctx() { payload }: MyContext
     ): Promise<UserResponse> {
         let errors = [];
@@ -766,10 +767,16 @@ export class UserResolver {
                     },
                 );
 
-                user = await User.findOne({
-                    where: { id: payload.id },
-                    relations: ["posts"],
-                });
+                if (origin === "dash") {
+                    user = await User.findOne({
+                        where: { id: payload.id },
+                        relations: ["posts"],
+                    });
+                } else {
+                    user = await User.findOne({
+                        where: { id: payload.id },
+                    });
+                }
                 status = "Your profile has been updated.";
             } catch (error) {
                 console.log(error);
@@ -782,6 +789,306 @@ export class UserResolver {
             errors,
             user,
             status,
+        };
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async editEmailAddress(
+        @Arg("email") email: string,
+        @Arg("confirmEmail") confirmEmail: string,
+        @Arg("origin") origin: string,
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let transporter = nodemailer.createTransport({
+            host: "authsmtp.securemail.pro",
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.SUPPORT_EMAIL_USER,
+                pass: process.env.SUPPORT_EMAIL_PASSWORD,
+            },
+            tls: {
+                rejectUnauthorized: false,
+            },
+        });
+        let errors = [];
+
+        if (!email.includes("@") || email === "" || email === null) {
+            errors.push({
+                field: "email",
+                message: "Invalid email",
+            });
+        }
+        if (!confirmEmail.includes("@") || confirmEmail === "" || confirmEmail === null) {
+            errors.push({
+                field: "confirmEmail",
+                message: "Invalid confirmation email",
+            });
+        }
+
+        if (email != confirmEmail) {
+            errors.push(
+                {
+                    field: "email",
+                    message: "The two email addresses do not match",
+                },
+                {
+                    field: "confirmEmail",
+                    message: "The two email addresses do not match",
+                }
+            );
+        }
+
+        let status = "";
+        let user;
+        if (origin === "dash") {
+            user = await User.findOne({
+                where: { id: payload?.id },
+                relations: ["posts"],
+            });
+        } else {
+            user = await User.findOne({
+                where: { id: payload?.id },
+            });
+        }
+
+        if (!payload) {
+            status = "You are not authenticated.";
+        } else if (user && user.email === email) {
+            errors.push({
+                field: "email",
+                message: "The email address you entered is the one you are already using",
+            });
+        } else if (errors.length === 0) {
+            const token = createAccessToken(user!);
+            const link = `${
+                origin === "dash"
+                    ? process.env.DASHBOARD_ORIGIN
+                    : process.env.CLIENT_ORIGIN
+            }/settings/account/verify-email/${token}`;
+
+            try {
+                await User.update(
+                    {
+                        id: payload.id,
+                    },
+                    {
+                        email: email,
+                        verified: false,
+                    },
+                );
+
+                ejs.renderFile(
+                    path.join(
+                        __dirname,
+                        "../helpers/templates/VerifyNewEmail.ejs"
+                    ),
+                    { link: link },
+                    function (error, data) {
+                        if (error) {
+                            console.log(error);
+                            status = "Could not send the email, check your internet connection.";
+                        } else {
+                            transporter.sendMail({
+                                from: "Support Team | ingrao.blog <support@ingrao.blog>",
+                                to: email,
+                                subject: "Verify your new email address",
+                                html: data,
+                            });
+                            status =
+                                "Check your inbox, we just sent you an email with the instructions to verify your new email address.";
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error(error);
+                if (error.code === "23505") {
+                    status = "A user using this email address already exists.";
+                } else {
+                    status = "An error has occurred. Please try again later to edit your email address.";
+                }
+            }
+        }
+
+        return {
+            status,
+            errors,
+        };
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async authSendVerificationEmail(
+        @Arg("origin") origin: string,
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let transporter = nodemailer.createTransport({
+            host: "authsmtp.securemail.pro",
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.SUPPORT_EMAIL_USER,
+                pass: process.env.SUPPORT_EMAIL_PASSWORD,
+            },
+            tls: {
+                rejectUnauthorized: false,
+            },
+        });
+
+        let status = "";
+        
+        let user: User | undefined;
+        if (origin === "dash") {
+            user = await User.findOne({
+                where: { id: payload?.id },
+                relations: ["posts"],
+            });
+        } else {
+            user = await User.findOne({
+                where: { id: payload?.id },
+                relations: ["posts"],
+            });
+        }
+
+        if (!payload) {
+            status = "You are not authenticated.";
+        } else if (user) {
+            const token = createAccessToken(user);
+            const link = `${
+                origin === "dash"
+                    ? process.env.DASHBOARD_ORIGIN
+                    : process.env.CLIENT_ORIGIN
+            }/settings/account/verify-email/${token}`;
+
+            try {
+                ejs.renderFile(
+                    path.join(
+                        __dirname,
+                        "../helpers/templates/VerifyEmail.ejs"
+                    ),
+                    { link: link },
+                    function (error, data) {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            transporter.sendMail({
+                                from: "Support Team | ingrao.blog <support@ingrao.blog>",
+                                to: user?.email,
+                                subject: "Verify your email address",
+                                html: data,
+                            });
+                            status =
+                                "Check your inbox, we just sent you an email with the instructions to verify your email address.";
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error(error);
+                status = "Could not send the email, check your internet connection.";
+            }
+        }
+
+        return {
+            status
+        };
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async changePassword(
+        @Arg("existingPassword") existingPassword: string,
+        @Arg("password") password: string,
+        @Arg("confirmPassword") confirmPassword: string,
+        @Arg("origin") origin: string,
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let errors = [];
+
+        if (existingPassword.length <= 2) {
+            errors.push({
+                field: "existingPassword",
+                message: "The existing password lenght must be greater than 2",
+            });
+        }
+
+        if (password.length <= 2) {
+            errors.push({
+                field: "password",
+                message: "The password lenght must be greater than 2",
+            });
+        }
+
+        if (confirmPassword.length <= 2) {
+            errors.push({
+                field: "confirmPassword",
+                message:
+                    "The confirmation password lenght must be greater than 2",
+            });
+        }
+
+        if (password != confirmPassword) {
+            errors.push(
+                {
+                    field: "password",
+                    message: "The two passwords do not match",
+                },
+                {
+                    field: "confirmPassword",
+                    message: "The two passwords do not match",
+                }
+            );
+        }
+
+        let status = "";
+        let user;
+        if (origin === "dash") {
+            user = await User.findOne({
+                where: { id: payload?.id },
+                relations: ["posts"],
+            });
+        } else {
+            user = await User.findOne({
+                where: { id: payload?.id },
+                relations: ["posts"],
+            });
+        }
+
+        let valid = false;
+
+        if (user) {
+            valid = await argon2.verify(user.password, password);
+        }
+
+        if (!payload) {
+            status = "You are not authenticated.";
+        } else if (!valid) {
+            errors.push({
+                field: "existingPassword",
+                message: "Incorrect password",
+            });
+        } else if (errors.length === 0) {
+            try {
+                
+                await User.update(
+                    {
+                        id: payload.id,
+                    },
+                    {
+                        password: await argon2.hash(password),
+                    }
+                );
+
+                status = "The password has been changed.";
+            } catch (error) {
+                status =
+                    "An error has occurred. Please try again later to change your account password.";
+            }
+        }
+
+        return {
+            status,
+            errors,
         };
     }
 }

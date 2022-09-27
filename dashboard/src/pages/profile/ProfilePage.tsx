@@ -195,6 +195,7 @@ function ProfilePage() {
                                                                     data?.me
                                                                         ?.gender ||
                                                                     "Gender",
+                                                                origin: "dash",
                                                             }}
                                                             onSubmit={async (
                                                                 values,
@@ -380,6 +381,7 @@ function ProfilePage() {
                                                                                                       ?.id
                                                                                               }/${profilePictureName}`
                                                                                             : "",
+                                                                                    origin: "dash",
                                                                                 },
                                                                             update: (
                                                                                 store,

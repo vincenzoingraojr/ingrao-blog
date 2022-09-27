@@ -21,6 +21,11 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import PostsPage from "./pages/profile/PostsPage";
 import ViewPost from "./pages/ViewPost";
 import EditPost from "./pages/EditPost";
+import AccountSettings from "./pages/settings/account-settings/AccountSettings";
+import EditEmailAddress from "./pages/settings/account-settings/EditEmailAddress";
+import VerifyEmail from "./pages/VerifyEmail";
+import VerifyEmailAddress from "./pages/settings/account-settings/VerifyEmailAddress";
+import ChangePassword from "./pages/settings/account-settings/ChangePassword";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -78,6 +83,15 @@ function App() {
                         <IsNotAuthenticated
                             isAuth={isAuth}
                             children={<RecoverPassword />}
+                        />
+                    }
+                />
+                <Route
+                    path="/verify/:token"
+                    element={
+                        <IsNotAuthenticated
+                            isAuth={isAuth}
+                            children={<VerifyEmail />}
                         />
                     }
                 />
@@ -208,6 +222,57 @@ function App() {
                         />
                     }
                 />
+                <Route
+                    path="/settings/account"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<AccountSettings />}
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/email-address"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Edit email address"
+                                    modalContent={<EditEmailAddress />}
+                                />
+                            }
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/account/verify-email/:token"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Edit your email address"
+                                    modalContent={<VerifyEmailAddress />}
+                                />
+                            }
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/password"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Change your password"
+                                    modalContent={<ChangePassword />}
+                                />
+                            }
+                        />
+                    }
+                />
             </Routes>
             {state?.backgroundLocation && (
                 <Routes>
@@ -234,6 +299,48 @@ function App() {
                                     <Modal
                                         headerText="Publish this post"
                                         modalContent={<PublishPost />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                    <Route
+                        path="/settings/email-address"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Edit email address"
+                                        modalContent={<EditEmailAddress />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                    <Route
+                        path="/settings/account/verify-email/:token"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Edit your email address"
+                                        modalContent={<VerifyEmailAddress />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                    <Route
+                        path="/settings/password"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Change your password"
+                                        modalContent={<ChangePassword />}
                                     />
                                 }
                             />

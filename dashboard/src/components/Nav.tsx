@@ -540,7 +540,7 @@ function Nav() {
                                             className={(navData: any) =>
                                                 navData.isActive ? "active" : ""
                                             }
-                                            to="/settings/profile"
+                                            to="/settings/account"
                                             title="Go to the account settings page"
                                             aria-label="Go to the account settings page"
                                         >
