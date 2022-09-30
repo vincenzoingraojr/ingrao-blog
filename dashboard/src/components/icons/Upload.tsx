@@ -1,9 +1,8 @@
 import styled from "styled-components";
 import { FunctionComponent } from "react";
 import { SvgIcon } from "../../styles/global";
-import { IconProps } from "./common";
 
-interface UploadProps extends IconProps {
+interface UploadProps {
     color?: string;
 }
 

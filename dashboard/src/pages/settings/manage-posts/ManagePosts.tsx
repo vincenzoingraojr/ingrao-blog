@@ -4,13 +4,14 @@ import PageLayout from "../../../components/layouts/PageLayout";
 import PageContentLayout from "../../../components/layouts/sublayouts/PageContentLayout";
 import { SidebarLayoutTitle } from "../../../components/layouts/sublayouts/SidebarLayout";
 import LoadingComponent from "../../../components/utils/LoadingComponent";
-import { useMeQuery } from "../../../generated/graphql";
+import SearchBoxComponent from "../../../components/utils/SearchBox";
+import { useDashPostFeedQuery, useMeQuery } from "../../../generated/graphql";
 import { LoadingContainer, PageTextMB24 } from "../../../styles/global";
 import SettingsComponent from "../SettingsComponent";
 
 function ManagePosts() {
     const { data, loading, error } = useMeQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: { origin: "dash" },
     });
 
@@ -23,6 +24,8 @@ function ManagePosts() {
             setIsAdmin(false);
         }
     }, [data]);
+
+    const { data: dashPostData } = useDashPostFeedQuery({ fetchPolicy: "cache-and-network" });
 
     return (
         <>
@@ -50,7 +53,7 @@ function ManagePosts() {
                                                 <PageTextMB24>
                                                     In this page you can manage all the posts.
                                                 </PageTextMB24>                               
-                                                       
+                                                <SearchBoxComponent data={dashPostData?.dashPostFeed} type="post" />  
                                             </>
                                         )}
                                     </>

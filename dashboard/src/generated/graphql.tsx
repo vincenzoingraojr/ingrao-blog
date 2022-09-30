@@ -202,8 +202,8 @@ export type PostResponse = {
 export type Query = {
   __typename?: 'Query';
   blogFeed: Array<Post>;
+  dashPostFeed: Array<Post>;
   dashUsers: Array<User>;
-  draftAllPostFeed: Array<Post>;
   draftPostFeed: Array<Post>;
   findPost?: Maybe<Post>;
   findPostBySlug?: Maybe<Post>;
@@ -274,6 +274,11 @@ export type CreatePostMutationVariables = Exact<{
 
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', status?: string | null | undefined, post?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
+export type DashPostFeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DashPostFeedQuery = { __typename?: 'Query', dashPostFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } }> };
 
 export type DashUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -569,6 +574,64 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const DashPostFeedDocument = gql`
+    query dashPostFeed {
+  dashPostFeed {
+    id
+    slug
+    draft
+    authorId
+    author {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      createdAt
+      updatedAt
+    }
+    title
+    description
+    slogan
+    postCover
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useDashPostFeedQuery__
+ *
+ * To run a query within a React component, call `useDashPostFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDashPostFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDashPostFeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDashPostFeedQuery(baseOptions?: Apollo.QueryHookOptions<DashPostFeedQuery, DashPostFeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DashPostFeedQuery, DashPostFeedQueryVariables>(DashPostFeedDocument, options);
+      }
+export function useDashPostFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DashPostFeedQuery, DashPostFeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DashPostFeedQuery, DashPostFeedQueryVariables>(DashPostFeedDocument, options);
+        }
+export type DashPostFeedQueryHookResult = ReturnType<typeof useDashPostFeedQuery>;
+export type DashPostFeedLazyQueryHookResult = ReturnType<typeof useDashPostFeedLazyQuery>;
+export type DashPostFeedQueryResult = Apollo.QueryResult<DashPostFeedQuery, DashPostFeedQueryVariables>;
 export const DashUsersDocument = gql`
     query dashUsers {
   dashUsers {

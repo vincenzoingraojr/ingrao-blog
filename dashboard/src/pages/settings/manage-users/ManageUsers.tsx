@@ -4,13 +4,14 @@ import PageLayout from "../../../components/layouts/PageLayout";
 import PageContentLayout from "../../../components/layouts/sublayouts/PageContentLayout";
 import { SidebarLayoutTitle } from "../../../components/layouts/sublayouts/SidebarLayout";
 import LoadingComponent from "../../../components/utils/LoadingComponent";
-import { useMeQuery } from "../../../generated/graphql";
+import SearchBoxComponent from "../../../components/utils/SearchBox";
+import { useDashUsersQuery, useMeQuery } from "../../../generated/graphql";
 import { LoadingContainer, PageTextMB24 } from "../../../styles/global";
 import SettingsComponent from "../SettingsComponent";
 
 function ManageUsers() {
     const { data, loading, error } = useMeQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: { origin: "dash" },
     });
 
@@ -23,6 +24,8 @@ function ManageUsers() {
             setIsAdmin(false);
         }
     }, [data]);
+
+    const { data: dashUsersData } = useDashUsersQuery({ fetchPolicy: "cache-and-network" });
 
     return (
         <>
@@ -49,7 +52,8 @@ function ManageUsers() {
                                                 </SidebarLayoutTitle>
                                                 <PageTextMB24>
                                                     In this page you can manage the dashboard users.
-                                                </PageTextMB24> 
+                                                </PageTextMB24>
+                                                <SearchBoxComponent data={dashUsersData?.dashUsers} type="user" />
                                             </>
                                         )}
                                     </>

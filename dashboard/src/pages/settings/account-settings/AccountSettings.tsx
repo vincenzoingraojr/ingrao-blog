@@ -29,7 +29,7 @@ const VerifyEmailAddressButton = styled(Button)`
 
 function AccountSettings() {
     const { data, loading, error } = useMeQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: { origin: "dash" },
     });
 

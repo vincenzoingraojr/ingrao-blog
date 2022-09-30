@@ -58,13 +58,10 @@ export class PostResolver {
     }
 
     @Query(() => [Post])
-    draftAllPostFeed() {
+    dashPostFeed() {
         return Post.find({
             order: {
                 updatedAt: "DESC",
-            },
-            where: {
-                draft: true,
             },
             relations: ["author"],
         });
