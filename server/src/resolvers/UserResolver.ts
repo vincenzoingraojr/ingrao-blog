@@ -75,6 +75,13 @@ export class UserResolver {
         }
     }
 
+    @Query(() => [User])
+    dashUsers() {
+        return User.find({ 
+            where:  { role: "admin" || "writer" },
+        });
+    }
+
     @Mutation(() => UserResponse, { nullable: true })
     async login(
         @Arg("email") email: string,

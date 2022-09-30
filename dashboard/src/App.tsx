@@ -26,6 +26,8 @@ import EditEmailAddress from "./pages/settings/account-settings/EditEmailAddress
 import VerifyEmail from "./pages/VerifyEmail";
 import VerifyEmailAddress from "./pages/settings/account-settings/VerifyEmailAddress";
 import ChangePassword from "./pages/settings/account-settings/ChangePassword";
+import ManageUsers from "./pages/settings/manage-users/ManageUsers";
+import ManagePosts from "./pages/settings/manage-posts/ManagePosts";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -232,7 +234,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/settings/email-address"
+                    path="/settings/account/email-address"
                     element={
                         <IsAuthenticated
                             isAuth={isAuth}
@@ -260,7 +262,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/settings/password"
+                    path="/settings/account/password"
                     element={
                         <IsAuthenticated
                             isAuth={isAuth}
@@ -270,6 +272,24 @@ function App() {
                                     modalContent={<ChangePassword />}
                                 />
                             }
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/manage-users"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<ManageUsers />}
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/manage-posts"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<ManagePosts />}
                         />
                     }
                 />
@@ -305,7 +325,7 @@ function App() {
                         }
                     />
                     <Route
-                        path="/settings/email-address"
+                        path="/settings/account/email-address"
                         element={
                             <IsAuthenticated
                                 isAuth={isAuth}
@@ -333,7 +353,7 @@ function App() {
                         }
                     />
                     <Route
-                        path="/settings/password"
+                        path="/settings/account/password"
                         element={
                             <IsAuthenticated
                                 isAuth={isAuth}

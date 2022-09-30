@@ -202,6 +202,7 @@ export type PostResponse = {
 export type Query = {
   __typename?: 'Query';
   blogFeed: Array<Post>;
+  dashUsers: Array<User>;
   draftAllPostFeed: Array<Post>;
   draftPostFeed: Array<Post>;
   findPost?: Maybe<Post>;
@@ -273,6 +274,11 @@ export type CreatePostMutationVariables = Exact<{
 
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', status?: string | null | undefined, post?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
+export type DashUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DashUsersQuery = { __typename?: 'Query', dashUsers: Array<{ __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined }> };
 
 export type DeletePostMutationVariables = Exact<{
   postId: Scalars['Int'];
@@ -563,6 +569,64 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const DashUsersDocument = gql`
+    query dashUsers {
+  dashUsers {
+    id
+    firstName
+    lastName
+    email
+    birthDate
+    gender
+    title
+    verified
+    role
+    profilePicture
+    createdAt
+    updatedAt
+    posts {
+      id
+      slug
+      draft
+      authorId
+      title
+      description
+      slogan
+      postCover
+      content
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useDashUsersQuery__
+ *
+ * To run a query within a React component, call `useDashUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDashUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDashUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDashUsersQuery(baseOptions?: Apollo.QueryHookOptions<DashUsersQuery, DashUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DashUsersQuery, DashUsersQueryVariables>(DashUsersDocument, options);
+      }
+export function useDashUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DashUsersQuery, DashUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DashUsersQuery, DashUsersQueryVariables>(DashUsersDocument, options);
+        }
+export type DashUsersQueryHookResult = ReturnType<typeof useDashUsersQuery>;
+export type DashUsersLazyQueryHookResult = ReturnType<typeof useDashUsersLazyQuery>;
+export type DashUsersQueryResult = Apollo.QueryResult<DashUsersQuery, DashUsersQueryVariables>;
 export const DeletePostDocument = gql`
     mutation deletePost($postId: Int!) {
   deletePost(postId: $postId)

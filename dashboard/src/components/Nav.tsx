@@ -552,24 +552,43 @@ function Nav() {
                                             </MenuDirectionEntryText>
                                         </NavLink>
                                     </MenuDirectionEntry>
-                                    {data?.me?.role !== "writer" && (
-                                        <MenuDirectionEntry>
-                                            <NavLink
-                                                className={(navData: any) =>
-                                                    navData.isActive ? "active" : ""
-                                                }
-                                                to="/settings/platform"
-                                                title="Go to the platform settings page"
-                                                aria-label="Go to the platform settings page"
-                                            >
-                                                <MenuDirectionEntryIcon>
-                                                    <Arrow color="blue" />
-                                                </MenuDirectionEntryIcon>
-                                                <MenuDirectionEntryText>
-                                                    Platform settings
-                                                </MenuDirectionEntryText>
-                                            </NavLink>
-                                        </MenuDirectionEntry>
+                                    {data?.me?.role === "admin" && (
+                                        <>
+                                            <MenuDirectionEntry>
+                                                <NavLink
+                                                    className={(navData: any) =>
+                                                        navData.isActive ? "active" : ""
+                                                    }
+                                                    to="/settings/manage-users"
+                                                    title="Manage users"
+                                                    aria-label="Manage users"
+                                                >
+                                                    <MenuDirectionEntryIcon>
+                                                        <Arrow color="blue" />
+                                                    </MenuDirectionEntryIcon>
+                                                    <MenuDirectionEntryText>
+                                                        Manage users
+                                                    </MenuDirectionEntryText>
+                                                </NavLink>
+                                            </MenuDirectionEntry>
+                                            <MenuDirectionEntry>
+                                                <NavLink
+                                                    className={(navData: any) =>
+                                                        navData.isActive ? "active" : ""
+                                                    }
+                                                    to="/settings/manage-posts"
+                                                    title="Manage posts"
+                                                    aria-label="Manage posts"
+                                                >
+                                                    <MenuDirectionEntryIcon>
+                                                        <Arrow color="blue" />
+                                                    </MenuDirectionEntryIcon>
+                                                    <MenuDirectionEntryText>
+                                                        Manage posts
+                                                    </MenuDirectionEntryText>
+                                                </NavLink>
+                                            </MenuDirectionEntry>
+                                        </>
                                     )}
                                     <MenuDirectionEntry>
                                         <NavLink

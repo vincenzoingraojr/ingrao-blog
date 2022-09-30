@@ -8,7 +8,7 @@ import { Button, LinkButton, LoadingContainer, OptionContainer, OptionTitle, Pag
 import styled from "styled-components";
 import SettingsComponent from "../SettingsComponent";
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { Form, Formik } from "formik";
 
 const AccountSettingsPageContent = styled.div`
@@ -72,7 +72,7 @@ function AccountSettings() {
                                                 </SidebarLayoutTitle>
                                                 <AccountSettingsPageContent>
                                                     <PageText>
-                                                        In this page you can modify the email address and password associated to your account. 
+                                                        In this page you can modify the email address and password associated to your account. You can update your profile information <Link to="/profile" title="Your profile page" aria-label="Your profile page">in this page</Link>.
                                                     </PageText>
                                                     <OptionContainer>
                                                         <OptionTitle>
@@ -83,7 +83,7 @@ function AccountSettings() {
                                                         </PageText>
                                                         <PageBlock>
                                                             <EditAccountButton
-                                                                to="/settings/email-address"
+                                                                to="/settings/account/email-address"
                                                                 state={{
                                                                     backgroundLocation: location,
                                                                 }}
@@ -102,7 +102,7 @@ function AccountSettings() {
                                                         </PageText>
                                                         <PageBlock>
                                                             <EditAccountButton
-                                                                to="/settings/password"
+                                                                to="/settings/account/password"
                                                                 state={{
                                                                     backgroundLocation: location,
                                                                 }}

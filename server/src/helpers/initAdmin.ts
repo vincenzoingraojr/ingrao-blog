@@ -14,11 +14,15 @@ export async function initAdmin() {
         region: "eu-south-1",
     });
 
+    let users = await User.find({
+        where: { role: "admin" || "writer" },
+    });
+
     let adminUser = await User.findOne({
         where: { email: "vincent@ingrao.blog" },
     });
 
-    if (!adminUser) {
+    if (!adminUser && users.length === 0) {
         const result = await getConnection()
             .createQueryBuilder()
             .insert()

@@ -25,10 +25,6 @@ const SettingsComponent: FunctionComponent<SettingsComponentProps> = ({ isAdmin,
             text: "Account settings",
         },
         {
-            url: "settings/platform",
-            text: "Platform settings",
-        },
-        {
             url: "settings/manage-users",
             text: "Manage users",
         },
