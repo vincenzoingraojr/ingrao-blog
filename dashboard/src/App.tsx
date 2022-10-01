@@ -28,6 +28,8 @@ import VerifyEmailAddress from "./pages/settings/account-settings/VerifyEmailAdd
 import ChangePassword from "./pages/settings/account-settings/ChangePassword";
 import ManageUsers from "./pages/settings/manage-users/ManageUsers";
 import ManagePosts from "./pages/settings/manage-posts/ManagePosts";
+import { useMeQuery } from "./generated/graphql";
+import AddNewUser from "./pages/settings/manage-users/AddNewUser";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -49,10 +51,15 @@ function App() {
             setLoading(false);
         });
     }, []);
+    
+    const { data: meData, loading: meLoading } = useMeQuery({
+        fetchPolicy: "network-only",
+        variables: { origin: "dash" },
+    });
 
     document.body.classList.remove("not-scrolling");
 
-    if (loading) {
+    if (loading || meLoading || !meData) {
         return <Preloader />;
     }
 
@@ -275,24 +282,42 @@ function App() {
                         />
                     }
                 />
-                <Route
-                    path="/settings/manage-users"
-                    element={
-                        <IsAuthenticated
-                            isAuth={isAuth}
-                            children={<ManageUsers />}
+                {meData?.me?.role === "admin" && (
+                    <>
+                        <Route
+                            path="/settings/manage-users"
+                            element={
+                                <IsAuthenticated
+                                    isAuth={isAuth}
+                                    children={<ManageUsers />}
+                                />
+                            }
                         />
-                    }
-                />
-                <Route
-                    path="/settings/manage-posts"
-                    element={
-                        <IsAuthenticated
-                            isAuth={isAuth}
-                            children={<ManagePosts />}
+                        <Route
+                            path="/settings/manage-posts"
+                            element={
+                                <IsAuthenticated
+                                    isAuth={isAuth}
+                                    children={<ManagePosts />}
+                                />
+                            }
                         />
-                    }
-                />
+                        <Route
+                            path="/settings/manage-users/new"
+                            element={
+                                <IsAuthenticated
+                                    isAuth={isAuth}
+                                    children={
+                                        <Modal
+                                            headerText="Add a new user"
+                                            modalContent={<AddNewUser />}
+                                        />
+                                    }
+                                />
+                            }
+                        />
+                    </>
+                )}
             </Routes>
             {state?.backgroundLocation && (
                 <Routes>
@@ -366,6 +391,24 @@ function App() {
                             />
                         }
                     />
+                    {meData?.me?.role === "admin" && (
+                        <>
+                            <Route
+                                path="/settings/manage-users/new"
+                                element={
+                                    <IsAuthenticated
+                                        isAuth={isAuth}
+                                        children={
+                                            <Modal
+                                                headerText="Add a new user"
+                                                modalContent={<AddNewUser />}
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+                        </>
+                    )}
                 </Routes>
             )}
         </>

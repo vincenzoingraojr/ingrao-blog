@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import profilePicture from "../../../images/profile-picture.svg";
 import { PageText } from "../../../styles/global";
@@ -152,6 +152,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
                             >
                                 Delete user
                             </DeleteUserLink>
+                            <Outlet />
                         </PostButtonsContainer>
                     )}
                 </UserInfoContainer>

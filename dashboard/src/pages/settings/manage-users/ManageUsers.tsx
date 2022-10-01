@@ -6,14 +6,32 @@ import { SidebarLayoutTitle } from "../../../components/layouts/sublayouts/Sideb
 import LoadingComponent from "../../../components/utils/LoadingComponent";
 import SearchBoxComponent from "../../../components/utils/SearchBox";
 import { useDashUsersQuery, useMeQuery } from "../../../generated/graphql";
-import { LoadingContainer, PageTextMB24 } from "../../../styles/global";
+import { LinkButton, LinkButtonText, LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText, PageTextMB48 } from "../../../styles/global";
 import SettingsComponent from "../SettingsComponent";
+import styled from "styled-components";
+import { Outlet, useLocation } from "react-router-dom";
+import Add from "../../../components/icons/Add";
+
+const PageExtraContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    margin-bottom: 48px;
+`;
+
+const AddDashUserButton = styled(LinkButton)`
+    color: #ffffff;
+    background-color: blue;
+`;
+
 
 function ManageUsers() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "cache-and-network",
         variables: { origin: "dash" },
     });
+
+    const location = useLocation();
 
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -50,9 +68,33 @@ function ManageUsers() {
                                                 <SidebarLayoutTitle>
                                                     Manage users
                                                 </SidebarLayoutTitle>
-                                                <PageTextMB24>
+                                                <PageTextMB48>
                                                     In this page you can manage the dashboard users.
-                                                </PageTextMB24>
+                                                </PageTextMB48>
+                                                <PageExtraContent>
+                                                    <OptionContainer>
+                                                        <OptionTitle>
+                                                            Add a new user
+                                                        </OptionTitle>
+                                                        <PageText>
+                                                            Here you can add a new user to the dashboard.
+                                                        </PageText>
+                                                        <PageBlock>
+                                                            <AddDashUserButton
+                                                                to="/settings/manage-users/new"
+                                                                state={{
+                                                                    backgroundLocation: location,
+                                                                }}
+                                                            >
+                                                                <Add color={"#ffffff"} />
+                                                                <LinkButtonText>
+                                                                    New user
+                                                                </LinkButtonText>
+                                                            </AddDashUserButton>
+                                                            <Outlet />
+                                                        </PageBlock>
+                                                    </OptionContainer>
+                                                </PageExtraContent>
                                                 <SearchBoxComponent data={dashUsersData?.dashUsers || []} type="user" />
                                             </>
                                         )}

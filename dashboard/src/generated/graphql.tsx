@@ -251,6 +251,19 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type AddDashUserMutationVariables = Exact<{
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  title: Scalars['String'];
+  gender: Scalars['String'];
+  role: Scalars['String'];
+  birthDate: Scalars['DateTime'];
+}>;
+
+
+export type AddDashUserMutation = { __typename?: 'Mutation', addDashUser?: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
+
 export type AuthSendVerificationEmailMutationVariables = Exact<{
   origin: Scalars['String'];
 }>;
@@ -432,6 +445,84 @@ export type VerifyEmailAddressMutationVariables = Exact<{
 export type VerifyEmailAddressMutation = { __typename?: 'Mutation', verifyEmailAddress: { __typename?: 'UserResponse', status?: string | null | undefined } };
 
 
+export const AddDashUserDocument = gql`
+    mutation addDashUser($email: String!, $firstName: String!, $lastName: String!, $title: String!, $gender: String!, $role: String!, $birthDate: DateTime!) {
+  addDashUser(
+    email: $email
+    firstName: $firstName
+    lastName: $lastName
+    title: $title
+    gender: $gender
+    role: $role
+    birthDate: $birthDate
+  ) {
+    user {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      createdAt
+      updatedAt
+      posts {
+        id
+        slug
+        draft
+        authorId
+        title
+        description
+        slogan
+        postCover
+        content
+        createdAt
+        updatedAt
+      }
+    }
+    errors {
+      field
+      message
+    }
+    status
+  }
+}
+    `;
+export type AddDashUserMutationFn = Apollo.MutationFunction<AddDashUserMutation, AddDashUserMutationVariables>;
+
+/**
+ * __useAddDashUserMutation__
+ *
+ * To run a mutation, you first call `useAddDashUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddDashUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addDashUserMutation, { data, loading, error }] = useAddDashUserMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
+ *      title: // value for 'title'
+ *      gender: // value for 'gender'
+ *      role: // value for 'role'
+ *      birthDate: // value for 'birthDate'
+ *   },
+ * });
+ */
+export function useAddDashUserMutation(baseOptions?: Apollo.MutationHookOptions<AddDashUserMutation, AddDashUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddDashUserMutation, AddDashUserMutationVariables>(AddDashUserDocument, options);
+      }
+export type AddDashUserMutationHookResult = ReturnType<typeof useAddDashUserMutation>;
+export type AddDashUserMutationResult = Apollo.MutationResult<AddDashUserMutation>;
+export type AddDashUserMutationOptions = Apollo.BaseMutationOptions<AddDashUserMutation, AddDashUserMutationVariables>;
 export const AuthSendVerificationEmailDocument = gql`
     mutation authSendVerificationEmail($origin: String!) {
   authSendVerificationEmail(origin: $origin) {

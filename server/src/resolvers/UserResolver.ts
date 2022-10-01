@@ -3,6 +3,7 @@ import {
     Arg,
     Ctx,
     Field,
+    Int,
     Mutation,
     ObjectType,
     Query,
@@ -622,6 +623,7 @@ export class UserResolver {
                                     })
                                     .catch((error) => {
                                         console.error(error);
+                                        status = "An error has occurred and the email cannot be sent, but the user has been created. The new user can set up the account password during the log in operation."
                                     });
                             }
                         }
@@ -753,7 +755,7 @@ export class UserResolver {
         if (gender === "Gender" || gender === "") {
             errors.push({
                 field: "gender",
-                message: "The title field cannot take this value",
+                message: "The gender field cannot take this value",
             });
         }
 
@@ -1096,6 +1098,52 @@ export class UserResolver {
         return {
             status,
             errors,
+        };
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async changeRole(
+        @Arg("id", () => Int) id: number,
+        @Arg("role") role: string,
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let errors = [];
+        let status = "";
+
+        if (role === "Role" || role === "") {
+            errors.push({
+                field: "role",
+                message: "The role field cannot take this value",
+            });
+        }
+
+        if (!payload) {
+            status = "You are not authenticated.";
+        } else if (errors.length === 0 && payload.role === "admin") {
+            try {
+                await User.update(
+                    {
+                        id: id,
+                    },
+                    {
+                        role: role
+                    },
+                );
+
+                status = "The user role has been changed.";
+            } catch (error) {
+                console.log(error);
+                status =
+                    "An error has occurred. Please try again later to change the user role.";
+            }
+        } else {
+            status = "You are not authorized to change the role of another user.";
+        }
+
+        return {
+            errors,
+            status,
         };
     }
 }

@@ -108,6 +108,9 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
                             Twitter
                         </a>
                     </FooterItem>
+                    <FooterItem>
+                        v0.1.0
+                    </FooterItem>
                 </FooterContainer>
             </PageLayoutContainer>
         </PageLayoutWrapper>

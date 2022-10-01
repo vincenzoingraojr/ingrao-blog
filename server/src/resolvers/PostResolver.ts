@@ -173,7 +173,6 @@ export class PostResolver {
         } else {
             post = await Post.findOne({
                 id: postId,
-                authorId: payload.id,
             });
 
             if (!post) {
@@ -191,27 +190,44 @@ export class PostResolver {
                     });
                 } else {
                     try {
-                        await Post.update(
-                            {
-                                id: postId,
-                                authorId: payload.id,
-                            },
-                            {
-                                slug: slug,
-                                draft: true,
-                                title: title,
-                                description: description,
-                                slogan: slogan,
-                                postCover: postCover,
-                                content: content,
-                                author: await User.findOne({
-                                    where: {
-                                        id: payload.id,
-                                        role: payload.role,
-                                    },
-                                }),
-                            }
-                        );
+                        if (payload.role === "admin" && payload.id !== post.authorId) {
+                            await Post.update(
+                                {
+                                    id: postId,
+                                },
+                                {
+                                    slug: slug,
+                                    draft: true,
+                                    title: title,
+                                    description: description,
+                                    slogan: slogan,
+                                    postCover: postCover,
+                                    content: content,
+                                }
+                            );
+                        } else {
+                            await Post.update(
+                                {
+                                    id: postId,
+                                    authorId: payload.id,
+                                },
+                                {
+                                    slug: slug,
+                                    draft: true,
+                                    title: title,
+                                    description: description,
+                                    slogan: slogan,
+                                    postCover: postCover,
+                                    content: content,
+                                    author: await User.findOne({
+                                        where: {
+                                            id: payload.id,
+                                            role: payload.role,
+                                        },
+                                    }),
+                                }
+                            );
+                        }
 
                         status = "Your changes have been saved.";
                     } catch (error) {
@@ -248,7 +264,6 @@ export class PostResolver {
         } else {
             post = await Post.findOne({
                 id: postId,
-                authorId: payload.id,
             });
 
             if (!post) {
@@ -293,15 +308,26 @@ export class PostResolver {
                 }
 
                 if (errors.length === 0) {
-                    await Post.update(
-                        {
-                            id: postId,
-                            authorId: payload.id,
-                        },
-                        {
-                            draft: false,
-                        }
-                    );
+                    if (payload.role === "admin" && payload.id !== post.authorId) {
+                        await Post.update(
+                            {
+                                id: postId,
+                            },
+                            {
+                                draft: false,
+                            }
+                        );
+                    } else {
+                        await Post.update(
+                            {
+                                id: postId,
+                                authorId: payload.id,
+                            },
+                            {
+                                draft: false,
+                            }
+                        );
+                    }
 
                     status = "Your post is now online.";
                 }
@@ -335,7 +361,6 @@ export class PostResolver {
         } else {
             post = await Post.findOne({
                 id: postId,
-                authorId: payload.id,
             });
 
             if (!post) {
@@ -386,24 +411,41 @@ export class PostResolver {
                 }
 
                 if (errors.length === 0) {
-                    await Post.update(
-                        {
-                            id: postId,
-                            authorId: payload.id,
-                        },
-                        {
-                            slug: slug,
-                            title: title,
-                            description: description,
-                            slogan: slogan,
-                            postCover: postCover,
-                            content: content,
-                            draft: false,
-                            author: await User.findOne({
-                                where: { id: payload.id, role: payload.role },
-                            }),
-                        }
-                    );
+                    if (payload.role === "admin" && payload.id !== post.authorId) {
+                        await Post.update(
+                            {
+                                id: postId,
+                            },
+                            {
+                                slug: slug,
+                                title: title,
+                                description: description,
+                                slogan: slogan,
+                                postCover: postCover,
+                                content: content,
+                                draft: false,
+                            }
+                        );
+                    } else {
+                        await Post.update(
+                            {
+                                id: postId,
+                                authorId: payload.id,
+                            },
+                            {
+                                slug: slug,
+                                title: title,
+                                description: description,
+                                slogan: slogan,
+                                postCover: postCover,
+                                content: content,
+                                draft: false,
+                                author: await User.findOne({
+                                    where: { id: payload.id, role: payload.role },
+                                }),
+                            }
+                        );
+                    }
 
                     status = "Your changes are now online.";
                 }
@@ -426,15 +468,32 @@ export class PostResolver {
             return false;
         }
 
-        await Post.update(
-            {
-                id: postId,
-                authorId: payload.id,
-            },
-            {
-                draft: true,
-            }
-        );
+        const post = await Post.findOne({
+            id: postId,
+        });
+
+        if (!post) {
+            return false;
+        } else if (payload.role === "admin" && payload.id !== post.authorId) {
+            await Post.update(
+                {
+                    id: postId,
+                },
+                {
+                    draft: true,
+                }
+            );
+        } else {
+            await Post.update(
+                {
+                    id: postId,
+                    authorId: payload.id,
+                },
+                {
+                    draft: true,
+                }
+            );
+        }
 
         return true;
     }
@@ -449,12 +508,27 @@ export class PostResolver {
             return false;
         }
 
-        await Post.delete({ id: postId, authorId: payload.id }).catch(
-            (error) => {
-                console.error(error);
-                return false;
-            }
-        );
+        const post = await Post.findOne({
+            id: postId,
+        });
+
+        if (!post) {
+            return false;
+        } else if (payload.role === "admin" && payload.id !== post.authorId) {
+            await Post.delete({ id: postId }).catch(
+                (error) => {
+                    console.error(error);
+                    return false;
+                }
+            );
+        } else {
+            await Post.delete({ id: postId, authorId: payload.id }).catch(
+                (error) => {
+                    console.error(error);
+                    return false;
+                }
+            );
+        }
 
         return true;
     }
