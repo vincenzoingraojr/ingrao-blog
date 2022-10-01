@@ -41,7 +41,7 @@ function ManageUsers() {
                                 isAdmin={isAdmin}
                                 content={
                                     <>
-                                        {(loading && !data && dashUsersData === undefined) || error ? (
+                                        {(loading && !data) || error ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
@@ -53,7 +53,7 @@ function ManageUsers() {
                                                 <PageTextMB24>
                                                     In this page you can manage the dashboard users.
                                                 </PageTextMB24>
-                                                <SearchBoxComponent data={dashUsersData?.dashUsers} type="user" />
+                                                <SearchBoxComponent data={dashUsersData?.dashUsers || []} type="user" />
                                             </>
                                         )}
                                     </>
