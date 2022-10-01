@@ -191,7 +191,7 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                                     <>
                                         {dataItems.map((user: any) => {
                                             return (
-                                                <UserComponent key={user.id} user={user} me={meData?.me?.id === user.id} />
+                                                <UserComponent key={user.id} user={user} />
                                             );
                                         })}
                                     </>

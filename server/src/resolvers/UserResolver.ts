@@ -10,7 +10,7 @@ import {
     Resolver,
     UseMiddleware,
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository} from "typeorm";
 import argon2 from "argon2";
 import { MyContext } from "../types";
 import { sendRefreshToken } from "../auth/sendRefreshToken";
@@ -76,11 +76,17 @@ export class UserResolver {
         }
     }
 
+    @Query(() => User, { nullable: true })
+    findUser(@Arg("id", () => Int, { nullable: true }) id: number) {
+        return User.findOne({ where: { id }, relations: ["posts"] });
+    }
+
     @Query(() => [User])
     dashUsers() {
-        return User.find({ 
-            where:  { role: "admin" || "writer" },
-        });
+        return getRepository(User)
+            .createQueryBuilder()
+            .where("role != :role", { role: "user" })
+            .getMany();
     }
 
     @Mutation(() => UserResponse, { nullable: true })
@@ -1137,12 +1143,42 @@ export class UserResolver {
                 status =
                     "An error has occurred. Please try again later to change the user role.";
             }
-        } else {
+        } else if (payload.role !== "admin") {
             status = "You are not authorized to change the role of another user.";
         }
 
         return {
             errors,
+            status,
+        };
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async deleteUserFromDashboard(
+        @Arg("id", () => Int) id: number,
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let status = "";
+
+        const user = await User.findOne({
+            where: { id: id },
+            relations: ["posts"],
+        });
+
+        if (!payload) {
+            status = "You are not authenticated.";
+        } else if (!user) {
+            status = "This user doesn't exist.";
+        } else if (payload.role === "admin") {
+            await User.remove(user).then(() => {
+                status = "This user has been deleted.";
+            }).catch(() => {
+                status = "An error has occurred while deleting this user. Please try again later.";
+            });
+        }
+
+        return {
             status,
         };
     }

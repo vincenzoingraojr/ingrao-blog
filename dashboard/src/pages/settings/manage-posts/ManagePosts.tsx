@@ -25,7 +25,7 @@ function ManagePosts() {
         }
     }, [data]);
 
-    const { data: dashPostData } = useDashPostFeedQuery({ fetchPolicy: "cache-and-network" });
+    const { data: dashPostData } = useDashPostFeedQuery({ fetchPolicy: "network-only" });
 
     return (
         <>

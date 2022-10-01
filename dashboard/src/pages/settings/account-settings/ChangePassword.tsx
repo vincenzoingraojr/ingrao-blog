@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import styled from "styled-components";
+import Head from "../../../components/Head";
 import InputField from "../../../components/input/InputField";
 import ModalLoading from "../../../components/utils/modal/ModalLoading";
 import { useChangePasswordMutation, useMeQuery } from "../../../generated/graphql";
@@ -21,12 +22,16 @@ function ChangePassword() {
 
     return (
         <>
+            <Head 
+                title="Change your password | dashboard.ingrao.blog"
+                description="In this page you can change your account password."
+            />
             {(loading && !data) || error ? (
                 <ModalLoading />
             ) : (
                 <ModalContentContainer>
                     <PageTextMB24>
-                        Change the email address linked to your account.
+                        Change your account password.
                     </PageTextMB24>
                     <Formik
                         initialValues={{

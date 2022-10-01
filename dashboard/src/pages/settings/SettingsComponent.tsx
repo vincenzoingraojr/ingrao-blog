@@ -36,7 +36,7 @@ const SettingsComponent: FunctionComponent<SettingsComponentProps> = ({ isAdmin,
             url: "settings/delete-account",
             text: "Delete your account",
         },
-    ]; 
+    ];
 
     return (
         <SidebarLayout

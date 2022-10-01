@@ -43,7 +43,7 @@ function ManageUsers() {
         }
     }, [data]);
 
-    const { data: dashUsersData } = useDashUsersQuery({ fetchPolicy: "cache-and-network" });
+    const { data: dashUsersData } = useDashUsersQuery({ fetchPolicy: "network-only" });
 
     return (
         <>

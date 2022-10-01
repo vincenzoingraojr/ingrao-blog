@@ -1,0 +1,29 @@
+query findUser($id: Int!) {
+    findUser(id: $id) {
+        id
+        firstName
+        lastName
+        email
+        birthDate
+        gender
+        title
+        verified
+        role
+        profilePicture
+        createdAt
+        updatedAt
+        posts {
+            id
+            slug
+            draft
+            authorId
+            title
+            description
+            slogan
+            postCover
+            content
+            createdAt
+            updatedAt
+        }
+    }
+}

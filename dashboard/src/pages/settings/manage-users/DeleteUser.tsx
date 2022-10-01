@@ -1,20 +1,18 @@
 import { Form, Formik } from "formik";
-import SelectField from "../../../components/input/select/SelectField";
 import ModalLoading from "../../../components/utils/modal/ModalLoading";
-import { useChangeRoleMutation, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
+import { useDeleteUserFromDashboardMutation, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
 import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../../styles/global";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { toErrorMap } from "../../../utils/toErrorMap";
 import Head from "../../../components/Head";
 
-const ChangeRoleButton = styled(Button)`
-    background-color: blue;
+const DeleteUserButton = styled(Button)`
+    background-color: red;
     color: #ffffff;
 `;
 
-function ChangeRole() {
+function DeleteUser() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "network-only",
         variables: { origin: "dash" },
@@ -37,68 +35,46 @@ function ChangeRole() {
         }
     }, [navigate, userData, userLoading, userError]);
 
-    const roleOptions = [
-        { value: "Role", label: "Role" },
-        { value: "admin", label: "Admin" },
-        { value: "writer", label: "Writer" },
-    ];
-
-    const [changeRole] = useChangeRoleMutation();
+    const [deleteUser] = useDeleteUserFromDashboardMutation();
 
     return (
         <>
             <Head 
-                title="Change user role | dashboard.ingrao.blog"
-                description="In this page you can change the user role."
+                title="Delete user | dashboard.ingrao.blog"
+                description="In this page you can delete a user from the dashboard."
             />
             {(loading && !data && !userData) || error ? (
                 <ModalLoading />
             ) : (
                 <ModalContentContainer>
                     <PageTextMB24>
-                        Change the user role.
+                        Delete a user from the dashboard.
                     </PageTextMB24>
                     <Formik
                         initialValues={{
                             id: parseInt(params.id!),
-                            role: "",
                         }}
-                        onSubmit={async (values, { setErrors, setStatus }) => {
-                            const response = await changeRole({
+                        onSubmit={async (values, { setStatus }) => {
+                            const response = await deleteUser({
                                 variables: values,
                             });
 
-                            if (response.data?.changeRole.status) {
-                                setStatus(response.data.changeRole.status);
-                            } else {
-                                setStatus(null);
-                                setErrors(toErrorMap(response.data?.changeRole.errors!));
-                            }
+                            setStatus(response.data?.deleteUserFromDashboard?.status);
                         }}
                     >
-                        {({ errors, status }) => (
+                        {({ status }) => (
                             <Form>
                                 {status ? <Status>{status}</Status> : null}
                                 <FlexContainer24>
-                                    <SelectField
-                                        field="role"
-                                        placeholder="Role"
-                                        errors={
-                                            errors
-                                        }
-                                        options={
-                                            roleOptions
-                                        }
-                                    />
                                     <PageBlock>
-                                        <ChangeRoleButton
+                                        <DeleteUserButton
                                             type="submit"
-                                            title="Change user role"
+                                            title="Delete user"
                                             role="button"
-                                            aria-label="Change user role"
+                                            aria-label="Delete user"
                                         >
-                                            Change role
-                                        </ChangeRoleButton>
+                                            Delete user
+                                        </DeleteUserButton>
                                     </PageBlock>
                                 </FlexContainer24>
                             </Form>
@@ -110,4 +86,4 @@ function ChangeRole() {
     )
 }
 
-export default ChangeRole;
+export default DeleteUser;

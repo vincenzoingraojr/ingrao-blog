@@ -1,0 +1,5 @@
+mutation deleteUserFromDashboard($id: Int!) {
+    deleteUserFromDashboard(id: $id) {
+        status
+    }
+}

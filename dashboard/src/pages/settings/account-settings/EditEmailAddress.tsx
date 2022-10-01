@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import styled from "styled-components";
+import Head from "../../../components/Head";
 import InputField from "../../../components/input/InputField";
 import ModalLoading from "../../../components/utils/modal/ModalLoading";
 import { useEditEmailAddressMutation, useMeQuery } from "../../../generated/graphql";
@@ -21,6 +22,10 @@ function EditEmailAddress() {
 
     return (
         <>
+            <Head 
+                title="Edit email address | dashboard.ingrao.blog"
+                description="In this page you can change the email address linked to your account."
+            />
             {(loading && !data) || error ? (
                 <ModalLoading />
             ) : (

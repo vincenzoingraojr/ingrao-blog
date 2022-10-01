@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import styled from "styled-components";
+import Head from "../../../components/Head";
 import DatePickerField from "../../../components/input/datepicker/DatePickerField";
 import InputField from "../../../components/input/InputField";
 import SelectField from "../../../components/input/select/SelectField";
@@ -35,8 +36,8 @@ function AddNewUser() {
 
     const roleOptions = [
         { value: "Role", label: "Role" },
-        { value: "Admin", label: "Admin" },
-        { value: "Writer", label: "Writer" },
+        { value: "admin", label: "Admin" },
+        { value: "writer", label: "Writer" },
     ];
 
     const [addUser] = useAddDashUserMutation();
@@ -45,9 +46,12 @@ function AddNewUser() {
         fetchPolicy: "network-only",
     });
 
-
     return (
         <>
+            <Head 
+                title="Add a new user | dashboard.ingrao.blog"
+                description="In this page you can add a new user to the dashboard."
+            />
             {(loading && !data) || error ? (
                 <ModalLoading />
             ) : (

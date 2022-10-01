@@ -27,8 +27,10 @@ export type Mutation = {
   addDashUser?: Maybe<UserResponse>;
   authSendVerificationEmail: UserResponse;
   changePassword: UserResponse;
+  changeRole: UserResponse;
   createPost: PostResponse;
   deletePost: Scalars['Boolean'];
+  deleteUserFromDashboard: UserResponse;
   editEmailAddress: UserResponse;
   editProfile: UserResponse;
   editPublishedPost: PostResponse;
@@ -70,6 +72,12 @@ export type MutationChangePasswordArgs = {
 };
 
 
+export type MutationChangeRoleArgs = {
+  id: Scalars['Int'];
+  role: Scalars['String'];
+};
+
+
 export type MutationCreatePostArgs = {
   slug: Scalars['String'];
 };
@@ -77,6 +85,11 @@ export type MutationCreatePostArgs = {
 
 export type MutationDeletePostArgs = {
   postId: Scalars['Int'];
+};
+
+
+export type MutationDeleteUserFromDashboardArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -207,6 +220,7 @@ export type Query = {
   draftPostFeed: Array<Post>;
   findPost?: Maybe<Post>;
   findPostBySlug?: Maybe<Post>;
+  findUser?: Maybe<User>;
   me?: Maybe<User>;
   postFeed: Array<Post>;
 };
@@ -219,6 +233,11 @@ export type QueryFindPostArgs = {
 
 export type QueryFindPostBySlugArgs = {
   slug?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFindUserArgs = {
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -281,6 +300,14 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'UserResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
 
+export type ChangeRoleMutationVariables = Exact<{
+  id: Scalars['Int'];
+  role: Scalars['String'];
+}>;
+
+
+export type ChangeRoleMutation = { __typename?: 'Mutation', changeRole: { __typename?: 'UserResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
 export type CreatePostMutationVariables = Exact<{
   slug: Scalars['String'];
 }>;
@@ -304,6 +331,13 @@ export type DeletePostMutationVariables = Exact<{
 
 
 export type DeletePostMutation = { __typename?: 'Mutation', deletePost: boolean };
+
+export type DeleteUserFromDashboardMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteUserFromDashboardMutation = { __typename?: 'Mutation', deleteUserFromDashboard: { __typename?: 'UserResponse', status?: string | null | undefined } };
 
 export type DraftPostFeedQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -370,6 +404,13 @@ export type FindPostBySlugQueryVariables = Exact<{
 
 
 export type FindPostBySlugQuery = { __typename?: 'Query', findPostBySlug?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined };
+
+export type FindUserQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type FindUserQuery = { __typename?: 'Query', findUser?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -601,6 +642,44 @@ export function useChangePasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
+export const ChangeRoleDocument = gql`
+    mutation changeRole($id: Int!, $role: String!) {
+  changeRole(id: $id, role: $role) {
+    status
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type ChangeRoleMutationFn = Apollo.MutationFunction<ChangeRoleMutation, ChangeRoleMutationVariables>;
+
+/**
+ * __useChangeRoleMutation__
+ *
+ * To run a mutation, you first call `useChangeRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeRoleMutation, { data, loading, error }] = useChangeRoleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      role: // value for 'role'
+ *   },
+ * });
+ */
+export function useChangeRoleMutation(baseOptions?: Apollo.MutationHookOptions<ChangeRoleMutation, ChangeRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeRoleMutation, ChangeRoleMutationVariables>(ChangeRoleDocument, options);
+      }
+export type ChangeRoleMutationHookResult = ReturnType<typeof useChangeRoleMutation>;
+export type ChangeRoleMutationResult = Apollo.MutationResult<ChangeRoleMutation>;
+export type ChangeRoleMutationOptions = Apollo.BaseMutationOptions<ChangeRoleMutation, ChangeRoleMutationVariables>;
 export const CreatePostDocument = gql`
     mutation createPost($slug: String!) {
   createPost(slug: $slug) {
@@ -812,6 +891,39 @@ export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
+export const DeleteUserFromDashboardDocument = gql`
+    mutation deleteUserFromDashboard($id: Int!) {
+  deleteUserFromDashboard(id: $id) {
+    status
+  }
+}
+    `;
+export type DeleteUserFromDashboardMutationFn = Apollo.MutationFunction<DeleteUserFromDashboardMutation, DeleteUserFromDashboardMutationVariables>;
+
+/**
+ * __useDeleteUserFromDashboardMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserFromDashboardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserFromDashboardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserFromDashboardMutation, { data, loading, error }] = useDeleteUserFromDashboardMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteUserFromDashboardMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserFromDashboardMutation, DeleteUserFromDashboardMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteUserFromDashboardMutation, DeleteUserFromDashboardMutationVariables>(DeleteUserFromDashboardDocument, options);
+      }
+export type DeleteUserFromDashboardMutationHookResult = ReturnType<typeof useDeleteUserFromDashboardMutation>;
+export type DeleteUserFromDashboardMutationResult = Apollo.MutationResult<DeleteUserFromDashboardMutation>;
+export type DeleteUserFromDashboardMutationOptions = Apollo.BaseMutationOptions<DeleteUserFromDashboardMutation, DeleteUserFromDashboardMutationVariables>;
 export const DraftPostFeedDocument = gql`
     query draftPostFeed {
   draftPostFeed {
@@ -1205,6 +1317,65 @@ export function useFindPostBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type FindPostBySlugQueryHookResult = ReturnType<typeof useFindPostBySlugQuery>;
 export type FindPostBySlugLazyQueryHookResult = ReturnType<typeof useFindPostBySlugLazyQuery>;
 export type FindPostBySlugQueryResult = Apollo.QueryResult<FindPostBySlugQuery, FindPostBySlugQueryVariables>;
+export const FindUserDocument = gql`
+    query findUser($id: Int!) {
+  findUser(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    birthDate
+    gender
+    title
+    verified
+    role
+    profilePicture
+    createdAt
+    updatedAt
+    posts {
+      id
+      slug
+      draft
+      authorId
+      title
+      description
+      slogan
+      postCover
+      content
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useFindUserQuery__
+ *
+ * To run a query within a React component, call `useFindUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindUserQuery(baseOptions: Apollo.QueryHookOptions<FindUserQuery, FindUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindUserQuery, FindUserQueryVariables>(FindUserDocument, options);
+      }
+export function useFindUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindUserQuery, FindUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindUserQuery, FindUserQueryVariables>(FindUserDocument, options);
+        }
+export type FindUserQueryHookResult = ReturnType<typeof useFindUserQuery>;
+export type FindUserLazyQueryHookResult = ReturnType<typeof useFindUserLazyQuery>;
+export type FindUserQueryResult = Apollo.QueryResult<FindUserQuery, FindUserQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!, $origin: String!) {
   login(email: $email, password: $password, origin: $origin) {

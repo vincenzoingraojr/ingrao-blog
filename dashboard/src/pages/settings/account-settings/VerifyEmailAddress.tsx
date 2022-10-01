@@ -6,6 +6,7 @@ import jwtDecode, { JwtHeader, JwtPayload } from "jwt-decode";
 import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../../styles/global";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import Head from "../../../components/Head";
 
 const VerifyEmailAddressButton = styled(Button)`
     background-color: blue;
@@ -37,6 +38,10 @@ function VerifyEmailAddress() {
 
     return (
         <>
+            <Head 
+                title="Verify your email address | dashboard.ingrao.blog"
+                description="In this page you can verify your email address."
+            />
             {(loading && !data) || error ? (
                 <ModalLoading />
             ) : (

@@ -1,0 +1,15 @@
+mutation changeRole(
+    $id: Int!
+    $role: String!
+) {
+    changeRole(
+        id: $id
+        role: $role
+    ) {
+        status
+        errors {
+            field
+            message
+        }
+    }
+}

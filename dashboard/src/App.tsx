@@ -30,6 +30,8 @@ import ManageUsers from "./pages/settings/manage-users/ManageUsers";
 import ManagePosts from "./pages/settings/manage-posts/ManagePosts";
 import { useMeQuery } from "./generated/graphql";
 import AddNewUser from "./pages/settings/manage-users/AddNewUser";
+import ChangeRole from "./pages/settings/manage-users/ChangeRole";
+import DeleteUser from "./pages/settings/manage-users/DeleteUser";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -282,42 +284,66 @@ function App() {
                         />
                     }
                 />
-                {meData?.me?.role === "admin" && (
-                    <>
-                        <Route
-                            path="/settings/manage-users"
-                            element={
-                                <IsAuthenticated
-                                    isAuth={isAuth}
-                                    children={<ManageUsers />}
+                <Route
+                    path="/settings/manage-users"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<ManageUsers />}
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/manage-posts"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<ManagePosts />}
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/manage-users/new"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Add a new user"
+                                    modalContent={<AddNewUser />}
                                 />
                             }
                         />
-                        <Route
-                            path="/settings/manage-posts"
-                            element={
-                                <IsAuthenticated
-                                    isAuth={isAuth}
-                                    children={<ManagePosts />}
+                    }
+                />
+                <Route
+                    path="/settings/manage-users/change-role/:id"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Change user role"
+                                    modalContent={<ChangeRole />}
                                 />
                             }
                         />
-                        <Route
-                            path="/settings/manage-users/new"
-                            element={
-                                <IsAuthenticated
-                                    isAuth={isAuth}
-                                    children={
-                                        <Modal
-                                            headerText="Add a new user"
-                                            modalContent={<AddNewUser />}
-                                        />
-                                    }
+                    }
+                />
+                <Route
+                    path="/settings/manage-users/delete-user/:id"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Delete user"
+                                    modalContent={<DeleteUser />}
                                 />
                             }
                         />
-                    </>
-                )}
+                    }
+                />
             </Routes>
             {state?.backgroundLocation && (
                 <Routes>
@@ -391,24 +417,48 @@ function App() {
                             />
                         }
                     />
-                    {meData?.me?.role === "admin" && (
-                        <>
-                            <Route
-                                path="/settings/manage-users/new"
-                                element={
-                                    <IsAuthenticated
-                                        isAuth={isAuth}
-                                        children={
-                                            <Modal
-                                                headerText="Add a new user"
-                                                modalContent={<AddNewUser />}
-                                            />
-                                        }
+                    <Route
+                        path="/settings/manage-users/new"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Add a new user"
+                                        modalContent={<AddNewUser />}
                                     />
                                 }
                             />
-                        </>
-                    )}
+                        }
+                    />
+                    <Route
+                        path="/settings/manage-users/change-role/:id"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Change user role"
+                                        modalContent={<ChangeRole />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                    <Route
+                        path="/settings/manage-users/delete-user/:id"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Delete user"
+                                        modalContent={<DeleteUser />}
+                                    />
+                                }
+                            />
+                        }
+                    />
                 </Routes>
             )}
         </>
