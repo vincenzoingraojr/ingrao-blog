@@ -41,7 +41,7 @@ const UserProfilePicture = styled.div`
 const UserInfoContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 `;
 
 const UserMainInfoContainer = styled.div`

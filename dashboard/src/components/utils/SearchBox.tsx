@@ -100,6 +100,9 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                         .includes(query.toLowerCase()) ||
                     dataItem.role
                         .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                    dataItem.email
+                        .toLowerCase()
                         .includes(query.toLowerCase())
                 );
             } else {
@@ -111,6 +114,9 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                         .toLowerCase()
                         .includes(query.toLowerCase()) ||
                     dataItem.slogan
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                    dataItem.slug
                         .toLowerCase()
                         .includes(query.toLowerCase())
                 );                

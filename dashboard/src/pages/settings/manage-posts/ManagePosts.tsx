@@ -41,7 +41,7 @@ function ManagePosts() {
                                 isAdmin={isAdmin}
                                 content={
                                     <>
-                                        {(loading && !data) || error ? (
+                                        {(loading && !data && dashPostData === undefined) || error ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
@@ -52,7 +52,7 @@ function ManagePosts() {
                                                 </SidebarLayoutTitle>
                                                 <PageTextMB24>
                                                     In this page you can manage all the posts.
-                                                </PageTextMB24>                               
+                                                </PageTextMB24>
                                                 <SearchBoxComponent data={dashPostData?.dashPostFeed} type="post" />  
                                             </>
                                         )}

@@ -41,7 +41,7 @@ function ManageUsers() {
                                 isAdmin={isAdmin}
                                 content={
                                     <>
-                                        {(loading && !data) || error ? (
+                                        {(loading && !data && dashUsersData === undefined) || error ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
