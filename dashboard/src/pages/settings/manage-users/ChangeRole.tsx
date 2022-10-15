@@ -35,7 +35,7 @@ function ChangeRole() {
         } else {
             navigate("/");
         }
-    }, [navigate, userData, userLoading, userError]);
+    }, [navigate, userData, userLoading, userError, data]);
 
     const roleOptions = [
         { value: "Role", label: "Role" },

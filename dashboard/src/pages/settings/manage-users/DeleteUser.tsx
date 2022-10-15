@@ -37,7 +37,7 @@ function DeleteUser() {
         } else {
             navigate("/");
         }
-    }, [navigate, userData, userLoading, userError]);
+    }, [navigate, userData, userLoading, userError, data]);
 
     const [deleteUser] = useDeleteUserFromDashboardMutation();
 
