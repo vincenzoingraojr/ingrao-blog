@@ -28,14 +28,14 @@ function DeleteUser() {
     const { data: userData, loading: userLoading, error: userError } = useFindUserQuery({ fetchPolicy: "network-only", variables: { id: parseInt(params.id!) } });
 
     useEffect(() => {
-        if (!userLoading && !userError) {
+        if (!userLoading && !userError && data && data.me && data.me.role === "admin") {
             if (userData && userData.findUser) {
                 console.log("User found.");
             } else {
                 navigate("/");
             }
         } else {
-            console.log("Loading...");
+            navigate("/");
         }
     }, [navigate, userData, userLoading, userError]);
 

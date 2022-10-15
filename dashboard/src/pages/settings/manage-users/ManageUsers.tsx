@@ -9,7 +9,7 @@ import { useDashUsersQuery, useMeQuery } from "../../../generated/graphql";
 import { LinkButton, LinkButtonText, LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText, PageTextMB48 } from "../../../styles/global";
 import SettingsComponent from "../SettingsComponent";
 import styled from "styled-components";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Add from "../../../components/icons/Add";
 
 const PageExtraContent = styled.div`
@@ -31,6 +31,7 @@ function ManageUsers() {
         variables: { origin: "dash" },
     });
 
+    const navigate = useNavigate();
     const location = useLocation();
 
     const [isAdmin, setIsAdmin] = useState(false);
@@ -40,8 +41,9 @@ function ManageUsers() {
             setIsAdmin(true);
         } else {
             setIsAdmin(false);
+            navigate("/");
         }
-    }, [data]);
+    }, [navigate, data]);
 
     const { data: dashUsersData } = useDashUsersQuery({ fetchPolicy: "network-only" });
 

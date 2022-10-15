@@ -1,4 +1,6 @@
 import { Form, Formik } from "formik";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Head from "../../../components/Head";
 import DatePickerField from "../../../components/input/datepicker/DatePickerField";
@@ -19,6 +21,17 @@ function AddNewUser() {
         fetchPolicy: "network-only",
         variables: { origin: "dash" },
     });
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (data && data.me && data.me.role === "admin") {
+            console.log("You are an admin");
+        } else {
+            navigate("/");
+        }
+    }, [navigate, data]);
+
 
     const titleOptions = [
         { value: "Title", label: "Title" },
