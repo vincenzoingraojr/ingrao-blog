@@ -306,7 +306,7 @@ export type ChangeRoleMutationVariables = Exact<{
 }>;
 
 
-export type ChangeRoleMutation = { __typename?: 'Mutation', changeRole: { __typename?: 'UserResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+export type ChangeRoleMutation = { __typename?: 'Mutation', changeRole: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   slug: Scalars['String'];
@@ -645,6 +645,33 @@ export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePas
 export const ChangeRoleDocument = gql`
     mutation changeRole($id: Int!, $role: String!) {
   changeRole(id: $id, role: $role) {
+    user {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      createdAt
+      updatedAt
+      posts {
+        id
+        slug
+        draft
+        authorId
+        title
+        description
+        slogan
+        postCover
+        content
+        createdAt
+        updatedAt
+      }
+    }
     status
     errors {
       field

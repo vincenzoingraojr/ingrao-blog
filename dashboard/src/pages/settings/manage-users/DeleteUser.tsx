@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import ModalLoading from "../../../components/utils/modal/ModalLoading";
-import { useDeleteUserFromDashboardMutation, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
+import { DashUsersDocument, DashUsersQuery, useDashUsersQuery, useDeleteUserFromDashboardMutation, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
 import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../../styles/global";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +10,10 @@ import Head from "../../../components/Head";
 const DeleteUserButton = styled(Button)`
     background-color: red;
     color: #ffffff;
+`;
+
+const DeleteStatus = styled(Status)`
+    background-color: red;
 `;
 
 function DeleteUser() {
@@ -37,6 +41,10 @@ function DeleteUser() {
 
     const [deleteUser] = useDeleteUserFromDashboardMutation();
 
+    const { data: dashUsersData } = useDashUsersQuery({
+        fetchPolicy: "network-only",
+    });
+
     return (
         <>
             <Head 
@@ -57,6 +65,24 @@ function DeleteUser() {
                         onSubmit={async (values, { setStatus }) => {
                             const response = await deleteUser({
                                 variables: values,
+                                update: (store, { data }) => {
+                                    if (
+                                        data &&
+                                        data.deleteUserFromDashboard
+                                    ) {
+                                        const usersData = dashUsersData?.dashUsers || [];
+                                        const selectedUser = usersData.find((item) => item.id === parseInt(params.id!));
+                                        const index = usersData.indexOf(selectedUser!);
+                                        usersData.splice(index!, 1);
+                                        
+                                        store.writeQuery<DashUsersQuery>({
+                                            query: DashUsersDocument,
+                                            data: {
+                                                dashUsers: usersData,
+                                            },
+                                        });
+                                    }
+                                },
                             });
 
                             setStatus(response.data?.deleteUserFromDashboard?.status);
@@ -64,7 +90,7 @@ function DeleteUser() {
                     >
                         {({ status }) => (
                             <Form>
-                                {status ? <Status>{status}</Status> : null}
+                                {status ? <DeleteStatus>{status}</DeleteStatus> : null}
                                 <FlexContainer24>
                                     <PageBlock>
                                         <DeleteUserButton

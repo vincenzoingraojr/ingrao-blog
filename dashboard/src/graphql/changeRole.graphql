@@ -6,6 +6,33 @@ mutation changeRole(
         id: $id
         role: $role
     ) {
+        user {
+            id
+            firstName
+            lastName
+            email
+            birthDate
+            gender
+            title
+            verified
+            role
+            profilePicture
+            createdAt
+            updatedAt
+            posts {
+                id
+                slug
+                draft
+                authorId
+                title
+                description
+                slogan
+                postCover
+                content
+                createdAt
+                updatedAt
+            }
+        }
         status
         errors {
             field

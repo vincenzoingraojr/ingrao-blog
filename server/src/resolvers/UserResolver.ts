@@ -593,6 +593,7 @@ export class UserResolver {
                     user = result.raw[0];
                     const token = createAccessToken(user);
                     const link = `${process.env.DASHBOARD_ORIGIN}/complete-account/${token}`;
+                    status = "The new user should now receive an email containing the instructions to set up a password.";
 
                     ejs.renderFile(
                         path.join(
@@ -623,10 +624,6 @@ export class UserResolver {
 
                                 ses.sendEmail(params)
                                     .promise()
-                                    .then(() => {
-                                        status =
-                                            "The new user should now receive an email containing the instructions to set up a password.";
-                                    })
                                     .catch((error) => {
                                         console.error(error);
                                         status = "An error has occurred and the email cannot be sent, but the user has been created. The new user can set up the account password during the log in operation."
@@ -1115,6 +1112,7 @@ export class UserResolver {
         @Ctx() { payload }: MyContext
     ): Promise<UserResponse> {
         let errors = [];
+        let user;
         let status = "";
 
         if (role === "Role" || role === "") {
@@ -1138,6 +1136,11 @@ export class UserResolver {
                 );
 
                 status = "The user role has been changed.";
+                
+                user = await User.findOne({
+                    where: { id: id },
+                    relations: ["posts"],
+                });
             } catch (error) {
                 console.log(error);
                 status =
@@ -1149,6 +1152,7 @@ export class UserResolver {
 
         return {
             errors,
+            user,
             status,
         };
     }

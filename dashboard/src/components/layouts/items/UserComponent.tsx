@@ -162,7 +162,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
                                 <ChangeUserRoleButton
                                     type="button"
                                     role="button"
-                                    title="Change user rol"
+                                    title="Change user role"
                                     aria-label="Change user role"
                                     onClick={(e) => {
                                         e.stopPropagation();

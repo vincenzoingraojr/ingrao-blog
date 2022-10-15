@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import SelectField from "../../../components/input/select/SelectField";
 import ModalLoading from "../../../components/utils/modal/ModalLoading";
-import { useChangeRoleMutation, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
+import { DashUsersDocument, DashUsersQuery, useChangeRoleMutation, useDashUsersQuery, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
 import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../../styles/global";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
@@ -44,6 +44,10 @@ function ChangeRole() {
     ];
 
     const [changeRole] = useChangeRoleMutation();
+    
+    const { data: dashUsersData } = useDashUsersQuery({
+        fetchPolicy: "network-only",
+    });
 
     return (
         <>
@@ -66,6 +70,26 @@ function ChangeRole() {
                         onSubmit={async (values, { setErrors, setStatus }) => {
                             const response = await changeRole({
                                 variables: values,
+                                update: (store, { data }) => {
+                                    if (
+                                        data &&
+                                        data.changeRole &&
+                                        data.changeRole.user
+                                    ) {
+                                        const usersData = dashUsersData?.dashUsers || [];
+                                        const selectedUser = usersData.find((item) => item.id === parseInt(params.id!));
+                                        const index = usersData.indexOf(selectedUser!);
+                                        usersData.splice(index!, 1);
+                                        usersData.push(data.changeRole.user);
+                                        
+                                        store.writeQuery<DashUsersQuery>({
+                                            query: DashUsersDocument,
+                                            data: {
+                                                dashUsers: usersData,
+                                            },
+                                        });
+                                    }
+                                },
                             });
 
                             if (response.data?.changeRole.status) {

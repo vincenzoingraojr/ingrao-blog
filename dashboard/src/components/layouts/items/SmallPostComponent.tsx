@@ -165,7 +165,7 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
                         )}
                     </SmallPostTitle>
                     <PostSmallText>
-                        {post.draft ? <>Updated</> : <>Published on</>} {date}
+                        {post.draft ? <>Updated</> : <>Published on</>} {date}, by {post.author.firstName} {post.author.lastName}
                     </PostSmallText>
                     <PostButtonsContainer>
                         {post.draft ? (
