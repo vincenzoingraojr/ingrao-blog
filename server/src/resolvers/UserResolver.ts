@@ -160,12 +160,10 @@ export class UserResolver {
                                 Source: "noreply@ingrao.blog",
                             };
 
+                            status = "You should now receive an email containing the instructions to set up a password.";
+
                             ses.sendEmail(params)
                                 .promise()
-                                .then(() => {
-                                    status =
-                                        "You should now receive an email containing the instructions to set up a password.";
-                                })
                                 .catch((error) => {
                                     console.error(error);
                                 });
