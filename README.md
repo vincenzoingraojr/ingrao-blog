@@ -8,6 +8,7 @@ My personal blog, where I talk about the things I learn and do. You can visit th
 |---------------------------|--------------------|
 | [brand](./brand/)         | Brand files        |
 | [dashboard](./dashboard/) | React.js dashboard |
+| [editor](./editor/)       | Draft.js editor    |
 | [server](./server/)       | Express server     |
 
 ## What is ingrao.blog?

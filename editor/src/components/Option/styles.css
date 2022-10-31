@@ -1,0 +1,30 @@
+.rdw-option-wrapper {
+  border: none;
+  padding: 4px;
+  min-width: 25px;
+  height: 20px;
+  border-radius: 0px;
+  margin: 0 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+  text-transform: capitalize;
+}
+.rdw-option-wrapper:hover {
+  background: blue;
+  color: #ffffff;
+}
+.rdw-option-wrapper:active {
+  background: #000000;
+  color: #ffffff;
+}
+.rdw-option-active {
+  background: #000000;
+  color: #ffffff;
+}
+.rdw-option-disabled {
+  opacity: 0.3;
+  cursor: default;
+}
