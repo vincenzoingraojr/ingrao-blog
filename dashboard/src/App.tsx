@@ -32,10 +32,12 @@ import { useMeQuery } from "./generated/graphql";
 import AddNewUser from "./pages/settings/manage-users/AddNewUser";
 import ChangeRole from "./pages/settings/manage-users/ChangeRole";
 import DeleteUser from "./pages/settings/manage-users/DeleteUser";
+import IsAdmin from "./components/routes/IsAdmin";
 
 function App() {
     const [loading, setLoading] = useState(true);
     const [isAuth, setIsAuth] = useState(false);
+    const [role, setRole] = useState("");
     const location = useLocation();
 
     useEffect(() => {
@@ -43,8 +45,9 @@ function App() {
             method: "POST",
             credentials: "include",
         }).then(async (x) => {
-            const { accessToken } = await x.json();
+            const { accessToken, role } = await x.json();
             setAccessToken(accessToken);
+            setRole(role);
             if (accessToken) {
                 setIsAuth(true);
             } else {
@@ -289,7 +292,11 @@ function App() {
                     element={
                         <IsAuthenticated
                             isAuth={isAuth}
-                            children={<ManageUsers />}
+                            children={
+                                <IsAdmin role={role} children={
+                                    <ManageUsers />
+                                } />
+                            }
                         />
                     }
                 />
@@ -298,7 +305,11 @@ function App() {
                     element={
                         <IsAuthenticated
                             isAuth={isAuth}
-                            children={<ManagePosts />}
+                            children={
+                                <IsAdmin role={role} children={
+                                    <ManagePosts />
+                                } />
+                            }
                         />
                     }
                 />
@@ -308,9 +319,14 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={
-                                <Modal
-                                    headerText="Add a new user"
-                                    modalContent={<AddNewUser />}
+                                <IsAdmin
+                                    role={role}
+                                    children={
+                                        <Modal
+                                            headerText="Add a new user"
+                                            modalContent={<AddNewUser />}
+                                        />
+                                    }
                                 />
                             }
                         />
@@ -322,9 +338,14 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={
-                                <Modal
-                                    headerText="Change user role"
-                                    modalContent={<ChangeRole />}
+                                <IsAdmin
+                                    role={role}
+                                    children={
+                                        <Modal
+                                            headerText="Change user role"
+                                            modalContent={<ChangeRole />}
+                                        />
+                                    }
                                 />
                             }
                         />
@@ -336,9 +357,14 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={
-                                <Modal
-                                    headerText="Delete user"
-                                    modalContent={<DeleteUser />}
+                                <IsAdmin
+                                    role={role}
+                                    children={
+                                        <Modal
+                                            headerText="Delete user"
+                                            modalContent={<DeleteUser />}
+                                        />
+                                    }
                                 />
                             }
                         />
@@ -423,9 +449,14 @@ function App() {
                             <IsAuthenticated
                                 isAuth={isAuth}
                                 children={
-                                    <Modal
-                                        headerText="Add a new user"
-                                        modalContent={<AddNewUser />}
+                                    <IsAdmin
+                                        role={role}
+                                        children={
+                                            <Modal
+                                                headerText="Add a new user"
+                                                modalContent={<AddNewUser />}
+                                            />
+                                        }
                                     />
                                 }
                             />
@@ -437,9 +468,14 @@ function App() {
                             <IsAuthenticated
                                 isAuth={isAuth}
                                 children={
-                                    <Modal
-                                        headerText="Change user role"
-                                        modalContent={<ChangeRole />}
+                                    <IsAdmin
+                                        role={role}
+                                        children={
+                                            <Modal
+                                                headerText="Change user role"
+                                                modalContent={<ChangeRole />}
+                                            />
+                                        }
                                     />
                                 }
                             />
@@ -451,9 +487,14 @@ function App() {
                             <IsAuthenticated
                                 isAuth={isAuth}
                                 children={
-                                    <Modal
-                                        headerText="Delete user"
-                                        modalContent={<DeleteUser />}
+                                    <IsAdmin
+                                        role={role}
+                                        children={
+                                            <Modal
+                                                headerText="Delete user"
+                                                modalContent={<DeleteUser />}
+                                            />
+                                        }
                                     />
                                 }
                             />

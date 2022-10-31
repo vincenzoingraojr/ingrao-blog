@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Head from "../../../components/Head";
 import PageLayout from "../../../components/layouts/PageLayout";
 import PageContentLayout from "../../../components/layouts/sublayouts/PageContentLayout";
@@ -16,7 +15,6 @@ function ManagePosts() {
         variables: { origin: "dash" },
     });
 
-    const navigate = useNavigate();
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
@@ -24,7 +22,6 @@ function ManagePosts() {
             setIsAdmin(true);
         } else {
             setIsAdmin(false);
-            navigate("/");
         }
     }, [data]);
 
