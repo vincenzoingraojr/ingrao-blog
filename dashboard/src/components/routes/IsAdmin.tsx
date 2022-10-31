@@ -3,14 +3,14 @@ import { Navigate } from "react-router-dom";
 
 interface IsAdminProps {
     children: JSX.Element;
-    role: string;
+    isAdmin: boolean;
 }
 
 const IsAdmin: FunctionComponent<IsAdminProps> = ({
     children,
-    role,
+    isAdmin,
 }) => {
-    return role === "admin" ? children : <Navigate replace to="/" />;
+    return isAdmin ? children : <Navigate replace to="/" />;
 };
 
 export default IsAdmin;

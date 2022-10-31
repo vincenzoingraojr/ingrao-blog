@@ -54,7 +54,7 @@ async function main() {
         const token = req.cookies.cke;
 
         if (!token) {
-            return res.send({ ok: false, accessToken: "" });
+            return res.send({ ok: false, accessToken: "", role: "" });
         }
 
         let payload: any = null;
@@ -63,22 +63,22 @@ async function main() {
             payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
         } catch (error) {
             console.error(error);
-            return res.send({ ok: false, accessToken: "" });
+            return res.send({ ok: false, accessToken: "", role: "" });
         }
 
         const user = await User.findOne({ id: payload.id });
 
         if (!user) {
-            return res.send({ ok: false, accessToken: "" });
+            return res.send({ ok: false, accessToken: "", role: "" });
         }
 
         if (user.tokenVersion !== payload.tokenVersion) {
-            return res.send({ ok: false, accessToken: "" });
+            return res.send({ ok: false, accessToken: "", role: "" });
         }
 
         sendRefreshToken(res, createRefreshToken(user));
 
-        return res.send({ ok: true, accessToken: createAccessToken(user) });
+        return res.send({ ok: true, accessToken: createAccessToken(user), role: user.role });
     });
 
     await createConnection({

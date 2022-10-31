@@ -37,7 +37,7 @@ import IsAdmin from "./components/routes/IsAdmin";
 function App() {
     const [loading, setLoading] = useState(true);
     const [isAuth, setIsAuth] = useState(false);
-    const [role, setRole] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
 
     useEffect(() => {
@@ -47,11 +47,15 @@ function App() {
         }).then(async (x) => {
             const { accessToken, role } = await x.json();
             setAccessToken(accessToken);
-            setRole(role);
             if (accessToken) {
                 setIsAuth(true);
             } else {
                 setIsAuth(false);
+            }
+            if (role === "admin") {
+                setIsAdmin(true);
+            } else {
+                setIsAdmin(false);
             }
             setLoading(false);
         });
@@ -293,7 +297,7 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={
-                                <IsAdmin role={role} children={
+                                <IsAdmin isAdmin={isAdmin} children={
                                     <ManageUsers />
                                 } />
                             }
@@ -306,7 +310,7 @@ function App() {
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={
-                                <IsAdmin role={role} children={
+                                <IsAdmin isAdmin={isAdmin} children={
                                     <ManagePosts />
                                 } />
                             }
@@ -320,7 +324,7 @@ function App() {
                             isAuth={isAuth}
                             children={
                                 <IsAdmin
-                                    role={role}
+                                    isAdmin={isAdmin}
                                     children={
                                         <Modal
                                             headerText="Add a new user"
@@ -339,7 +343,7 @@ function App() {
                             isAuth={isAuth}
                             children={
                                 <IsAdmin
-                                    role={role}
+                                    isAdmin={isAdmin}
                                     children={
                                         <Modal
                                             headerText="Change user role"
@@ -358,7 +362,7 @@ function App() {
                             isAuth={isAuth}
                             children={
                                 <IsAdmin
-                                    role={role}
+                                    isAdmin={isAdmin}
                                     children={
                                         <Modal
                                             headerText="Delete user"
@@ -450,7 +454,7 @@ function App() {
                                 isAuth={isAuth}
                                 children={
                                     <IsAdmin
-                                        role={role}
+                                        isAdmin={isAdmin}
                                         children={
                                             <Modal
                                                 headerText="Add a new user"
@@ -469,7 +473,7 @@ function App() {
                                 isAuth={isAuth}
                                 children={
                                     <IsAdmin
-                                        role={role}
+                                        isAdmin={isAdmin}
                                         children={
                                             <Modal
                                                 headerText="Change user role"
@@ -488,7 +492,7 @@ function App() {
                                 isAuth={isAuth}
                                 children={
                                     <IsAdmin
-                                        role={role}
+                                        isAdmin={isAdmin}
                                         children={
                                             <Modal
                                                 headerText="Delete user"
