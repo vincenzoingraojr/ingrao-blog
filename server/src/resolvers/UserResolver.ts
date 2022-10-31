@@ -1173,7 +1173,7 @@ export class UserResolver {
         } else if (!user) {
             status = "This user doesn't exist.";
         } else if (payload.role === "admin") {
-            await User.remove(user).then(() => {
+            await User.delete(user).then(() => {
                 status = "This user has been deleted.";
             }).catch(() => {
                 status = "An error has occurred while deleting this user. Please try again later.";
