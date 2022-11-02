@@ -1,7 +1,7 @@
 .rdw-emoji-wrapper {
   display: flex;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 0px;
   position: relative;
   flex-wrap: wrap
 }
@@ -14,12 +14,12 @@
   flex-wrap: wrap;
   width: 235px;
   height: 180px;
-  border: 1px solid #F1F1F1;
+  border: 2px solid #000000;
   padding: 15px;
   border-radius: 2px;
   z-index: 100;
   background: white;
-  box-shadow: 3px 3px 5px #BFBDBD;
+  box-shadow: none;
 }
 .rdw-emoji-icon {
   margin: 2.5px;
