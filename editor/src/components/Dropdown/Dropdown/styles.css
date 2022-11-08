@@ -47,7 +47,7 @@
 .rdw-dropdown-optionwrapper {
   z-index: 100;
   position: relative;
-  border: none;
+  border: 2px solid black;
   width: 98%;
   background: white;
   border-radius: 0px;

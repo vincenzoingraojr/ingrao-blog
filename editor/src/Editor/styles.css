@@ -1,22 +1,25 @@
+@import url("https://storage.ingrao.blog/static/css/roboto-condensed.css");
+
 .rdw-editor-main {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
 }
 .rdw-editor-toolbar {
-  padding: 6px 5px 0;
-  border-radius: 2px;
-  border: 1px solid #F1F1F1;
+  font-family: "Roboto Condensed", sans-serif;
+  padding: none;
+  border-radius: 0px;
+  border: none;
   display: flex;
   justify-content: flex-start;
   background: white;
   flex-wrap: wrap;
   font-size: 15px;
-  margin-bottom: 5px;
+  margin-bottom: 0px;
   user-select: none;
 }
 .public-DraftStyleDefault-block {
-  margin: 1em 0;
+  margin: 0.6em 0;
 }
 .rdw-editor-wrapper:focus {
   outline: none;
@@ -25,11 +28,15 @@
   box-sizing: content-box;
 }
 .rdw-editor-main blockquote {
-  border-left: 5px solid #f1f1f1;
-  padding-left: 5px;
+  border-left: 4px solid #000000;
+  padding-left: 6px;
 }
 .rdw-editor-main pre {
-  background: #f1f1f1;
-  border-radius: 3px;
-  padding: 1px 10px;
+  background: #c0c0c0;
+  border-radius: 2px;
+  padding: 2px 10px;
+}
+
+input, button {
+  font-family: "Roboto Condensed", sans-serif;
 }

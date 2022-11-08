@@ -15,8 +15,8 @@
   width: 235px;
   height: 180px;
   border: 2px solid #000000;
-  padding: 15px;
-  border-radius: 2px;
+  padding: 6px;
+  border-radius: 0px;
   z-index: 100;
   background: white;
   box-shadow: none;

@@ -71,7 +71,7 @@
 .rdw-embedded-modal-btn-section {
   display: flex;
   justify-content: center;
-  gap: 4px;
+  gap: 8px;
   padding-bottom: 8px;
 }
 .rdw-embedded-modal-btn {
@@ -84,6 +84,7 @@
   background: transparent;
   text-transform: uppercase;
   color: #FFFFFF;
+  font-weight: 700;
 }
 .rdw-embedded-modal-btn:nth-child(1) {
   background: blue;

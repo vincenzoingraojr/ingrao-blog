@@ -1,7 +1,7 @@
 .rdw-image-wrapper {
   display: flex;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 0px;
   position: relative;
   flex-wrap: wrap
 }
@@ -12,17 +12,20 @@
   display: flex;
   flex-direction: column;
   width: 235px;
-  border: 1px solid #F1F1F1;
-  padding: 15px;
-  border-radius: 2px;
+  border: 2px solid #000000;
+  padding: 0px;
+  border-radius: 0px;
   z-index: 100;
   background: white;
-  box-shadow: 3px 3px 5px #BFBDBD;
+  box-shadow: none;
 }
 .rdw-image-modal-header {
   font-size: 15px;
-  margin: 10px 0;
   display: flex;
+  padding-top: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 8px;
 }
 .rdw-image-modal-header-option {
   width: 50%;
@@ -34,31 +37,31 @@
 }
 .rdw-image-modal-header-label {
   width: 80px;
-  background: #f1f1f1;
-  border: 1px solid #f1f1f1;
-  margin-top: 5px;
+  border: none;
+  margin-top: 4px;
+  background: transparent;
+  border-bottom: 2px solid transparent;
 }
 .rdw-image-modal-header-label-highlighted {
-  background: #6EB8D4;
-  border-bottom: 2px solid #0a66b7;
+  border-bottom: 2px solid blue;
 }
 .rdw-image-modal-upload-option {
   width: 100%;
-  color: gray;
+  color: #000000;
   cursor: pointer;
   display: flex;
   border: none;
   font-size: 15px;
   align-items: center;
   justify-content: center;
-  background-color: #f1f1f1;
-  outline: 2px dashed gray;
+  background-color: #c0c0c0;
+  outline: 2px dashed #000000;
   outline-offset: -10px;
-  margin: 10px 0;
+  margin: 8px 0;
   padding: 9px 0;
 }
 .rdw-image-modal-upload-option-highlighted {
-  outline: 2px dashed #0a66b7;
+  outline: 2px dashed blue;
 }
 .rdw-image-modal-upload-option-label {
   cursor: pointer;
@@ -67,9 +70,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 15px;
+  padding: 16px;
 }
-.rdw-image-modal-upload-option-label span{
+.rdw-image-modal-upload-option-label span {
   padding: 0 20px;
 }
 .rdw-image-modal-upload-option-image-preview {
@@ -87,40 +90,46 @@
 .rdw-image-modal-url-section {
   display: flex;
   align-items: center;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 .rdw-image-modal-url-input {
   width: 90%;
   height: 35px;
-  margin: 15px 0 12px;
-  border: 1px solid #F1F1F1;
-  border-radius: 2px;
+  margin: none;
+  border: none;
+  border-bottom: 1px solid #000000;
+  border-radius: 0px;
   font-size: 15px;
-  padding: 0 5px;
+  padding: 0 4px;
 }
 .rdw-image-modal-btn-section {
-  margin: 10px auto 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 .rdw-image-modal-url-input:focus {
   outline: none;
 }
 .rdw-image-modal-btn {
-  margin: 0 5px;
+  margin: none;
   width: 75px;
   height: 30px;
-  border: 1px solid #F1F1F1;
+  border: none;
   border-radius: 2px;
   cursor: pointer;
-  background: white;
-  text-transform: capitalize;
+  background: transparent;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  font-weight: 700;
 }
-.rdw-image-modal-btn:hover {
-  box-shadow: 1px 1px 0px #BFBDBD;
+.rdw-image-modal-btn:nth-child(1) {
+  background: blue;
 }
-.rdw-image-modal-btn:active {
-  box-shadow: 1px 1px 0px #BFBDBD inset;
-}
-.rdw-image-modal-btn:focus {
-  outline: none !important;
+.rdw-image-modal-btn:nth-child(2) {
+  background: #000000;
 }
 .rdw-image-modal-btn:disabled {
   background: #ece9e9;
@@ -136,10 +145,12 @@
 .rdw-image-modal-alt-input {
   width: 70%;
   height: 20px;
-  border: 1px solid #F1F1F1;
-  border-radius: 2px;
-  font-size: 12px;
-  margin-left: 5px;
+  margin: none;
+  border: none;
+  border-bottom: 1px solid #000000;
+  border-radius: 0px;
+  font-size: 15px;
+  padding: 0 4px;
 }
 .rdw-image-modal-alt-input:focus {
   outline: none;
@@ -150,15 +161,20 @@
 .rdw-image-modal-size {
   align-items: center;
   display: flex;
-  margin: 8px 0;
+  margin-top: 8px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 0px;
   justify-content: space-between;
 }
 .rdw-image-modal-size-input {
-  width: 40%;
+  width: calc(40% - 4px);
   height: 20px;
-  border: 1px solid #F1F1F1;
-  border-radius: 2px;
+  border: none;
+  border-bottom: 1px solid #000000;
+  border-radius: 0px;
   font-size: 12px;
+  padding: 0 4px;
 }
 .rdw-image-modal-size-input:focus {
   outline: none;
