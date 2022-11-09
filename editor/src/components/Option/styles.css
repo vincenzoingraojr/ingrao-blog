@@ -13,16 +13,13 @@
   text-transform: capitalize;
 }
 .rdw-option-wrapper:hover {
-  background: blue;
-  color: #ffffff;
+  background: #c0c0c0;
 }
 .rdw-option-wrapper:active {
-  background: #000000;
-  color: #ffffff;
+  background: #c0c0c0;
 }
 .rdw-option-active {
-  background: #000000;
-  color: #ffffff;
+  background: #c0c0c0;
 }
 .rdw-option-disabled {
   opacity: 0.3;
