@@ -2,7 +2,7 @@
   border: none;
   padding: 4px;
   min-width: 25px;
-  height: 20px;
+  height: 26px;
   border-radius: 0px;
   margin: 0 4px;
   display: flex;
@@ -11,6 +11,9 @@
   cursor: pointer;
   background: white;
   text-transform: capitalize;
+}
+.rdw-option-wrapper img {
+  height: 20px;
 }
 .rdw-option-wrapper:hover {
   background: #c0c0c0;
