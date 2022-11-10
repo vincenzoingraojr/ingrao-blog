@@ -2,9 +2,9 @@
   border: none;
   padding: 4px;
   min-width: 25px;
-  height: 26px;
+  height: 22px;
   border-radius: 0px;
-  margin: 0 4px;
+  margin: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,7 +13,7 @@
   text-transform: capitalize;
 }
 .rdw-option-wrapper img {
-  height: 20px;
+  height: 22px;
 }
 .rdw-option-wrapper:hover {
   background: #c0c0c0;

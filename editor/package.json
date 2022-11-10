@@ -1,6 +1,6 @@
 {
   "name": "@ingrao-blog/editor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Draft.js editor for ingrao-blog",
   "main": "dist/editor.js",
   "repository": {
