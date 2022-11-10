@@ -309,7 +309,7 @@ function ProfilePage() {
                                                                     let profilePictureData = new FormData();
                                                                     profilePictureData.append('file', selectedProfilePicture);
                                                     
-                                                                    await axios.put(url, data, profilePictureConfig)
+                                                                    await axios.put(url, profilePictureData, profilePictureConfig)
                                                                         .then(() => {
                                                                             setStatus("Your profile picture was uploaded successfully.");
                                                                         }).catch((error) => {

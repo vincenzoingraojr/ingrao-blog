@@ -144,7 +144,7 @@ function UpdatePost() {
                 let postCoverData = new FormData();
                 postCoverData.append('file', selectedPostCover);
 
-                await axios.put(url, data, postCoverConfig)
+                await axios.put(url, postCoverData, postCoverConfig)
                     .then(() => {
                         setStatus("The post cover was uploaded successfully.");
                     }).catch((error) => {
