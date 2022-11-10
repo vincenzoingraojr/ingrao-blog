@@ -46,7 +46,7 @@ export class Post extends BaseEntity {
     postCover: string;
 
     @Field(() => User)
-    @ManyToOne(() => User, (user) => user.posts, { onDelete: "NO ACTION" })
+    @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
     author: User;
 
     @Field(() => String, { nullable: true, defaultValue: "" })

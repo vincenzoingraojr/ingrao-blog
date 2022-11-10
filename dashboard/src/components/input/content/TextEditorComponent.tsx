@@ -1,5 +1,5 @@
 import {
-    FunctionComponent,
+    FunctionComponent, useState,
 } from "react";
 import styled from "styled-components";
 import { Editor } from "@ingrao-blog/editor";
@@ -46,7 +46,11 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
     field,
     form,
 }) => {
-    
+    const [initialContent] = useState<any | undefined>(() => {
+        const content = field.value;
+        return content ? JSON.parse(content) : "";
+    });
+
     return (
         <EditorComponentContainer>
             <EditorContainer>
@@ -69,7 +73,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                             alt: { present: true, mandatory: false },
                         },
                     }}
-                    initialContentState={JSON.parse(field.value)}
+                    initialContentState={initialContent}
                     onChange={(contentState) => {
                         form.setFieldValue(
                             field.name,
