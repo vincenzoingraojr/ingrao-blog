@@ -1,6 +1,6 @@
 {
   "name": "@ingrao-blog/editor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Draft.js editor for ingrao-blog",
   "main": "dist/editor.js",
   "repository": {
@@ -61,6 +61,7 @@
     "linkify-it": "^2.2.0",
     "prop-types": "^15.7.2"
   },
+  "types": "./types/index.d.ts",
   "peerDependencies": {
     "draft-js": "^0.10.x || ^0.11.x",
     "immutable": "3.x.x || 4.x.x",
