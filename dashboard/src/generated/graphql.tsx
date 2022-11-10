@@ -16,6 +16,15 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type ExtendedUserResponse = {
+  __typename?: 'ExtendedUserResponse';
+  accessToken?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<FieldError>>;
+  ok?: Maybe<Scalars['Boolean']>;
+  status?: Maybe<Scalars['String']>;
+  user?: Maybe<User>;
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   field?: Maybe<Scalars['String']>;
@@ -29,6 +38,7 @@ export type Mutation = {
   changePassword: UserResponse;
   changeRole: UserResponse;
   createPost: PostResponse;
+  deleteAccount: ExtendedUserResponse;
   deletePost: Scalars['Boolean'];
   deleteUserFromDashboard: UserResponse;
   editEmailAddress: UserResponse;
@@ -80,6 +90,11 @@ export type MutationChangeRoleArgs = {
 
 export type MutationCreatePostArgs = {
   slug: Scalars['String'];
+};
+
+
+export type MutationDeleteAccountArgs = {
+  origin: Scalars['String'];
 };
 
 
@@ -324,6 +339,13 @@ export type DashUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type DashUsersQuery = { __typename?: 'Query', dashUsers: Array<{ __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined }> };
+
+export type DeleteAccountMutationVariables = Exact<{
+  origin: Scalars['String'];
+}>;
+
+
+export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount: { __typename?: 'ExtendedUserResponse', status?: string | null | undefined, ok?: boolean | null | undefined } };
 
 export type DeletePostMutationVariables = Exact<{
   postId: Scalars['Int'];
@@ -887,6 +909,40 @@ export function useDashUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type DashUsersQueryHookResult = ReturnType<typeof useDashUsersQuery>;
 export type DashUsersLazyQueryHookResult = ReturnType<typeof useDashUsersLazyQuery>;
 export type DashUsersQueryResult = Apollo.QueryResult<DashUsersQuery, DashUsersQueryVariables>;
+export const DeleteAccountDocument = gql`
+    mutation deleteAccount($origin: String!) {
+  deleteAccount(origin: $origin) {
+    status
+    ok
+  }
+}
+    `;
+export type DeleteAccountMutationFn = Apollo.MutationFunction<DeleteAccountMutation, DeleteAccountMutationVariables>;
+
+/**
+ * __useDeleteAccountMutation__
+ *
+ * To run a mutation, you first call `useDeleteAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAccountMutation, { data, loading, error }] = useDeleteAccountMutation({
+ *   variables: {
+ *      origin: // value for 'origin'
+ *   },
+ * });
+ */
+export function useDeleteAccountMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAccountMutation, DeleteAccountMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAccountMutation, DeleteAccountMutationVariables>(DeleteAccountDocument, options);
+      }
+export type DeleteAccountMutationHookResult = ReturnType<typeof useDeleteAccountMutation>;
+export type DeleteAccountMutationResult = Apollo.MutationResult<DeleteAccountMutation>;
+export type DeleteAccountMutationOptions = Apollo.BaseMutationOptions<DeleteAccountMutation, DeleteAccountMutationVariables>;
 export const DeletePostDocument = gql`
     mutation deletePost($postId: Int!) {
   deletePost(postId: $postId)

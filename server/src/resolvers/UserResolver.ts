@@ -23,6 +23,7 @@ import path from "path";
 import { FieldError } from "./common";
 import { isAuth } from "../middleware/isAuth";
 import aws from "aws-sdk";
+import axios from "axios";
 
 @ObjectType()
 export class UserResponse {
@@ -37,6 +38,12 @@ export class UserResponse {
 
     @Field(() => String, { nullable: true })
     status?: string;
+}
+
+@ObjectType()
+class ExtendedUserResponse extends UserResponse {
+    @Field(() => Boolean, { nullable: true })
+    ok?: boolean;
 }
 
 @Resolver(User)
@@ -1182,6 +1189,58 @@ export class UserResolver {
 
         return {
             status,
+        };
+    }
+
+    @Mutation(() => ExtendedUserResponse)
+    @UseMiddleware(isAuth)
+    async deleteAccount(
+        @Arg("origin") origin: string,
+        @Ctx() { payload }: MyContext
+    ): Promise<ExtendedUserResponse> {
+        let status = "";
+        let ok;
+
+        if (!payload) {
+            status = "You are not authenticated.";
+        } else {
+            let user;
+            if (origin === "dash") {
+                user = await User.findOne({
+                    where: { id: payload.id },
+                    relations: ["posts"],
+                });
+            } else {
+                user = await User.findOne({
+                    where: { id: payload.id },
+                });
+            }
+
+            if (user?.profilePicture !== "" && user?.profilePicture !== null) {
+                await axios.delete(user?.profilePicture!);
+            }
+
+            let adminUsers = await User.find({
+                where: { role: "admin" }, 
+            });
+
+            if (payload.role === "admin" && (adminUsers.length - 1) === 0) {
+                status = "You can't delete your account because you are the only admin of the dashboard.";
+                ok = false;
+            } else {
+                await User.remove(user!).then(() => {
+                    status = "Your data has been deleted.";
+                    ok = true;
+                }).catch(() => {
+                    status = "An error has occurred while deleting your data. Please try again later.";
+                    ok = false;
+                });
+            }
+        }
+
+        return {
+            status,
+            ok,
         };
     }
 }

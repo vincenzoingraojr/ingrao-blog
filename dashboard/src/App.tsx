@@ -33,6 +33,7 @@ import AddNewUser from "./pages/settings/manage-users/AddNewUser";
 import ChangeRole from "./pages/settings/manage-users/ChangeRole";
 import DeleteUser from "./pages/settings/manage-users/DeleteUser";
 import IsAdmin from "./components/routes/IsAdmin";
+import DeleteAccount from "./pages/settings/DeleteAccount";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -371,6 +372,15 @@ function App() {
                                     }
                                 />
                             }
+                        />
+                    }
+                />
+                <Route
+                    path="/settings/delete-account"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<DeleteAccount />}
                         />
                     }
                 />
