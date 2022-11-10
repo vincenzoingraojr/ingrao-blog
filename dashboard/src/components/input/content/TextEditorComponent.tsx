@@ -51,9 +51,9 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
         <EditorComponentContainer>
             <EditorContainer>
                 <Editor
-                    toolbarClassName="rdw-storybook-toolbar"
+                    toolbarClassName="rdw-storybook-toolbar editor-custom-toolbar"
                     wrapperClassName="rdw-storybook-wrapper"
-                    editorClassName="rdw-storybook-editor"
+                    editorClassName="rdw-storybook-editor editor-custom-body"
                     toolbar={{
                         options: [
                             "inline",
