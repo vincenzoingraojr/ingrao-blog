@@ -16,6 +16,7 @@ import Close from "../components/icons/Close";
 import InputField from "../components/input/InputField";
 import EditorField from "../components/input/content/EditorField";
 import Arrow from "../components/icons/Arrow";
+import axios from "axios";
 
 const EditPostLayoutTitle = styled.div`
     display: block;
@@ -193,15 +194,12 @@ function EditPost() {
                                         
                                                     if (selectedPostCover !== null) {
                                                         if (existingPostCoverName !== "") {
-                                                            await fetch(
+                                                            await axios.delete(
                                                                 `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
                                                                     process.env.REACT_APP_ENV === "development"
                                                                         ? "local-post"
                                                                         : "post"
-                                                                }/${data?.findPost?.id}/${existingPostCoverName}`,
-                                                                {
-                                                                    method: "DELETE",
-                                                                }
+                                                                }/${data?.findPost?.id}/${existingPostCoverName}`
                                                             );
                                                         }
                                         
@@ -229,31 +227,33 @@ function EditPost() {
                                         
                                                         setStatus("Uploading the post cover...");
 
-                                                        await fetch(url, {
-                                                            method: "PUT",
-                                                            headers: {
-                                                                "Content-Type": "multipart/form-data",
-                                                            },
-                                                            body: selectedPostCover,
-                                                        }).then(() => {
-                                                            setStatus("The post cover was uploaded successfully.");
-                                                        }).catch((error) => {
-                                                            setStatus(`An error occurred while uploading the post cover. Error code: ${error.code}.`);
-                                                        });
+                                                        const postCoverConfig = {
+                                                            onUploadProgress: function(progressEvent: any) {
+                                                                var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                                                setStatus(`Uploading post cover: ${percentCompleted}%.`);
+                                                            }
+                                                        };
+
+                                                        let postCoverData = new FormData();
+                                                        postCoverData.append('file', selectedPostCover);
+
+                                                        await axios.put(url, data, postCoverConfig)
+                                                            .then(() => {
+                                                                setStatus("The post cover was uploaded successfully.");
+                                                            }).catch((error) => {
+                                                                setStatus(`An error occurred while uploading the post cover. Error code: ${error.code}.`);
+                                                            });
                                                     } else if (
                                                         data?.findPost?.postCover !== "" &&
                                                         data?.findPost?.postCover !== null &&
                                                         deletePostCover
                                                     ) {
-                                                        await fetch(
+                                                        await axios.delete(
                                                             `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
                                                                 process.env.REACT_APP_ENV === "development"
                                                                     ? "local-post"
                                                                     : "post"
-                                                            }/${data?.findPost?.id}/${existingPostCoverName}`,
-                                                            {
-                                                                method: "DELETE",
-                                                            }
+                                                            }/${data?.findPost?.id}/${existingPostCoverName}`
                                                         );
                                                     } else {
                                                         postCoverName = existingPostCoverName;

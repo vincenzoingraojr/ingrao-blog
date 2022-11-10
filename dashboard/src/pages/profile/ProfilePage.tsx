@@ -30,6 +30,7 @@ import profilePicture from "../../images/profile-picture.svg";
 import Upload from "../../components/icons/Upload";
 import Close from "../../components/icons/Close";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const ProfilePageContent = styled.div`
     display: block;
@@ -246,7 +247,7 @@ function ProfilePage() {
                                                                         existingProfilePictureName !==
                                                                         ""
                                                                     ) {
-                                                                        await fetch(
+                                                                        await axios.delete(
                                                                             `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
                                                                                 process
                                                                                     .env
@@ -258,10 +259,7 @@ function ProfilePage() {
                                                                                 data
                                                                                     ?.me
                                                                                     ?.id
-                                                                            }/${existingProfilePictureName}`,
-                                                                            {
-                                                                                method: "DELETE",
-                                                                            }
+                                                                            }/${existingProfilePictureName}`
                                                                         );
                                                                     }
 
@@ -301,22 +299,22 @@ function ProfilePage() {
 
                                                                     setStatus("Uploading the profile picture...");
 
-                                                                    await fetch(
-                                                                        url,
-                                                                        {
-                                                                            method: "PUT",
-                                                                            headers:
-                                                                                {
-                                                                                    "Content-Type":
-                                                                                        "multipart/form-data",
-                                                                                },
-                                                                            body: selectedProfilePicture,
+                                                                    const profilePictureConfig = {
+                                                                        onUploadProgress: function(progressEvent: any) {
+                                                                            var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                                                            setStatus(`Uploading the profile picture: ${percentCompleted}%.`);
                                                                         }
-                                                                    ).then(() => {
-                                                                        setStatus("Your profile picture was uploaded successfully.");
-                                                                    }).catch((error) => {
-                                                                        setStatus(`An error occurred while uploading your profile picture. Error code: ${error.code}.`);
-                                                                    });
+                                                                    };
+                                                    
+                                                                    let profilePictureData = new FormData();
+                                                                    profilePictureData.append('file', selectedProfilePicture);
+                                                    
+                                                                    await axios.put(url, data, profilePictureConfig)
+                                                                        .then(() => {
+                                                                            setStatus("Your profile picture was uploaded successfully.");
+                                                                        }).catch((error) => {
+                                                                            setStatus(`An error occurred while uploading your profile picture. Error code: ${error.code}.`);
+                                                                        });
                                                                 } else if (
                                                                     data?.me
                                                                         ?.profilePicture !==
@@ -326,7 +324,7 @@ function ProfilePage() {
                                                                         null &&
                                                                     deleteProfilePicture
                                                                 ) {
-                                                                    await fetch(
+                                                                    await axios.delete(
                                                                         `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
                                                                             process
                                                                                 .env
@@ -338,10 +336,7 @@ function ProfilePage() {
                                                                             data
                                                                                 ?.me
                                                                                 ?.id
-                                                                        }/${existingProfilePictureName}`,
-                                                                        {
-                                                                            method: "DELETE",
-                                                                        }
+                                                                        }/${existingProfilePictureName}`
                                                                     );
                                                                 } else {
                                                                     profilePictureName =
