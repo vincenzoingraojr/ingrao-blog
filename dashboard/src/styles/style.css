@@ -73,10 +73,6 @@ img {
     display: none;
 }
 
-.editor-custom-toolbar {
-    column-gap: 4px;
-}
-
 .editor-custom-body {
     padding-left: 12px;
     padding-right: 12px;
