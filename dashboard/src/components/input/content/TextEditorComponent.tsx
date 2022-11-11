@@ -62,8 +62,8 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                 xhr.setRequestHeader("Content-Type", "multipart/form-data");
                 xhr.send(file);
                 console.log(xhr);
-                const imageLink = `https://storage.ingrao.blog/${key}`;
                 xhr.addEventListener("load", () => {
+                    const imageLink = `https://storage.ingrao.blog/${key}`;
                     resolve({ data: { link: imageLink } });
                 });
                 xhr.addEventListener("error", (error) => {

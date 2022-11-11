@@ -69,10 +69,6 @@ img {
     height: auto;
 }
 
-.toolbar-not-visible {
-    display: none;
-}
-
 .editor-custom-body {
     padding-left: 12px;
     padding-right: 12px;

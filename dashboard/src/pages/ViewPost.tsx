@@ -244,7 +244,7 @@ function ViewPost() {
                                             <PostContent>
                                                 <Editor
                                                     readOnly={true}
-                                                    toolbarClassName="toolbar-not-visible"
+                                                    toolbarHidden={true}
                                                     initialContentState={postContent}
                                                 />
                                             </PostContent>

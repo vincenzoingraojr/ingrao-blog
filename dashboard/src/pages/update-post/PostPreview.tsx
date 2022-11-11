@@ -211,7 +211,7 @@ function PostPreview() {
                                             <PostPreviewContent>
                                                 <Editor
                                                     readOnly={true}
-                                                    toolbarClassName="toolbar-not-visible"
+                                                    toolbarHidden={true}
                                                     initialContentState={postContent}
                                                 />
                                             </PostPreviewContent>
