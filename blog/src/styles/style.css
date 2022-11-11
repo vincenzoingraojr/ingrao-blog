@@ -1,0 +1,82 @@
+@import url("https://storage.ingrao.blog/static/css/roboto-condensed.css");
+@import url("https://storage.ingrao.blog/static/css/source-serif-pro.css");
+
+html {
+    font-family: "Roboto Condensed", sans-serif;
+    font-size: 18px;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+body {
+    overflow: auto;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+*:focus {
+    outline: none;
+}
+
+a {
+    font-weight: 400;
+    font-size: inherit;
+    color: blue;
+    text-decoration: none;
+}
+
+a:hover,
+a:active {
+    text-decoration: underline;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    display: block;
+    background-color: transparent;
+    color: #000000;
+    padding: 0;
+    width: 100%;
+    border: none;
+}
+
+textarea {
+    resize: none;
+}
+
+input::-ms-reveal {
+    display: none;
+}
+
+input::placeholder {
+    color: #000000;
+    opacity: 1;
+}
+
+.not-scrolling {
+    overflow: hidden;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+input[type="checkbox"] {
+    border: 2px solid #000000;
+    background: transparent;
+    width: 18px;
+    height: 18px;
+    appearance: inherit;
+}
+
+input[type="checkbox"]:checked {
+    background: blue;
+}

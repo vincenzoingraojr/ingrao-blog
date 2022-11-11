@@ -1,0 +1,67 @@
+div.select-container {
+    display: block;
+    background-color: #ffffff;
+    width: 100%;
+}
+
+div.select__control {
+    background-color: #ffffff;
+    border: none;
+    box-shadow: none;
+    min-height: auto;
+}
+
+div.select__value-container {
+    padding: 0;
+}
+
+div.select__single-value,
+div.select__input-container {
+    color: #000000;
+    margin: 0;
+    padding: 0;
+}
+
+span.select__indicator-separator {
+    display: none;
+}
+
+div.select__indicator.select__dropdown-indicator {
+    padding: 0;
+    color: #000000;
+}
+
+div.select__indicator.select__dropdown-indicator svg {
+    fill: #000000;
+}
+
+div.select__menu {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    background-color: #ffffff;
+    border-radius: 0;
+    border: 2px solid #000000;
+    box-sizing: border-box;
+}
+
+div.select__menu-list {
+    margin: 0;
+    padding: 0;
+}
+
+div.select__option {
+    padding-top: 4px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 4px;
+}
+
+div.select__option.select__option--is-focused {
+    background-color: black;
+    color: #ffffff;
+}
+
+div.select__option.select__option--is-selected {
+    background-color: blue;
+    color: #ffffff;
+}
