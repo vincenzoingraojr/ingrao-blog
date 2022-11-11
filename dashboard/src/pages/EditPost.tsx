@@ -231,13 +231,13 @@ function EditPost() {
                                                             onUploadProgress: function(progressEvent: any) {
                                                                 var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                                                                 setStatus(`Uploading post cover: ${percentCompleted}%.`);
-                                                            }
+                                                            },
+                                                            Headers: {
+                                                                "Content-Type": "multipart/form-data",
+                                                            },
                                                         };
 
-                                                        let postCoverData = new FormData();
-                                                        postCoverData.append('file', selectedPostCover);
-
-                                                        await axios.put(url, postCoverData, postCoverConfig)
+                                                        await axios.put(url, selectedPostCover, postCoverConfig)
                                                             .then(() => {
                                                                 setStatus("The post cover was uploaded successfully.");
                                                             }).catch((error) => {

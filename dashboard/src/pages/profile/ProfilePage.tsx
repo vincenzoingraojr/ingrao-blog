@@ -303,13 +303,13 @@ function ProfilePage() {
                                                                         onUploadProgress: function(progressEvent: any) {
                                                                             var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                                                                             setStatus(`Uploading the profile picture: ${percentCompleted}%.`);
-                                                                        }
+                                                                        },
+                                                                        Headers: {
+                                                                            "Content-Type": "multipart/form-data",
+                                                                        },
                                                                     };
                                                     
-                                                                    let profilePictureData = new FormData();
-                                                                    profilePictureData.append('file', selectedProfilePicture);
-                                                    
-                                                                    await axios.put(url, profilePictureData, profilePictureConfig)
+                                                                    await axios.put(url, selectedProfilePicture, profilePictureConfig)
                                                                         .then(() => {
                                                                             setStatus("Your profile picture was uploaded successfully.");
                                                                         }).catch((error) => {
