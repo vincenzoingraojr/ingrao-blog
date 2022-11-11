@@ -17,7 +17,7 @@ const SidebarLayoutContainer = styled.div`
     grid-template-columns: auto;
     grid-template-rows: auto auto;
     column-gap: 0px;
-    row-gap: 24px;
+    row-gap: 48px;
     width: 100%;
 
     @media ${devices.tablet} {

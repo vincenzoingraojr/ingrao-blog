@@ -1014,7 +1014,7 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     @UseMiddleware(isAuth)
     async changePassword(
-        @Arg("existingPassword") existingPassword: string,
+        @Arg("currentPassword") currentPassword: string,
         @Arg("password") password: string,
         @Arg("confirmPassword") confirmPassword: string,
         @Arg("origin") origin: string,
@@ -1022,10 +1022,10 @@ export class UserResolver {
     ): Promise<UserResponse> {
         let errors = [];
 
-        if (existingPassword.length <= 2) {
+        if (currentPassword.length <= 2) {
             errors.push({
-                field: "existingPassword",
-                message: "The existing password lenght must be greater than 2",
+                field: "currentPassword",
+                message: "The current password lenght must be greater than 2",
             });
         }
 
@@ -1074,14 +1074,14 @@ export class UserResolver {
         let valid = false;
 
         if (user) {
-            valid = await argon2.verify(user.password, password);
+            valid = await argon2.verify(user.password, currentPassword);
         }
 
         if (!payload) {
             status = "You are not authenticated.";
         } else if (!valid) {
             errors.push({
-                field: "existingPassword",
+                field: "currentPassword",
                 message: "Incorrect password",
             });
         } else if (errors.length === 0) {

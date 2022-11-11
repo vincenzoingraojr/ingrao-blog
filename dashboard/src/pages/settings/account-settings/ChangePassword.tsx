@@ -35,7 +35,7 @@ function ChangePassword() {
                     </PageTextMB24>
                     <Formik
                         initialValues={{
-                            existingPassword: "",
+                            currentPassword: "",
                             password: "",
                             confirmPassword: "",
                             origin: "dash",
@@ -64,9 +64,9 @@ function ChangePassword() {
                                 {status ? <Status>{status}</Status> : null}
                                 <FlexContainer24>
                                     <InputField
-                                        field="existingPassword"
+                                        field="currentPassword"
                                         type="password"
-                                        placeholder="Existing password"
+                                        placeholder="Current password"
                                         errors={errors}
                                     />
                                     <InputField

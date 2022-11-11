@@ -13,7 +13,6 @@ interface UserComponentProps {
 const UserContainer = styled.div`
     display: block;
     width: 100%;
-    cursor: pointer;
 `;
 
 const UserInnerContainer = styled.div`
@@ -77,11 +76,6 @@ const UserFullName = styled(PageText)`
     font-size: 22px;
     text-decoration: none;
 
-    &:hover,
-    &:focus {
-        text-decoration: underline;
-    }
-
     @media ${devices.mobileL} {
         font-size: 26px;
     }
@@ -122,14 +116,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
     });
 
     return (
-        <UserContainer
-            onClick={() => {
-                navigate(`/user/${user.id}`);
-            }}
-            role="link"
-            title={`${user.firstName} ${user.lastName}'s profile page`}
-            aria-label={`${user.firstName} ${user.lastName}'s profile page`}
-        >
+        <UserContainer>
             <UserInnerContainer>
                 <UserProfilePicture>
                     <img
@@ -164,8 +151,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
                                     role="button"
                                     title="Change user role"
                                     aria-label="Change user role"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
+                                    onClick={() => {
                                         navigate(`/settings/manage-users/change-role/${user.id}`, { state: { backgroundLocation: location }});
                                     }}
                                 >
@@ -179,8 +165,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
                                     role="button"
                                     title="Delete user"
                                     aria-label="Delete user"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
+                                    onClick={() => {
                                         navigate(`/settings/manage-users/delete-user/${user.id}`, { state: { backgroundLocation: location }});
                                     }}
                                 >

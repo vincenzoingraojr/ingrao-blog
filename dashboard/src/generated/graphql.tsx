@@ -76,7 +76,7 @@ export type MutationAuthSendVerificationEmailArgs = {
 
 export type MutationChangePasswordArgs = {
   confirmPassword: Scalars['String'];
-  existingPassword: Scalars['String'];
+  currentPassword: Scalars['String'];
   origin: Scalars['String'];
   password: Scalars['String'];
 };
@@ -306,7 +306,7 @@ export type AuthSendVerificationEmailMutationVariables = Exact<{
 export type AuthSendVerificationEmailMutation = { __typename?: 'Mutation', authSendVerificationEmail: { __typename?: 'UserResponse', status?: string | null | undefined } };
 
 export type ChangePasswordMutationVariables = Exact<{
-  existingPassword: Scalars['String'];
+  currentPassword: Scalars['String'];
   confirmPassword: Scalars['String'];
   password: Scalars['String'];
   origin: Scalars['String'];
@@ -620,9 +620,9 @@ export type AuthSendVerificationEmailMutationHookResult = ReturnType<typeof useA
 export type AuthSendVerificationEmailMutationResult = Apollo.MutationResult<AuthSendVerificationEmailMutation>;
 export type AuthSendVerificationEmailMutationOptions = Apollo.BaseMutationOptions<AuthSendVerificationEmailMutation, AuthSendVerificationEmailMutationVariables>;
 export const ChangePasswordDocument = gql`
-    mutation changePassword($existingPassword: String!, $confirmPassword: String!, $password: String!, $origin: String!) {
+    mutation changePassword($currentPassword: String!, $confirmPassword: String!, $password: String!, $origin: String!) {
   changePassword(
-    existingPassword: $existingPassword
+    currentPassword: $currentPassword
     confirmPassword: $confirmPassword
     password: $password
     origin: $origin
@@ -650,7 +650,7 @@ export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMut
  * @example
  * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
  *   variables: {
- *      existingPassword: // value for 'existingPassword'
+ *      currentPassword: // value for 'currentPassword'
  *      confirmPassword: // value for 'confirmPassword'
  *      password: // value for 'password'
  *      origin: // value for 'origin'
