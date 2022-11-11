@@ -76,4 +76,18 @@ img {
 .editor-custom-body {
     padding-left: 12px;
     padding-right: 12px;
+    max-height: 320px;
+    overflow: auto;
+}
+
+input[type="checkbox"] {
+    border: 2px solid #000000;
+    background: transparent;
+    width: 18px;
+    height: 18px;
+    appearance: inherit;
+}
+
+input[type="checkbox"]:checked {
+    background: blue;
 }

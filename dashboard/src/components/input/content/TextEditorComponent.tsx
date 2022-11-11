@@ -8,6 +8,7 @@ import "@ingrao-blog/editor/dist/editor.css";
 export interface TextEditorComponentProps {
     field: any;
     form: any;
+    itemId?: number;
 }
 
 const EditorComponentContainer = styled.div`
@@ -21,35 +22,56 @@ const EditorContainer = styled.div`
     min-height: 240px;
 `;
 
-function uploadImageCallBack(file: string) {
-    return new Promise(
-      (resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.imgur.com/3/image');
-        xhr.setRequestHeader('Authorization', 'Client-ID 8d26ccd12712fca');
-        const data = new FormData();
-        data.append('image', file);
-        xhr.send(data);
-        xhr.addEventListener('load', () => {
-          const response = JSON.parse(xhr.responseText);
-          resolve(response);
-        });
-        xhr.addEventListener('error', () => {
-          const error = JSON.parse(xhr.responseText);
-          reject(error);
-        });
-      },
-    );
-  }
-
 const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
     field,
     form,
+    itemId,
 }) => {
     const [initialContent] = useState<any | undefined>(() => {
         const content = field.value;
         return content ? JSON.parse(content) : "";
     });
+
+    function uploadImageCallBack(file: File) {
+        return new Promise(
+            async (resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                let postImageName = "";
+                let directory = "";
+                postImageName = `post-image-${new Date().getTime()}.jpeg`;
+                directory =
+                    process.env.REACT_APP_ENV === "development"
+                        ? `local-posts/${itemId}`
+                        : `posts/${itemId}`;
+            
+                let key = `${directory}/${postImageName}`;
+                const { url } = await fetch(
+                    `${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            key: key,
+                        }),
+                    }
+                ).then((res) => res.json());
+                xhr.open("PUT", url);
+                xhr.setRequestHeader("Content-Type", "multipart/form-data");
+                xhr.send(file);
+                console.log(xhr);
+                const imageLink = `https://storage.ingrao.blog/${key}`;
+                xhr.addEventListener("load", () => {
+                    resolve({ data: { link: imageLink } });
+                });
+                xhr.addEventListener("error", (error) => {
+                    reject(error);
+                });
+            },
+        );
+    }
 
     return (
         <EditorComponentContainer>
@@ -65,12 +87,15 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                             "list",
                             "textAlign",
                             "link",
+                            "embedded",
                             "image",
                             "history"
                         ],
                         image: {
                             uploadCallback: uploadImageCallBack,
                             alt: { present: true, mandatory: false },
+                            showImageLoading: true,
+                            previewImage: true,
                         },
                     }}
                     initialContentState={initialContent}

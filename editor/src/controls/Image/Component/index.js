@@ -328,7 +328,7 @@ class LayoutComponent extends Component {
       </div>
     );
   }
-
+  
   render() {
     const {
       config: { icon, className, title },

@@ -329,7 +329,7 @@ export default {
     embedCallback: undefined,
     defaultSize: {
       height: "auto",
-      width: "auto"
+      width: "80%"
     },
     title: undefined
   },
@@ -347,7 +347,7 @@ export default {
     alt: { present: false, mandatory: false },
     defaultSize: {
       height: "auto",
-      width: "auto"
+      width: "100%"
     },
     title: undefined
   },
