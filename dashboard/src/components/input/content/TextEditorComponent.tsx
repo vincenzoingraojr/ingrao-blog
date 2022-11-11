@@ -89,6 +89,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                             "link",
                             "embedded",
                             "image",
+                            "remove",
                             "history"
                         ],
                         image: {
