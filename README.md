@@ -7,6 +7,7 @@ My personal blog, where I talk about the things I learn and do. You can visit th
 | **Folder**                | **Description**    |
 |---------------------------|--------------------|
 | [brand](./brand/)         | Brand files        |
+| [blog](./blog/)           | React.js blog      |
 | [dashboard](./dashboard/) | React.js dashboard |
 | [editor](./editor/)       | Draft.js editor    |
 | [server](./server/)       | Express server     |
