@@ -1,0 +1,5 @@
+mutation authSendVerificationEmail($origin: String!) {
+    authSendVerificationEmail(origin: $origin) {
+        status
+    }
+}

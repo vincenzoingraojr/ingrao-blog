@@ -5,12 +5,10 @@ import { LoadingContainer, PageText } from "../../styles/global";
 import Close from "../icons/Close";
 import Magnifier from "../icons/Magnifier";
 import SmallPostComponent from "../layouts/items/SmallPostComponent";
-import UserComponent from "../layouts/items/UserComponent";
 import LoadingComponent from "./LoadingComponent";
 
 interface SearchBoxComponentProps {
     data: any;
-    type: string;
 }
 
 const SearchBox = styled.div`
@@ -70,7 +68,7 @@ const SearchBoxContent = styled.div`
     gap: 24px;
 `;
 
-const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, type }) => {
+const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data }) => {
     const [value, setValue] = useState("");
 
     const emptyQuery = "";
@@ -82,7 +80,7 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
 
     const { data: meData, loading, error } = useMeQuery({
         fetchPolicy: "network-only",
-        variables: { origin: "dash" },
+        variables: { origin: "blog" },
     });
 
     function handleInputChange(e: any) {
@@ -90,37 +88,20 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
         const dataItems = data || [];
 
         const filteredData = dataItems.filter((dataItem: any) => {
-            if (type === "user") {
-                return (
-                    dataItem.firstName
-                        .toLowerCase()
-                        .includes(query.toLowerCase()) ||
-                    dataItem.lastName
-                        .toLowerCase()
-                        .includes(query.toLowerCase()) ||
-                    dataItem.role
-                        .toLowerCase()
-                        .includes(query.toLowerCase()) ||
-                    dataItem.email
-                        .toLowerCase()
-                        .includes(query.toLowerCase())
-                );
-            } else {
-                return (
-                    dataItem.title
-                        .toLowerCase()
-                        .includes(query.toLowerCase()) ||
-                    dataItem.description
-                        .toLowerCase()
-                        .includes(query.toLowerCase()) ||
-                    dataItem.slogan
-                        .toLowerCase()
-                        .includes(query.toLowerCase()) ||
-                    dataItem.slug
-                        .toLowerCase()
-                        .includes(query.toLowerCase())
-                );                
-            }
+            return (
+                dataItem.title
+                    .toLowerCase()
+                    .includes(query.toLowerCase()) ||
+                dataItem.description
+                    .toLowerCase()
+                    .includes(query.toLowerCase()) ||
+                dataItem.slogan
+                    .toLowerCase()
+                    .includes(query.toLowerCase()) ||
+                dataItem.slug
+                    .toLowerCase()
+                    .includes(query.toLowerCase())
+            );                
         });
 
         setState({
@@ -155,8 +136,8 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                                 autoCorrect="off"
                                 autoFocus
                                 aria-required
-                                placeholder={`Search for a ${type === "user" ? "user" : "blog post"}`}
-                                aria-label={`Search for a ${type === "user" ? "user" : "blog post"}`}
+                                placeholder={"Search for a blog post"}
+                                aria-label={"Search for a blog post"}
                                 value={value}
                                 onChange={(e) => {
                                     setValue(e.target.value);
@@ -187,23 +168,11 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                             <PageText>No results for "{query}".</PageText>
                         ) : (
                             <>
-                                {type === "user" ? (
-                                    <>
-                                        {dataItems.map((user: any) => {
-                                            return (
-                                                <UserComponent key={user.id} user={user} />
-                                            );
-                                        })}
-                                    </>
-                                ) : (
-                                    <>
-                                        {dataItems.map((post: any) => {
-                                            return (
-                                                <SmallPostComponent key={post.id} post={post} />
-                                            );
-                                        })}
-                                    </>
-                                )}
+                                {dataItems.map((post: any) => {
+                                    return (
+                                        <SmallPostComponent key={post.id} post={post} />
+                                    );
+                                })}
                             </>
                         )}
                     </SearchBoxContent>

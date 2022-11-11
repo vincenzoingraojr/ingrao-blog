@@ -1,0 +1,50 @@
+mutation editProfile(
+    $firstName: String!
+    $lastName: String!
+    $profilePicture: String!
+    $title: String!
+    $gender: String!
+    $origin: String!
+) {
+    editProfile(
+        firstName: $firstName
+        lastName: $lastName
+        profilePicture: $profilePicture
+        title: $title
+        gender: $gender
+        origin: $origin
+    ) {
+        user {
+            id
+            firstName
+            lastName
+            email
+            birthDate
+            gender
+            title
+            verified
+            role
+            profilePicture
+            createdAt
+            updatedAt
+            posts {
+                id
+                slug
+                draft
+                authorId
+                title
+                description
+                slogan
+                postCover
+                content
+                createdAt
+                updatedAt
+            }
+        }
+        errors {
+            field
+            message
+        }
+        status
+    }
+}

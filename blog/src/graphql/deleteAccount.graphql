@@ -1,0 +1,6 @@
+mutation deleteAccount($origin: String!) {
+    deleteAccount(origin: $origin) {
+        status
+        ok
+    }
+}

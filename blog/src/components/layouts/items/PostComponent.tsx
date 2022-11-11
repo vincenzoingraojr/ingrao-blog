@@ -1,10 +1,7 @@
 import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useDeletePostMutation } from "../../../generated/graphql";
-import postCover from "../../../images/post-cover.svg";
-import { PageText, TextButton } from "../../../styles/global";
-import { processDate } from "../../../utils/processDate";
+import { PageText } from "../../../styles/global";
 
 interface PostComponentProps {
     post: any;
@@ -70,97 +67,51 @@ const PostSmallText = styled(PageText)`
     font-size: 16px;
 `;
 
-const PostButtonsContainer = styled.div`
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    font-size: 16px;
-    column-gap: 12px;
-    row-gap: 4px;
-`;
-
-const ViewPostButton = styled(TextButton)`
-    color: blue;
-`;
-
-const DeletePostButton = styled(TextButton)`
-    color: red;
-`;
-
 const PostComponent: FunctionComponent<PostComponentProps> = ({
     post,
 }) => {
     const navigate = useNavigate();
 
     let date = "";
-
-    if (post.draft) {
-        date = processDate(post.updatedAt);
-    } else {
-        date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-        });
-    }
-
-    const [deletePost] = useDeletePostMutation();
+    date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
 
     return (
         <PostContainer
             onClick={() => {
-                navigate(
-                    post.draft ? `/update-post/${post.id}` : `/post/${post.slug}`
-                );
+                navigate(`/post/${post.slug}`);
             }}
             role="link"
-            title={post.draft ? `Unpublished post: ${post.id}` : `${post.title}`}
-            aria-label={
-                post.draft ? `Unpublished post: ${post.id}` : `${post.title}`
-            }
+            title={post.title}
+            aria-label={post.title}
         >
             <PostInnerContainer>
                 <PostHeader>
                     <HeadText>
-                        {post.draft ? (
-                            <>Unpublished post: {post.id}</>
-                        ) : (
-                            <>{post.slogan}</>
-                        )}
+                        {post.slogan}
                     </HeadText>
                 </PostHeader>
                 <PostImage>
                     <img
                         src={
-                            post.postCover !== null && post.postCover !== ""
-                                ? post.postCover
-                                : postCover
+                            post.postCover
                         }
                         title={
-                            post.draft
-                                ? `Unpublished post (${post.id}) cover image`
-                                : `${post.title}`
+                            post.title
                         }
                         alt={
-                            post.draft
-                                ? `Unpublished post (${post.id}) cover`
-                                : `${post.title}`
+                            post.title
                         }
                     />
                 </PostImage>
                 <PostBody>
                     <PostTitle>
-                        {post.title !== null && post.title !== "" ? (
-                            <>{post.title}</>
-                        ) : (
-                            <>{post.slug}</>
-                        )}
+                        {post.title}
                     </PostTitle>
-                    {post.description && (
                         <PageText>{post.description}</PageText>
-                    )}
                     <PostSmallText>
                         Written by{" "}
                         <b>
@@ -168,42 +119,8 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                         </b>
                     </PostSmallText>
                     <PostSmallText>
-                        {post.draft ? <>Updated</> : <>Published on</>} {date}
+                        Published on {date}
                     </PostSmallText>
-                    {post.draft && (
-                        <PostButtonsContainer>
-                            <ViewPostButton
-                                type="button"
-                                role="button"
-                                title="View post"
-                                aria-label="View post"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/update-post/${post.id}/preview`);
-                                }}
-                            >
-                                View post
-                            </ViewPostButton>
-                            <DeletePostButton
-                                type="button"
-                                role="button"
-                                title="Delete post"
-                                aria-label="Delete post"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    deletePost({
-                                        variables: {
-                                            postId: post.id,
-                                        },
-                                    }).then(() => {
-                                        navigate(0);
-                                    });
-                                }}
-                            >
-                                Delete post
-                            </DeletePostButton>
-                        </PostButtonsContainer>
-                    )}
                 </PostBody>
             </PostInnerContainer>
         </PostContainer>

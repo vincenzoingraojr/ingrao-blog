@@ -1,0 +1,17 @@
+mutation editEmailAddress(
+    $confirmEmail: String!
+    $email: String!
+    $origin: String!
+) {
+    editEmailAddress(
+        confirmEmail: $confirmEmail
+        email: $email
+        origin: $origin
+    ) {
+        status
+        errors {
+            field
+            message
+        }
+    }
+}

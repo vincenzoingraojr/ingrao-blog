@@ -1,10 +1,7 @@
 import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useDeletePostMutation, useUnpublishPostMutation } from "../../../generated/graphql";
-import postCover from "../../../images/post-cover.svg";
-import { PageText, TextButton } from "../../../styles/global";
-import { processDate } from "../../../utils/processDate";
+import { PageText } from "../../../styles/global";
 
 interface SmallPostComponentProps {
     post: any;
@@ -71,29 +68,6 @@ const PostSmallText = styled(PageText)`
     font-size: 16px;
 `;
 
-const PostButtonsContainer = styled.div`
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    font-size: 16px;
-    column-gap: 12px;
-    row-gap: 4px;
-`;
-
-const ViewPostButton = styled(TextButton)`
-    color: blue;
-`;
-
-const DeletePostButton = styled(TextButton)`
-    color: red;
-`;
-
-const UnpublishPostButton = styled(TextButton)`
-    color: #000000;
-`;
-
 const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
     post,
 }) => {
@@ -101,125 +75,51 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
 
     let date = "";
 
-    if (post.draft) {
-        date = processDate(post.updatedAt);
-    } else {
-        date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-        });
-    }
-
-    const [deletePost] = useDeletePostMutation();
-    const [unpublishPost] = useUnpublishPostMutation();
+    date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
 
     return (
         <SmallPostContainer
             onClick={() => {
                 navigate(
-                    post.draft ? `/update-post/${post.id}` : `/post/${post.slug}`
+                    `/post/${post.slug}`
                 );
             }}
             role="link"
-            title={post.draft ? `Unpublished post: ${post.id}` : `${post.title}`}
+            title={post.title}
             aria-label={
-                post.draft ? `Unpublished post: ${post.id}` : `${post.title}`
+                post.title
             }
         >
             <SmallPostInnerContainer>
                 <SmallPostImage>
                     <img
                         src={
-                            post.postCover !== null && post.postCover !== ""
-                                ? post.postCover
-                                : postCover
+                            post.postCover
                         }
                         title={
-                            post.draft
-                                ? `Unpublished post (${post.id}) cover image`
-                                : `${post.title}`
+                            post.title
                         }
                         alt={
-                            post.draft
-                                ? `Unpublished post (${post.id}) cover`
-                                : `${post.title}`
+                            post.title
                         }
                     />
                 </SmallPostImage>
                 <SmallPostBody>
                     <SmallPostHeader>
                         <HeadText>
-                            {post.draft ? (
-                                <>Unpublished post: {post.id}</>
-                            ) : (
-                                <>{post.slogan}</>
-                            )}
+                            {post.slogan}
                         </HeadText>
                     </SmallPostHeader>
                     <SmallPostTitle>
-                        {post.title !== null && post.title !== "" ? (
-                            <>{post.title}</>
-                        ) : (
-                            <>{post.slug}</>
-                        )}
+                        {post.title}
                     </SmallPostTitle>
                     <PostSmallText>
-                        {post.draft ? <>Updated</> : <>Published on</>} {date}, by {post.author.firstName} {post.author.lastName}
-                    </PostSmallText>
-                    <PostButtonsContainer>
-                        {post.draft ? (
-                            <ViewPostButton
-                                type="button"
-                                role="button"
-                                title="View post"
-                                aria-label="View post"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/update-post/${post.id}/preview`);
-                                }}
-                            >
-                                View post
-                            </ViewPostButton>
-                        ) : (
-                            <UnpublishPostButton
-                                type="button"
-                                role="button"
-                                title="Unpublish post"
-                                aria-label="Unpublish post"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    unpublishPost({
-                                        variables: {
-                                            postId: post.id,
-                                        },
-                                    }).then(() => {
-                                        navigate(0);
-                                    });
-                                }}
-                            >
-                                Unpublish post
-                            </UnpublishPostButton>
-                        )}
-                        <DeletePostButton
-                            type="button"
-                            role="button"
-                            title="Delete post"
-                            aria-label="Delete post"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                deletePost({
-                                    variables: {
-                                        postId: post.id,
-                                    },
-                                }).then(() => {
-                                    navigate(0);
-                                });
-                            }}
-                        >
-                            Delete post
-                        </DeletePostButton>
-                    </PostButtonsContainer>
+                        Published on {date}, by {post.author.firstName} {post.author.lastName}
+                    </PostSmallText>                        
                 </SmallPostBody>
             </SmallPostInnerContainer>
         </SmallPostContainer>

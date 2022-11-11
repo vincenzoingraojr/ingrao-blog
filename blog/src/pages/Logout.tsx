@@ -93,7 +93,7 @@ function Logout() {
 
     const { data, loading } = useMeQuery({
         fetchPolicy: "network-only",
-        variables: { origin: "dash" },
+        variables: { origin: "blog" },
     });
     const [logout, { client }] = useLogoutMutation();
 

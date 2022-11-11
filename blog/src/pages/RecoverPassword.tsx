@@ -32,7 +32,7 @@ function RecoverPassword() {
                             using the email associated with it.
                         </PageTextMB24>
                         <Formik
-                            initialValues={{ email: "", origin: "dash" }}
+                            initialValues={{ email: "", origin: "blog" }}
                             onSubmit={async (
                                 values,
                                 { setErrors, setStatus }

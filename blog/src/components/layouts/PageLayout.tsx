@@ -44,31 +44,27 @@ const PageLayoutContainer = styled.div`
 
 const PageLayoutContent = styled.div`
     display: block;
-    min-height: calc(100% + 60px);
+    min-height: calc(100vh - 164px);
 
     @media ${devices.tablet} {
-        min-height: calc(100vh - 244px);
+        min-height: calc(100vh - 196px);
     }
 `;
 
 const FooterContainer = styled.footer`
-    display: none;
-
-    @media ${devices.tablet} {
-        display: flex;
-        align-items: center;
-        align-content: center;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        height: 80px;
-        border-top: 2px solid #000000;
-        font-size: 14px;
-        column-gap: 12px;
-        row-gap: 4px;
-        margin-top: 24px;
-        margin-left: 16px;
-        margin-right: 16px;
-    }
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    height: 80px;
+    border-top: 2px solid #000000;
+    font-size: 14px;
+    column-gap: 12px;
+    row-gap: 4px;
+    margin-top: 24px;
+    margin-left: 16px;
+    margin-right: 16px;
 `;
 
 const FooterItem = styled(PageText)`
@@ -84,7 +80,7 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
                 <PageLayoutContent>{content}</PageLayoutContent>
                 <FooterContainer>
                     <FooterItem>
-                        &copy; {new Date().getFullYear()} ingrao.blog, the blog of Vincenzo Ingrao Jr.
+                        &copy; {new Date().getFullYear()} ingrao.blog
                     </FooterItem>
                     <FooterItem>
                         <a

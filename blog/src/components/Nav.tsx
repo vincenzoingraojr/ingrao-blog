@@ -31,6 +31,7 @@ const NavInnerContainer = styled.div`
     align-items: center;
     justify-content: space-between;
     gap: 36px;
+    border-bottom: 2px solid #000000;
     width: 100%;
 
     @media ${devices.tablet} {
@@ -106,7 +107,7 @@ const ProfileName = styled.div`
 const ProfileEmail = styled(PageText)`
     text-align: right;
     font-size: 16px;
-    text-transform: capitalize;
+    text-transform: lowercase;
 `;
 
 const ProfileImageContainer = styled.div`
@@ -296,7 +297,7 @@ function Nav() {
             <NavInnerContainer>
                 <SiteBrand>
                     <Link
-                        to="/home"
+                        to="/"
                         title="ingrao.blog"
                         aria-label="ingrao.blog"
                     >
