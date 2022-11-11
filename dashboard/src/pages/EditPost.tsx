@@ -185,8 +185,8 @@ function EditPost() {
                                                         existingPostCoverName = data?.findPost?.postCover?.replace(
                                                             `https://storage.ingrao.blog/${
                                                                 process.env.REACT_APP_ENV === "development"
-                                                                    ? "local-post"
-                                                                    : "post"
+                                                                    ? "local-posts"
+                                                                    : "posts"
                                                             }/${data?.findPost?.id}/`,
                                                             ""
                                                         )!;
@@ -197,8 +197,8 @@ function EditPost() {
                                                             await axios.delete(
                                                                 `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
                                                                     process.env.REACT_APP_ENV === "development"
-                                                                        ? "local-post"
-                                                                        : "post"
+                                                                        ? "local-posts"
+                                                                        : "posts"
                                                                 }/${data?.findPost?.id}/${existingPostCoverName}`
                                                             );
                                                         }
@@ -206,8 +206,8 @@ function EditPost() {
                                                         postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
                                                         directory =
                                                             process.env.REACT_APP_ENV === "development"
-                                                                ? `local-post/${data?.findPost?.id}`
-                                                                : `post/${data?.findPost?.id}`;
+                                                                ? `local-posts/${data?.findPost?.id}`
+                                                                : `posts/${data?.findPost?.id}`;
                                         
                                                         let key = `${directory}/${postCoverName}`;
                                         
@@ -232,7 +232,7 @@ function EditPost() {
                                                                 var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                                                                 setStatus(`Uploading post cover: ${percentCompleted}%.`);
                                                             },
-                                                            Headers: {
+                                                            headers: {
                                                                 "Content-Type": "multipart/form-data",
                                                             },
                                                         };
@@ -251,8 +251,8 @@ function EditPost() {
                                                         await axios.delete(
                                                             `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
                                                                 process.env.REACT_APP_ENV === "development"
-                                                                    ? "local-post"
-                                                                    : "post"
+                                                                    ? "local-posts"
+                                                                    : "posts"
                                                             }/${data?.findPost?.id}/${existingPostCoverName}`
                                                         );
                                                     } else {
@@ -275,8 +275,8 @@ function EditPost() {
                                                                 isPostCoverUploaded
                                                                     ? `https://storage.ingrao.blog/${
                                                                           process.env.REACT_APP_ENV === "development"
-                                                                              ? "local-post"
-                                                                              : "post"
+                                                                              ? "local-posts"
+                                                                              : "posts"
                                                                       }/${data?.findPost?.id}/${postCoverName}`
                                                                     : "",
                                                         },
@@ -487,6 +487,7 @@ function EditPost() {
                                                                 />
                                                                 <EditorField
                                                                     field="content"
+                                                                    itemId={data?.findPost?.id}
                                                                     errors={
                                                                         errors
                                                                     }

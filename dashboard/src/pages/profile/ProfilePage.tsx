@@ -304,7 +304,7 @@ function ProfilePage() {
                                                                             var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                                                                             setStatus(`Uploading the profile picture: ${percentCompleted}%.`);
                                                                         },
-                                                                        Headers: {
+                                                                        headers: {
                                                                             "Content-Type": "multipart/form-data",
                                                                         },
                                                                     };

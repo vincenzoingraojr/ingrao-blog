@@ -6,6 +6,7 @@ import styled from "styled-components";
 interface EditorFieldProps {
     field: string;
     errors: any;
+    itemId?: number;
 }
 
 const EditorFieldWrapper = styled.div`
@@ -30,6 +31,7 @@ const EditorFieldContainer = styled.div`
 const EditorField: FunctionComponent<EditorFieldProps> = ({
     field,
     errors,
+    itemId,
 }) => {
     return (
         <EditorFieldWrapper>
@@ -37,7 +39,7 @@ const EditorField: FunctionComponent<EditorFieldProps> = ({
                 <EditorFieldError>{errors[field]}</EditorFieldError>
             ) : null}
             <EditorFieldContainer>
-                <Field name={field} component={TextEditorComponent} />
+                <Field name={field} component={TextEditorComponent} itemId={itemId} />
             </EditorFieldContainer>
         </EditorFieldWrapper>
     );
