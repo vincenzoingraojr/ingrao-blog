@@ -138,7 +138,7 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                 aria-label="Exit"
                 onClick={() => {
                     if (navigationType === "POP") {
-                        navigate("/home");
+                        navigate("/");
                     } else {
                         navigate(-1);
                     }
@@ -152,7 +152,7 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                         aria-label="Close modal"
                         onClick={() => {
                             if (navigationType === "POP") {
-                                navigate("/home");
+                                navigate("/");
                             } else {
                                 navigate(-1);
                             }

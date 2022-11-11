@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Head from "../components/Head";
 import InputField from "../components/input/InputField";
 import { MeDocument, MeQuery, useLoginMutation, User } from "../generated/graphql";
@@ -19,7 +19,7 @@ function Login() {
             />
             <ModalContentContainer>
                 <PageTextMB24>
-                    Log in to the blog.
+                    Log in to the blog. Forgot your password?{" "}<Link to="/recover-password" title="Recover your password" aria-label="Recover your password">Recover it here</Link>
                 </PageTextMB24>
                 <Formik
                     initialValues={{

@@ -1,4 +1,5 @@
 import { Form, Formik } from "formik";
+import { Link } from "react-router-dom";
 import Head from "../components/Head";
 import DatePickerField from "../components/input/datepicker/DatePickerField";
 import InputField from "../components/input/InputField";
@@ -32,7 +33,7 @@ function Signup() {
             />
             <ModalContentContainer>
                 <PageTextMB24>
-                    Log in to the blog.
+                    Sign up to the blog. Log in{" "}<Link to="/login" title="Log in to the blog" aria-label="Log in to the blog">here</Link>.
                 </PageTextMB24>
                 <Formik
                     initialValues={{

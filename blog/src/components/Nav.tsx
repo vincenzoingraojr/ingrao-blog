@@ -79,7 +79,7 @@ const SiteBrandText = styled.div`
 
 const NavOptionsContainer = styled.nav`
     display: flex;
-    aling-items: center;
+    align-items: center;
     justify-content: flex-end;
     gap: 12px;
 `;

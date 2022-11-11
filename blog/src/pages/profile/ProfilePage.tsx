@@ -377,7 +377,7 @@ function ProfilePage() {
                                                                                                       ?.id
                                                                                               }/${profilePictureName}`
                                                                                             : "",
-                                                                                    origin: "dash",
+                                                                                    origin: "blog",
                                                                                 },
                                                                             update: (
                                                                                 store,
