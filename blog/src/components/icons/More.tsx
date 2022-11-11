@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { SvgIcon } from "../../styles/global";
 
 const MoreIcon = styled(SvgIcon)`
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     fill: #000000;
     stroke: none;
 `;

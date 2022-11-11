@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { devices } from "../styles/devices";
 import { ControlContainer, PageText } from "../styles/global";
@@ -8,6 +8,8 @@ import { useMeQuery } from "../generated/graphql";
 import { useEffect, useState } from "react";
 import Close from "./icons/Close";
 import Arrow from "./icons/Arrow";
+import More from "./icons/More";
+import Magnifier from "./icons/Magnifier";
 
 const NavContainer = styled.div`
     display: flex;
@@ -73,6 +75,13 @@ const SiteBrandText = styled.div`
     span {
         color: blue;
     }
+`;
+
+const NavOptionsContainer = styled.nav`
+    display: flex;
+    aling-items: center;
+    justify-content: flex-end;
+    gap: 12px;
 `;
 
 const ProfileContainer = styled.div`
@@ -282,6 +291,8 @@ function Nav() {
         variables: { origin: "blog" },
     });
 
+    const navigate = useNavigate();
+
     const [menu, setMenu] = useState(false);
 
     useEffect(() => {
@@ -309,34 +320,58 @@ function Nav() {
                         </SiteBrandText>
                     </Link>
                 </SiteBrand>
-                <ProfileContainer
-                    title="Open menu"
-                    role="button"
-                    aria-label="Open menu"
-                    onClick={() => {
-                        setMenu(true);
-                        document.body.classList.add("not-scrolling");
-                    }}
-                >
-                    <ProfileInfoContainer>
-                        <ProfileName>
-                            {data?.me?.firstName} {data?.me?.lastName}
-                        </ProfileName>
-                        <ProfileEmail>{data?.me?.email}</ProfileEmail>
-                    </ProfileInfoContainer>
-                    <ProfileImageContainer>
-                        <img
-                            src={
-                                data?.me?.profilePicture !== "" &&
-                                data?.me?.profilePicture !== null
-                                    ? data?.me?.profilePicture!
-                                    : profilePicture
-                            }
-                            title={`${data?.me?.firstName}'s profile picture`}
-                            alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
-                        />
-                    </ProfileImageContainer>
-                </ProfileContainer>
+                <NavOptionsContainer>
+                    <ControlContainer
+                        title="Search for a blog post"
+                        role="link"
+                        aria-label="Search for a blog post"
+                        onClick={() => {
+                            navigate("/search");
+                        }}
+                    >
+                        <Magnifier type="normal" />
+                    </ControlContainer>
+                    {data && data.me && (
+                        <ProfileContainer
+                            title="Your profile"
+                            role="link"
+                            aria-label="Your profile"
+                            onClick={() => {
+                                navigate("/profile");
+                            }}
+                        >
+                            <ProfileInfoContainer>
+                                <ProfileName>
+                                    {data?.me?.firstName} {data?.me?.lastName}
+                                </ProfileName>
+                                <ProfileEmail>{data?.me?.email}</ProfileEmail>
+                            </ProfileInfoContainer>
+                            <ProfileImageContainer>
+                                <img
+                                    src={
+                                        data?.me?.profilePicture !== "" &&
+                                        data?.me?.profilePicture !== null
+                                            ? data?.me?.profilePicture!
+                                            : profilePicture
+                                    }
+                                    title={`${data?.me?.firstName}'s profile picture`}
+                                    alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
+                                />
+                            </ProfileImageContainer>
+                        </ProfileContainer>
+                    )}
+                    <ControlContainer
+                        title="Open menu"
+                        role="button"
+                        aria-label="Open menu"
+                        onClick={() => {
+                            setMenu(true);
+                            document.body.classList.add("not-scrolling");
+                        }}
+                    >
+                        <More />
+                    </ControlContainer>
+                </NavOptionsContainer>
             </NavInnerContainer>
             {menu && (
                 <MenuOuterContainer>

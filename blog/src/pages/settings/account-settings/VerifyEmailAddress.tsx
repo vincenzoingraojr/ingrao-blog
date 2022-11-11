@@ -16,7 +16,7 @@ const VerifyEmailAddressButton = styled(Button)`
 function VerifyEmailAddress() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "network-only",
-        variables: { origin: "dash" },
+        variables: { origin: "blog" },
     });
 
     const navigate = useNavigate();
@@ -39,7 +39,7 @@ function VerifyEmailAddress() {
     return (
         <>
             <Head 
-                title="Verify your email address | dashboard.ingrao.blog"
+                title="Verify your email address | ingrao.blog"
                 description="In this page you can verify your email address."
             />
             {(loading && !data) || error ? (

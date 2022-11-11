@@ -10,7 +10,7 @@ const IsNotAuthenticated: FunctionComponent<IsNotAuthenticatedProps> = ({
     children,
     isAuth,
 }) => {
-    return isAuth ? <Navigate replace to="/home" /> : children;
+    return isAuth ? <Navigate replace to="/" /> : children;
 };
 
 export default IsNotAuthenticated;

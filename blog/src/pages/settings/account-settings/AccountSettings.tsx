@@ -7,7 +7,6 @@ import { useAuthSendVerificationEmailMutation, useMeQuery } from "../../../gener
 import { Button, LinkButton, LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText, Status } from "../../../styles/global";
 import styled from "styled-components";
 import SettingsComponent from "../SettingsComponent";
-import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Form, Formik } from "formik";
 
@@ -30,27 +29,17 @@ const VerifyEmailAddressButton = styled(Button)`
 function AccountSettings() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "cache-and-network",
-        variables: { origin: "dash" },
+        variables: { origin: "blog" },
     });
 
     const location = useLocation();
-
-    const [isAdmin, setIsAdmin] = useState(false);
-
-    useEffect(() => {
-        if (data && data.me && data.me.role === "admin") {
-            setIsAdmin(true);
-        } else {
-            setIsAdmin(false);
-        }
-    }, [data]);
 
     const [authSendEmail] = useAuthSendVerificationEmailMutation();
     
     return (
         <>
             <Head
-                title="Account settings | dashboard.ingrao.blog"
+                title="Account settings | ingrao.blog"
                 description="In this page you can modify the email address and password associated to your account."
             />
             <PageLayout
@@ -58,7 +47,6 @@ function AccountSettings() {
                     <PageContentLayout
                         content={
                             <SettingsComponent
-                                isAdmin={isAdmin}
                                 content={
                                     <>
                                         {(loading && !data) || error ? (
@@ -123,7 +111,7 @@ function AccountSettings() {
                                                             <PageBlock>
                                                                 <Formik
                                                                     initialValues={{
-                                                                        origin: "dash",
+                                                                        origin: "blog",
                                                                     }}
                                                                     onSubmit={async (
                                                                         values,

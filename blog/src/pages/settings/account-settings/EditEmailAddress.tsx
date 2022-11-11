@@ -15,7 +15,7 @@ const EditEmailAddressButton = styled(Button)`
 function EditEmailAddress() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "network-only",
-        variables: { origin: "dash" },
+        variables: { origin: "blog" },
     });
 
     const [editEmail] = useEditEmailAddressMutation();
@@ -23,7 +23,7 @@ function EditEmailAddress() {
     return (
         <>
             <Head 
-                title="Edit email address | dashboard.ingrao.blog"
+                title="Edit email address | ingrao.blog"
                 description="In this page you can change the email address linked to your account."
             />
             {(loading && !data) || error ? (
@@ -37,7 +37,7 @@ function EditEmailAddress() {
                         initialValues={{
                             email: "",
                             confirmEmail: "",
-                            origin: "dash",
+                            origin: "blog",
                         }}
                         onSubmit={async (values, { setErrors, setStatus }) => {
                             const response = await editEmail({

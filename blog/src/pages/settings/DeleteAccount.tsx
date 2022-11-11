@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Head from "../../components/Head";
 import PageLayout from "../../components/layouts/PageLayout";
 import PageContentLayout from "../../components/layouts/sublayouts/PageContentLayout";
@@ -26,27 +25,17 @@ const DeleteAccountButton = styled(Button)`
 function DeleteAccount() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "cache-and-network",
-        variables: { origin: "dash" },
+        variables: { origin: "blog" },
     });
 
     const navigate = useNavigate();
-
-    const [isAdmin, setIsAdmin] = useState(false);
-
-    useEffect(() => {
-        if (data && data.me && data.me.role === "admin") {
-            setIsAdmin(true);
-        } else {
-            setIsAdmin(false);
-        }
-    }, [data]);
 
     const [deleteAccount, { client }] = useDeleteAccountMutation();
 
     return (
         <>
             <Head
-                title="Delete your account | dashboard.ingrao.blog"
+                title="Delete your account | ingrao.blog"
                 description="In this page you can delete all of your account data."
             />
             <PageLayout
@@ -54,7 +43,6 @@ function DeleteAccount() {
                     <PageContentLayout
                         content={
                             <SettingsComponent
-                                isAdmin={isAdmin}
                                 content={
                                     <>
                                         {(loading && !data) || error ? (
@@ -80,7 +68,7 @@ function DeleteAccount() {
                                                         <PageBlock>
                                                             <Formik
                                                                 initialValues={{
-                                                                    origin: "dash"
+                                                                    origin: "blog"
                                                                 }}
                                                                 onSubmit={async (
                                                                     values,

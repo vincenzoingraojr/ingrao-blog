@@ -15,7 +15,7 @@ const ChangePasswordButton = styled(Button)`
 function ChangePassword() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "network-only",
-        variables: { origin: "dash" },
+        variables: { origin: "blog" },
     });
 
     const [changePassword] = useChangePasswordMutation();
@@ -23,7 +23,7 @@ function ChangePassword() {
     return (
         <>
             <Head 
-                title="Change your password | dashboard.ingrao.blog"
+                title="Change your password | ingrao.blog"
                 description="In this page you can change your account password."
             />
             {(loading && !data) || error ? (
@@ -38,7 +38,7 @@ function ChangePassword() {
                             currentPassword: "",
                             password: "",
                             confirmPassword: "",
-                            origin: "dash",
+                            origin: "blog",
                         }}
                         onSubmit={async (values, { setErrors, setStatus }) => {
                             const response = await changePassword({

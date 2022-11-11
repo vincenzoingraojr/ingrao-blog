@@ -153,7 +153,7 @@ function ProfilePage() {
     return (
         <>
             <Head
-                title="Your profile | dashboard.ingrao.blog"
+                title="Your profile | ingrao.blog"
                 description="In this page you can view your profile and update your personal information."
             />
             <PageLayout

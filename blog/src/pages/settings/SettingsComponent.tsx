@@ -2,12 +2,11 @@ import { FunctionComponent } from "react";
 import SidebarLayout from "../../components/layouts/sublayouts/SidebarLayout";
 
 interface SettingsComponentProps {
-    isAdmin: boolean;
     content: JSX.Element;
 }
 
 
-const SettingsComponent: FunctionComponent<SettingsComponentProps> = ({ isAdmin, content }) => {
+const SettingsComponent: FunctionComponent<SettingsComponentProps> = ({ content }) => {
     const settingsComponentSidebarData = [
         {
             url: "settings/account",
