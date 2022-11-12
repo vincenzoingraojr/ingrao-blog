@@ -441,6 +441,7 @@ function Nav() {
                                                         title="Go to the dashboard"
                                                         aria-label="Go to the dashboard"
                                                         target="_blank"
+                                                        rel="noreferrer noopener"
                                                     >
                                                         <MenuDirectionEntryIcon>
                                                             <Arrow color="blue" />

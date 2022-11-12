@@ -44,10 +44,10 @@ const PageLayoutContainer = styled.div`
 
 const PageLayoutContent = styled.div`
     display: block;
-    min-height: calc(100vh - 164px);
+    min-height: calc(100vh - 140px);
 
     @media ${devices.tablet} {
-        min-height: calc(100vh - 196px);
+        min-height: calc(100vh - 172px);
     }
 `;
 
@@ -62,7 +62,6 @@ const FooterContainer = styled.footer`
     font-size: 14px;
     column-gap: 12px;
     row-gap: 4px;
-    margin-top: 24px;
     margin-left: 16px;
     margin-right: 16px;
 `;

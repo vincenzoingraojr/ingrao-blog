@@ -292,6 +292,11 @@ export type AuthSendVerificationEmailMutationVariables = Exact<{
 
 export type AuthSendVerificationEmailMutation = { __typename?: 'Mutation', authSendVerificationEmail: { __typename?: 'UserResponse', status?: string | null | undefined } };
 
+export type BlogFeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BlogFeedQuery = { __typename?: 'Query', blogFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } }> };
+
 export type ChangePasswordMutationVariables = Exact<{
   currentPassword: Scalars['String'];
   confirmPassword: Scalars['String'];
@@ -429,6 +434,64 @@ export function useAuthSendVerificationEmailMutation(baseOptions?: Apollo.Mutati
 export type AuthSendVerificationEmailMutationHookResult = ReturnType<typeof useAuthSendVerificationEmailMutation>;
 export type AuthSendVerificationEmailMutationResult = Apollo.MutationResult<AuthSendVerificationEmailMutation>;
 export type AuthSendVerificationEmailMutationOptions = Apollo.BaseMutationOptions<AuthSendVerificationEmailMutation, AuthSendVerificationEmailMutationVariables>;
+export const BlogFeedDocument = gql`
+    query blogFeed {
+  blogFeed {
+    id
+    slug
+    draft
+    authorId
+    author {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      createdAt
+      updatedAt
+    }
+    title
+    description
+    slogan
+    postCover
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useBlogFeedQuery__
+ *
+ * To run a query within a React component, call `useBlogFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogFeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBlogFeedQuery(baseOptions?: Apollo.QueryHookOptions<BlogFeedQuery, BlogFeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BlogFeedQuery, BlogFeedQueryVariables>(BlogFeedDocument, options);
+      }
+export function useBlogFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BlogFeedQuery, BlogFeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BlogFeedQuery, BlogFeedQueryVariables>(BlogFeedDocument, options);
+        }
+export type BlogFeedQueryHookResult = ReturnType<typeof useBlogFeedQuery>;
+export type BlogFeedLazyQueryHookResult = ReturnType<typeof useBlogFeedLazyQuery>;
+export type BlogFeedQueryResult = Apollo.QueryResult<BlogFeedQuery, BlogFeedQueryVariables>;
 export const ChangePasswordDocument = gql`
     mutation changePassword($currentPassword: String!, $confirmPassword: String!, $password: String!, $origin: String!) {
   changePassword(

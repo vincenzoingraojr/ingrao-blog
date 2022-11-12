@@ -104,8 +104,8 @@ function Logout() {
     return (
         <>
             <Head
-                title="Log out | dashboard.ingrao.blog"
-                description="Log out from the dashboard."
+                title="Log out | ingrao.blog"
+                description="Log out from ingrao.blog."
             />
             <LogoutPage>
                 <LogoutContainer>
@@ -126,8 +126,8 @@ function Logout() {
                         </ControlContainer>
                         <Link
                             to="/"
-                            title="dashboard.ingrao.blog"
-                            aria-label="dashboard.ingrao.blog"
+                            title="ingrao.blog"
+                            aria-label="ingrao.blog"
                         >
                             <Logo type="inline" />
                         </Link>
@@ -135,7 +135,7 @@ function Logout() {
                     </LogoutPageHeader>
                     <LogoutPageContent>
                         <PageText>
-                            Do you really want to log out from the dashboard?
+                            Do you really want to log out from ingrao.blog?
                         </PageText>
                         <LogoutButton
                             type="button"

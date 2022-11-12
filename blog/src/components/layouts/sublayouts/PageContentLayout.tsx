@@ -10,7 +10,7 @@ const PageContentContainer = styled.div`
     padding-top: 48px;
     padding-left: 16px;
     padding-right: 16px;
-    padding-bottom: 48px;
+    padding-bottom: 72px;
 `;
 
 const PageContentLayout: FunctionComponent<PageContentLayoutProps> = ({
