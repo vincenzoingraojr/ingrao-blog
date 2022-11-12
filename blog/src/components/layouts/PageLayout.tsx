@@ -83,7 +83,7 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
                     </FooterItem>
                     <FooterItem>
                         <a
-                            href="https://ingrao.blog/privacy-policy"
+                            href="/privacy-policy"
                             target="_blank"
                             title="Privacy policy of ingrao.blog"
                             rel="noreferrer"

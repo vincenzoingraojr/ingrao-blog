@@ -335,3 +335,8 @@ export const UploadCoverImageButton = styled.div`
         visibility: hidden;
     }
 `;
+
+export const WritingContainer = styled.div`
+    display: block;
+    font-family: "Source Serif Pro", serif;
+`;

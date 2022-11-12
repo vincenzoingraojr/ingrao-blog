@@ -20,6 +20,10 @@ import VerifyEmailAddress from "./pages/settings/account-settings/VerifyEmailAdd
 import ChangePassword from "./pages/settings/account-settings/ChangePassword";
 import { useMeQuery } from "./generated/graphql";
 import DeleteAccount from "./pages/settings/DeleteAccount";
+import ContactPage from "./pages/ContactPage";
+import AboutPage from "./pages/AboutPage";
+import SearchPage from "./pages/SearchPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -201,6 +205,30 @@ function App() {
                             isAuth={isAuth}
                             children={<DeleteAccount />}
                         />
+                    }
+                />
+                <Route
+                    path="/contact"
+                    element={
+                        <ContactPage />
+                    }
+                />
+                <Route
+                    path="/about"
+                    element={
+                        <AboutPage />
+                    }
+                />
+                <Route
+                    path="/search"
+                    element={
+                        <SearchPage />
+                    }
+                />
+                <Route
+                    path="/privacy-policy"
+                    element={
+                        <PrivacyPolicyPage />
                     }
                 />
             </Routes>
