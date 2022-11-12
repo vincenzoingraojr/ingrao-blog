@@ -32,12 +32,13 @@ const NavInnerContainer = styled.div`
     height: 60px;
     align-items: center;
     justify-content: space-between;
-    gap: 36px;
+    gap: 12px;
     border-bottom: 2px solid #000000;
     width: 100%;
 
     @media ${devices.tablet} {
         height: 92px;
+        gap: 24px;
     }
 `;
 
