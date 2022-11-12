@@ -1225,7 +1225,7 @@ export class UserResolver {
             });
 
             if (payload.role === "admin" && (adminUsers.length - 1) === 0) {
-                status = "You can't delete your account because you are the only admin of the dashboard.";
+                status = "You can't delete your account because you are the only admin of ingrao.blog.";
                 ok = false;
             } else {
                 await User.remove(user!).then(() => {
