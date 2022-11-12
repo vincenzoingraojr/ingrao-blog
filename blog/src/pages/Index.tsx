@@ -1,11 +1,13 @@
 import Head from "../components/Head";
 import PageLayout from "../components/layouts/PageLayout";
 import styled from "styled-components";
-import { useBlogFeedQuery } from "../generated/graphql";
+import { Post, useBlogFeedQuery } from "../generated/graphql";
 import { devices } from "../styles/devices";
 import { LoadingContainer } from "../styles/global";
 import LoadingComponent from "../components/utils/LoadingComponent";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Arrow from "../components/icons/Arrow";
 
 const IndexPageWrapper = styled.div`
     display: flex;
@@ -135,8 +137,46 @@ const CommandModule = styled.div`
     }
 `;
 
+const PostsCount = styled.div`
+    display: flex;
+    width: 100%;
+    height: 80px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 32px;
+`;
+
+const CommandModuleControl = styled.div.attrs(
+    (props: { rotateArrow: boolean }) => props
+)`
+    display: flex;
+    cursor: pointer;
+    width: 100%;
+    height: 80px;
+    align-items: center;
+    justify-content: center;
+    transform: ${(props) => (props.rotateArrow ? "rotate(180deg)" : "rotate(0deg)")};
+    transform-origin: center;
+`; 
+
 function Index() {
     const { data, loading, error } = useBlogFeedQuery({ fetchPolicy: "cache-and-network" });
+    const [position, setPosition] = useState(0);
+    const [post, setPost] = useState<Post | undefined>(data?.blogFeed[position]);
+
+    useEffect(() => {
+        let x = data?.blogFeed!;
+        if (x !== undefined) {
+            if (position > x.length! - 1) {
+                setPosition(0);
+            }
+            if (position < 0) {
+                setPosition(x.length! - 1);
+            }
+            setPost(x[position]);
+        }
+    }, [data?.blogFeed, position]);
     
     return (
         <>
@@ -151,22 +191,44 @@ function Index() {
                         <IndexContainer>
                             <IndexItemContainer>
                                 <IndexItemImageContainer>
-                                    <img src={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/The_Blue_Marble_%28remastered%29.jpg/1024px-The_Blue_Marble_%28remastered%29.jpg"} title={"Earth"} alt={"Earth"} />
+                                    <img src={post?.postCover!} title={post?.title!} alt={post?.title!} />
                                 </IndexItemImageContainer>
                                 <IndexItemInfoContainer>
                                     <IndexItemInfoBox>
                                         <IndexItemSlogan>
-                                            Slogan
+                                            {post?.slogan}
                                         </IndexItemSlogan>
                                         <IndexItemTitle>
-                                            <Link to={`/post/1`} title={"Title"} aria-label={"Title"}>
-                                                Title
+                                            <Link to={`/post/${post?.slug!}`} title={post?.title!} aria-label={post?.title!}>
+                                                {post?.title}
                                             </Link>
                                         </IndexItemTitle>
                                     </IndexItemInfoBox>
                                 </IndexItemInfoContainer>
                                 <CommandModule>
-                                    Commands
+                                    <PostsCount>{position + 1}/{data?.blogFeed.length}</PostsCount>
+                                    <CommandModuleControl
+                                        role="button"
+                                        title="Previous post"
+                                        aria-label="Previous post"
+                                        rotateArrow={false}
+                                        onClick={() => {
+                                            setPosition(position - 1);
+                                        }}
+                                    >
+                                        <Arrow type="index" />
+                                    </CommandModuleControl>
+                                    <CommandModuleControl
+                                        role="button"
+                                        title="Next post"
+                                        aria-label="Next post"
+                                        rotateArrow={true}
+                                        onClick={() => {
+                                            setPosition(position + 1);
+                                        }}
+                                    >
+                                        <Arrow type="index" />
+                                    </CommandModuleControl>
                                 </CommandModule>
                             </IndexItemContainer>
                         </IndexContainer>

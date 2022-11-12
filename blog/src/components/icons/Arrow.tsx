@@ -20,7 +20,7 @@ const Arrow: FunctionComponent<ArrowProps> = ({ type, color }) => {
     const [isIndexIcon, setIsIndexIcon] = useState(false);
 
     useEffect(() => {
-        if (type === "normal") {
+        if (type === "index") {
             setIsIndexIcon(true);
         } else {
             setIsIndexIcon(false);
