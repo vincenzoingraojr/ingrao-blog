@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { devices } from "../styles/devices";
 import { ControlContainer, PageText } from "../styles/global";
@@ -304,6 +304,8 @@ function Nav() {
         }
     }, [menu]);
 
+    const location = useLocation();
+
     return (
         <NavContainer>
             <NavInnerContainer>
@@ -476,6 +478,9 @@ function Nav() {
                                                         navData.isActive ? "active" : ""
                                                     }
                                                     to="/login"
+                                                    state={{
+                                                        backgroundLocation: location,
+                                                    }}
                                                     title="Log in to the blog"
                                                     aria-label="Log in to the blog"
                                                 >
@@ -486,6 +491,7 @@ function Nav() {
                                                         Log in
                                                     </MenuDirectionEntryText>
                                                 </NavLink>
+                                                <Outlet />
                                             </MenuDirectionEntry>
                                             <MenuDirectionEntry>
                                                 <NavLink
@@ -493,6 +499,9 @@ function Nav() {
                                                         navData.isActive ? "active" : ""
                                                     }
                                                     to="/signup"
+                                                    state={{
+                                                        backgroundLocation: location,
+                                                    }}
                                                     title="Sign up to the blog"
                                                     aria-label="Sign up to the blog"
                                                 >
@@ -503,6 +512,7 @@ function Nav() {
                                                         Sign up
                                                     </MenuDirectionEntryText>
                                                 </NavLink>
+                                                <Outlet />
                                             </MenuDirectionEntry>
                                         </>
                                     )}
