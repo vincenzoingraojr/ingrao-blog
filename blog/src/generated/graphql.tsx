@@ -51,6 +51,7 @@ export type Mutation = {
   passwordSetup: UserResponse;
   publishPost: PostResponse;
   revokeRefreshTokensForUser: Scalars['Boolean'];
+  sendMessage?: Maybe<UserResponse>;
   sendRecoveryEmail: UserResponse;
   signup?: Maybe<UserResponse>;
   unpublishPost: Scalars['Boolean'];
@@ -175,6 +176,14 @@ export type MutationPublishPostArgs = {
 
 export type MutationRevokeRefreshTokensForUserArgs = {
   id: Scalars['Float'];
+};
+
+
+export type MutationSendMessageArgs = {
+  email: Scalars['String'];
+  message: Scalars['String'];
+  name: Scalars['String'];
+  subject: Scalars['String'];
 };
 
 
@@ -371,6 +380,16 @@ export type NotAuthModifyPasswordMutationVariables = Exact<{
 
 
 export type NotAuthModifyPasswordMutation = { __typename?: 'Mutation', notAuthModifyPassword: { __typename?: 'UserResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
+export type SendMessageMutationVariables = Exact<{
+  name: Scalars['String'];
+  email: Scalars['String'];
+  subject: Scalars['String'];
+  message: Scalars['String'];
+}>;
+
+
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage?: { __typename?: 'UserResponse', status?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
 
 export type SendRecoveryEmailMutationVariables = Exact<{
   email: Scalars['String'];
@@ -944,6 +963,46 @@ export function useNotAuthModifyPasswordMutation(baseOptions?: Apollo.MutationHo
 export type NotAuthModifyPasswordMutationHookResult = ReturnType<typeof useNotAuthModifyPasswordMutation>;
 export type NotAuthModifyPasswordMutationResult = Apollo.MutationResult<NotAuthModifyPasswordMutation>;
 export type NotAuthModifyPasswordMutationOptions = Apollo.BaseMutationOptions<NotAuthModifyPasswordMutation, NotAuthModifyPasswordMutationVariables>;
+export const SendMessageDocument = gql`
+    mutation sendMessage($name: String!, $email: String!, $subject: String!, $message: String!) {
+  sendMessage(name: $name, email: $email, subject: $subject, message: $message) {
+    status
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+
+/**
+ * __useSendMessageMutation__
+ *
+ * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      email: // value for 'email'
+ *      subject: // value for 'subject'
+ *      message: // value for 'message'
+ *   },
+ * });
+ */
+export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
+      }
+export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
+export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
+export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
 export const SendRecoveryEmailDocument = gql`
     mutation sendRecoveryEmail($email: String!, $origin: String!) {
   sendRecoveryEmail(email: $email, origin: $origin) {

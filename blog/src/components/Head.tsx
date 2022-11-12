@@ -5,9 +5,11 @@ import { useLocation } from "react-router-dom";
 interface HeadProps {
     title: string;
     description: string;
+    blogPost?: boolean;
+    image?: string;
 }
 
-const Head: FunctionComponent<HeadProps> = ({ title, description }) => {
+const Head: FunctionComponent<HeadProps> = ({ title, description, blogPost, image }) => {
     const { pathname } = useLocation();
 
     useEffect(() => {
@@ -22,6 +24,15 @@ const Head: FunctionComponent<HeadProps> = ({ title, description }) => {
             <meta property="og:description" content={description} />
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
+            <meta
+                property="og:image"
+                content={image ? image : "https://storage.ingrao.blog/brand/logo.png"}
+            />
+            <meta name="twitter:card" content={blogPost ? "summary_large_image" : "summary"} />
+            <meta
+                property="twitter:image"
+                content={image ? image : "https://storage.ingrao.blog/brand/logo.png"}
+            />
         </Helmet>
     );
 };

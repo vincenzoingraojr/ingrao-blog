@@ -24,6 +24,7 @@ import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 import SearchPage from "./pages/SearchPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -229,6 +230,12 @@ function App() {
                     path="/privacy-policy"
                     element={
                         <PrivacyPolicyPage />
+                    }
+                />
+                <Route
+                    path="*"
+                    element={
+                        <NotFoundPage />
                     }
                 />
             </Routes>

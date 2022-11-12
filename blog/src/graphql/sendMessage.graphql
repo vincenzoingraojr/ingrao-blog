@@ -1,0 +1,19 @@
+mutation sendMessage(
+    $name: String!
+    $email: String!
+    $subject: String!
+    $message: String!
+) {
+    sendMessage(
+        name: $name
+        email: $email
+        subject: $subject
+        message: $message
+    ) {
+        status
+        errors {
+            field
+            message
+        }
+    }
+}

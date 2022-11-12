@@ -2,11 +2,13 @@ import Head from "../components/Head";
 import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
 import StandardPageLayout from "../components/layouts/sublayouts/StandardPageLayout";
+import LoadingComponent from "../components/utils/LoadingComponent";
 import SearchBoxComponent from "../components/utils/SearchBox";
 import { useBlogFeedQuery } from "../generated/graphql";
+import { LoadingContainer } from "../styles/global";
 
 function SearchPage() {
-    const { data } = useBlogFeedQuery({ fetchPolicy: "cache-and-network" });
+    const { data, loading, error } = useBlogFeedQuery({ fetchPolicy: "cache-and-network" });
     return (
         <>
             <Head
@@ -20,9 +22,15 @@ function SearchPage() {
                         description="In this page you can search for a blog post."
                         content={
                             <>
-                                <SearchBoxComponent
-                                    data={data?.blogFeed}
-                                />
+                                {(loading && !data) || error ? (
+                                    <LoadingContainer>
+                                        <LoadingComponent />
+                                    </LoadingContainer>
+                                ) : (
+                                    <SearchBoxComponent
+                                        data={data?.blogFeed}
+                                    />
+                                )}
                             </>
                         }       
                     />

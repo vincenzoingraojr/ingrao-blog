@@ -1243,4 +1243,98 @@ export class UserResolver {
             ok,
         };
     }
+
+    @Mutation(() => UserResponse, { nullable: true })
+    async sendMessage(
+        @Arg("name") name: string,
+        @Arg("email") email: string,
+        @Arg("subject") subject: string,
+        @Arg("message") message: string,
+    ): Promise<UserResponse> {
+        const ses = new aws.SES({
+            credentials: {
+                accessKeyId: process.env.SES_KEY_ID!,
+                secretAccessKey: process.env.SES_SECRET_KEY!,
+            },
+            region: "eu-south-1",
+        });
+
+        let errors = [];
+        let status;
+
+        if (!email.includes("@") || email === "" || email === null) {
+            errors.push({
+                field: "email",
+                message: "Invalid email",
+            });
+        }
+        if (name === "" || name === null) {
+            errors.push({
+                field: "name",
+                message: "The name field cannot be empty",
+            });
+        }
+        if (subject === "" || subject === null) {
+            errors.push({
+                field: "subject",
+                message: "The subject field cannot be empty",
+            });
+        }
+        if (message === "" || message === null) {
+            errors.push({
+                field: "message",
+                message: "The message field cannot be empty",
+            });
+        }
+
+        if (errors.length === 0) {
+            ejs.renderFile(
+                path.join(
+                    __dirname,
+                    "../helpers/templates/MessageTemplate.ejs"
+                ),
+                {
+                    name: name,
+                    email: email,
+                    subject: subject,
+                    message: message,
+                },
+                function (error, data) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        const params: aws.SES.SendEmailRequest = {
+                            Destination: {
+                                ToAddresses: [process.env.PERSONAL_EMAIL!],
+                            },
+                            Message: {
+                                Body: {
+                                    Html: {
+                                        Data: data,
+                                    },
+                                },
+                                Subject: {
+                                    Data: subject,
+                                },
+                            },
+                            Source: "noreply@ingrao.blog",
+                        };
+
+                        status = "Your message has been sent.";
+
+                        ses.sendEmail(params)
+                            .promise()
+                            .catch((error) => {
+                                console.error(error);
+                            });
+                    }
+                }
+            );
+        }
+
+        return {
+            errors,
+            status,
+        };
+    }
 }

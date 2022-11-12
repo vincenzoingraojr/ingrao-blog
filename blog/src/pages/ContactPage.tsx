@@ -1,11 +1,21 @@
 import { Form, Formik } from "formik";
 import Head from "../components/Head";
+import InputField from "../components/input/InputField";
 import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
 import StandardPageLayout from "../components/layouts/sublayouts/StandardPageLayout";
-import { PageTextMB24, WritingContainer } from "../styles/global";
+import { Button, FlexContainer24, PageBlock, PageTextMB24, Status, WritingContainer } from "../styles/global";
+import { toErrorMap } from "../utils/toErrorMap";
+import styled from "styled-components";
+import { useSendMessageMutation } from "../generated/graphql";
+
+const ContactButton = styled(Button)`
+    background-color: blue;
+    color: #ffffff;
+`;
 
 function ContactPage() {
+    const [sendMessage] = useSendMessageMutation();
     return (
         <>
             <Head
@@ -25,11 +35,73 @@ function ContactPage() {
                                     </WritingContainer>
                                 </PageTextMB24>
                                 <Formik
-                                    
+                                    initialValues={{
+                                        name: "",
+                                        email: "",
+                                        subject: "",
+                                        message: "",
+                                    }}
+                                    onSubmit={async (
+                                        values,
+                                        { setErrors, setStatus }
+                                    ) => {
+                                        const response = await sendMessage({
+                                            variables: values,
+                                        });
+                                        
+                                        if (response.data?.sendMessage?.status) {
+                                            setStatus(response.data.sendMessage.status);
+                                        } else {
+                                            setStatus(null);
+                                            setErrors(
+                                                toErrorMap(
+                                                    response.data?.sendMessage?.errors!
+                                                )
+                                            );
+                                        }
+                                    }}
                                 >
-                                    <Form>
-
-                                    </Form>
+                                    {({ errors, status }) => (
+                                        <Form>
+                                            {status ? <Status>{status}</Status> : null}
+                                            <FlexContainer24>
+                                                <InputField
+                                                    field="name"
+                                                    type="text"
+                                                    placeholder="Full name"
+                                                    errors={errors}
+                                                />
+                                                <InputField
+                                                    field="email"
+                                                    type="email"
+                                                    placeholder="Email"
+                                                    errors={errors}
+                                                />
+                                                <InputField
+                                                    field="subject"
+                                                    type="text"
+                                                    placeholder="Subject"
+                                                    errors={errors}
+                                                />
+                                                <InputField
+                                                    field="message"
+                                                    type="textarea"
+                                                    placeholder="Message"
+                                                    errors={errors}
+                                                />
+                                                <PageBlock>
+                                                    <ContactButton
+                                                        type="submit"
+                                                        title="Send message"
+                                                        role="button"
+                                                        aria-label="Send message"
+                                                    >
+                                                        Send message
+                                                    </ContactButton>
+                                                </PageBlock>
+                                            </FlexContainer24>
+                                        </Form>
+                                    )}
                                 </Formik>
                             </>
                         }       
