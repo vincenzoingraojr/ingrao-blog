@@ -195,7 +195,7 @@ function EditPost() {
                                                     if (selectedPostCover !== null) {
                                                         if (existingPostCoverName !== "") {
                                                             await axios.delete(
-                                                                `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
+                                                                `${process.env.STORAGE_LINK}${
                                                                     process.env.REACT_APP_ENV === "development"
                                                                         ? "local-posts"
                                                                         : "posts"
@@ -249,7 +249,7 @@ function EditPost() {
                                                         deletePostCover
                                                     ) {
                                                         await axios.delete(
-                                                            `https://storage-ingrao-blog.s3.eu-south-1.amazonaws.com/${
+                                                            `${process.env.STORAGE_LINK}${
                                                                 process.env.REACT_APP_ENV === "development"
                                                                     ? "local-posts"
                                                                     : "posts"
