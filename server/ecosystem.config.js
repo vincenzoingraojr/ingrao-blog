@@ -3,7 +3,7 @@ module.exports = {
         {
             name: "ingrao-blog",
             script: "yarn",
-            args: "start",
+            args: "start:production",
         },
     ],
 };
