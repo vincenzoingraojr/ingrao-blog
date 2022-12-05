@@ -36,7 +36,8 @@
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "gen": "graphql-codegen --config codegen.yml",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "deploy": "aws s3 sync build/ s3://dashboard-ingrao-blog && aws cloudfront create-invalidation --distribution-id E1NVC0L0FKY0SL --paths '/*'"
     },
     "eslintConfig": {
         "extends": [

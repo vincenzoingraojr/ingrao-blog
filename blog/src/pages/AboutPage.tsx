@@ -24,7 +24,7 @@ function AboutPage() {
                                 </p>
                                 <h2>What’s ingrao.blog?</h2>
                                 <p>
-                                    ingrao.blog is my personal blog, but I wouldn’t call it a simple blog. It’s a full-stack web application that relies on modern technologies which allows me to post scientific articles, talk about technology and innovation with a lot of people — through a custom comment system (that will be implemented later this year) — and promote my projects on Internet.
+                                    ingrao.blog is my personal blog, but I wouldn’t call it a simple blog. It’s a full-stack web application that relies on modern technologies which allow me to post scientific articles, talk about technology and innovation with a lot of people — through a custom comment system (that will be implemented later this year) — and promote my projects on Internet.
                                 </p>
                             </WritingContainer>
                         }       
