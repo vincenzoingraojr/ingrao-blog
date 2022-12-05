@@ -45,7 +45,6 @@
         "dev": "nodemon --exec ts-node src/index.ts",
         "start": "ts-node src/index.ts",
         "studio": "cross-env CLIENT_ORIGIN=https://studio.apollographql.com PORT=4001 nodemon --exec ts-node src/index.ts",
-        "format": "prettier --write .",
-        "start:production": "node -r ts-node/register --max-old-space-size=700 src/index.ts"
+        "format": "prettier --write ."
     }
 }
