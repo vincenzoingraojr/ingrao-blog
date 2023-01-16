@@ -35,6 +35,7 @@ export async function initAdmin() {
                 gender: "Male",
                 birthDate: "2002-01-24",
                 role: "admin",
+                newsletterSubscribed: true,
                 verified: true,
             })
             .returning("*")
