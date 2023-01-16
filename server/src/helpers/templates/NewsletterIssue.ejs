@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Verify your new email address</title>
+        <title>Newsletter issue</title>
         <meta name="description" content="Email sent by ingrao.blog">
         <meta name="author" content="ingrao.blog">
         <meta http-equiv="Content-Type" content="text/html charset=UTF-8">
-        <meta property="og:title" content="Verify your new email address">
+        <meta property="og:title" content="Message from user">
         <meta name="og:description" content="Email sent by ingrao.blog">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,11 +29,20 @@
             </table>
             <table style="width: 100%; padding-bottom: 24px;">
                 <tr>
-                    <div style="display: block; font-family: Arial, Verdana, Helvetica, sans-serif; font-weight: 700; font-size: 42px; color: #000000; padding-bottom: 24px;">
-                        Verify your new email address
+                    <div style="display: block; font-family: serif; font-weight: 700; font-size: 42px; color: #000000; padding-bottom: 18px;">
+                        <%= title %>
                     </div>
-                    <div style="display: block; font-family: Arial, Verdana, Helvetica, sans-serif; font-weight: 400; font-size: 18px; color: #000000;">
-                        To verify the new email address linked to your account, click on this <a target="_blank" style="font-weight: 400; font-size: inherit; color: blue; text-decoration: underline;" href=<%= link %>>link</a>.
+                    <div style="display: block; font-family: Arial, Verdana, Helvetica, sans-serif; font-weight: 400; font-size: 16px; color: #000000; padding-bottom: 24px;">
+                        Written by <%= fullName %>
+                    </div>
+                    <div style="display: block; padding-bottom: 24px; border-bottom: 2px solid black; margin-bottom: 24px;">
+                        <img style="display: block; width: 100%; height: auto;" src=<%= newsletterCover %> />
+                    </div>
+                    <div style="display: block; font-family: serif; font-weight: 400; font-size: 18px; color: #000000; padding-bottom: 24px;">
+                        <%= content %>
+                    </div>
+                    <div style="display: block; font-family: Arial, Verdana, Helvetica, sans-serif; font-weight: 400; font-size: 16px; color: #000000; padding-bottom: 24px;">
+                        <a target="_blank" style="font-weight: 400; font-size: inherit; color: blue; text-decoration: underline;" href=<%= link %>>View in browser</a>
                     </div>
                 </tr>
             </table>

@@ -16,6 +16,7 @@ import { sendRefreshToken } from "./auth/sendRefreshToken";
 import { PostResolver } from "./resolvers/PostResolver";
 import { initAdmin } from "./helpers/initAdmin";
 import { getPresignedUrl } from "./helpers/getPresignedUrl";
+import { NewsletterResolver } from "./resolvers/NewsletterResolver";
 
 async function main() {
     const app = express();
@@ -102,7 +103,7 @@ async function main() {
 
     const server = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [UserResolver, PostResolver],
+            resolvers: [UserResolver, PostResolver, NewsletterResolver],
         }),
         context: ({ req, res }) => ({ req, res }),
     });
