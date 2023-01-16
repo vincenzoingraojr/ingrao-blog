@@ -17,6 +17,7 @@ query blogFeed {
             profilePicture
             createdAt
             updatedAt
+            newsletterSubscribed
         }
         title
         description

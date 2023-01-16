@@ -30,11 +30,21 @@ const cache = new InMemoryCache({
                         return incoming;
                     },
                 },
+                draftNewsletterFeed: {
+                    merge: (_existing = [], incoming) => {
+                        return incoming;
+                    },
+                },
             },
         },
         User: {
             fields: {
                 posts: {
+                    merge: (_existing = [], incoming) => {
+                        return incoming;
+                    },
+                },
+                issues: {
                     merge: (_existing = [], incoming) => {
                         return incoming;
                     },

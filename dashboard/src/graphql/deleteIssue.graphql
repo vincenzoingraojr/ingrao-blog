@@ -1,0 +1,3 @@
+mutation deleteIssue($id: Int!) {
+    deleteIssue(id: $id)
+}

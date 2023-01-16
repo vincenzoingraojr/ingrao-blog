@@ -68,7 +68,7 @@ export class UserResolver {
             if (origin === "dash") {
                 user = User.findOne({
                     where: { id: payload.id },
-                    relations: ["posts"],
+                    relations: ["posts", "issues"],
                 });
             } else {
                 user = User.findOne({
@@ -85,7 +85,7 @@ export class UserResolver {
 
     @Query(() => User, { nullable: true })
     findUser(@Arg("id", () => Int, { nullable: true }) id: number) {
-        return User.findOne({ where: { id }, relations: ["posts"] });
+        return User.findOne({ where: { id }, relations: ["posts", "issues"] });
     }
 
     @Query(() => [User])
@@ -119,7 +119,7 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { email: email },
-                relations: ["posts"],
+                relations: ["posts", "issues"],
             });
         } else {
             user = await User.findOne({
@@ -216,6 +216,7 @@ export class UserResolver {
         @Arg("password") password: string,
         @Arg("title") title: string,
         @Arg("gender") gender: string,
+        @Arg("newsletterSubscribed") newsletterSubscribed: boolean,
         @Arg("birthDate") birthDate: Date
     ): Promise<UserResponse> {
         let errors = [];
@@ -281,6 +282,7 @@ export class UserResolver {
                         title: title,
                         gender: gender,
                         birthDate: birthDate,
+                        newsletterSubscribed: newsletterSubscribed,
                         role: "user",
                         verified: false,
                     })
@@ -591,6 +593,7 @@ export class UserResolver {
                             gender: gender,
                             birthDate: birthDate,
                             role: role,
+                            newsletterSubscribed: true,
                             verified: true,
                         })
                         .returning("*")
@@ -787,7 +790,7 @@ export class UserResolver {
                 if (origin === "dash") {
                     user = await User.findOne({
                         where: { id: payload.id },
-                        relations: ["posts"],
+                        relations: ["posts", "issues"],
                     });
                 } else {
                     user = await User.findOne({
@@ -862,7 +865,7 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts"],
+                relations: ["posts", "issues"],
             });
         } else {
             user = await User.findOne({
@@ -959,12 +962,11 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts"],
+                relations: ["posts", "issues"],
             });
         } else {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts"],
             });
         }
 
@@ -1062,12 +1064,11 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts"],
+                relations: ["posts", "issues"],
             });
         } else {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts"],
             });
         }
 
@@ -1144,7 +1145,7 @@ export class UserResolver {
                 
                 user = await User.findOne({
                     where: { id: id },
-                    relations: ["posts"],
+                    relations: ["posts", "issues"],
                 });
             } catch (error) {
                 console.log(error);
@@ -1172,7 +1173,7 @@ export class UserResolver {
 
         const user = await User.findOne({
             where: { id: id },
-            relations: ["posts"],
+            relations: ["posts", "issues"],
         });
 
         if (!payload) {
@@ -1208,7 +1209,7 @@ export class UserResolver {
             if (origin === "dash") {
                 user = await User.findOne({
                     where: { id: payload.id },
-                    relations: ["posts"],
+                    relations: ["posts", "issues"],
                 });
             } else {
                 user = await User.findOne({

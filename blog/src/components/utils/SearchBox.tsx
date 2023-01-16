@@ -4,11 +4,13 @@ import { useMeQuery } from "../../generated/graphql";
 import { LoadingContainer, PageText } from "../../styles/global";
 import Close from "../icons/Close";
 import Magnifier from "../icons/Magnifier";
+import SmallIssueComponent from "../layouts/items/SmallIssueComponent";
 import SmallPostComponent from "../layouts/items/SmallPostComponent";
 import LoadingComponent from "./LoadingComponent";
 
 interface SearchBoxComponentProps {
     data: any;
+    type: string;
 }
 
 const SearchBox = styled.div`
@@ -68,7 +70,7 @@ const SearchBoxContent = styled.div`
     gap: 24px;
 `;
 
-const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data }) => {
+const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, type }) => {
     const [value, setValue] = useState("");
 
     const emptyQuery = "";
@@ -88,20 +90,31 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data }
         const dataItems = data || [];
 
         const filteredData = dataItems.filter((dataItem: any) => {
-            return (
-                dataItem.title
-                    .toLowerCase()
-                    .includes(query.toLowerCase()) ||
-                dataItem.description
-                    .toLowerCase()
-                    .includes(query.toLowerCase()) ||
-                dataItem.slogan
-                    .toLowerCase()
-                    .includes(query.toLowerCase()) ||
-                dataItem.slug
-                    .toLowerCase()
-                    .includes(query.toLowerCase())
-            );                
+            if (type === "post") {
+                return (
+                    dataItem.title
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                    dataItem.description
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                    dataItem.slogan
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                    dataItem.slug
+                        .toLowerCase()
+                        .includes(query.toLowerCase())
+                ); 
+            } else {
+                return (
+                    dataItem.title
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                    dataItem.subject
+                        .toLowerCase()
+                        .includes(query.toLowerCase())
+                );  
+            }               
         });
 
         setState({
@@ -136,8 +149,8 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data }
                                 autoCorrect="off"
                                 autoFocus
                                 aria-required
-                                placeholder={"Search for a blog post"}
-                                aria-label={"Search for a blog post"}
+                                placeholder={type === "post" ? "Search for a blog post" : "Search for a newsletter issue"}
+                                aria-label={type === "post" ? "Search for a blog post" : "Search for a newsletter issue"}
                                 value={value}
                                 onChange={(e) => {
                                     setValue(e.target.value);
@@ -168,11 +181,23 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data }
                             <PageText>No results for "{query}".</PageText>
                         ) : (
                             <>
-                                {dataItems.map((post: any) => {
-                                    return (
-                                        <SmallPostComponent key={post.id} post={post} />
-                                    );
-                                })}
+                                {type === "post" ? (
+                                    <>
+                                       {dataItems.map((post: any) => {
+                                            return (
+                                                <SmallPostComponent key={post.id} post={post} />
+                                            );
+                                        })} 
+                                    </>
+                                ) : (
+                                    <>
+                                        {dataItems.map((issue: any) => {
+                                            return (
+                                                <SmallIssueComponent key={issue.id} issue={issue} />
+                                            );
+                                        })}
+                                    </>
+                                )}
                             </>
                         )}
                     </SearchBoxContent>

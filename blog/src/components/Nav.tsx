@@ -544,6 +544,20 @@ function Nav() {
                                             </MenuDirectionEntryText>
                                         </NavLink>
                                     </MenuDirectionEntry>
+                                    <MenuDirectionEntry>
+                                        <NavLink
+                                            to="/newsletter"
+                                            title="ingrao.blog newsletter"
+                                            aria-label="ingrao.blog newsletter"
+                                        >
+                                            <MenuDirectionEntryIcon>
+                                                <Arrow color="blue" />
+                                            </MenuDirectionEntryIcon>
+                                            <MenuDirectionEntryText>
+                                                Newsletter
+                                            </MenuDirectionEntryText>
+                                        </NavLink>
+                                    </MenuDirectionEntry>
                                 </MenuDirectionContainer>
                             </MenuContent>
                         </MenuContentContainer>

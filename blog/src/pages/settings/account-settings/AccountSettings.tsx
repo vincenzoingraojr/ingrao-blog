@@ -3,12 +3,13 @@ import PageLayout from "../../../components/layouts/PageLayout";
 import PageContentLayout from "../../../components/layouts/sublayouts/PageContentLayout";
 import { SidebarLayoutTitle } from "../../../components/layouts/sublayouts/SidebarLayout";
 import LoadingComponent from "../../../components/utils/LoadingComponent";
-import { useAuthSendVerificationEmailMutation, useMeQuery } from "../../../generated/graphql";
+import { MeDocument, MeQuery, useAuthSendVerificationEmailMutation, useMeQuery, User, useUnsubscribeFromNewsletterMutation } from "../../../generated/graphql";
 import { Button, LinkButton, LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText, Status } from "../../../styles/global";
 import styled from "styled-components";
 import SettingsComponent from "../SettingsComponent";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Form, Formik } from "formik";
+import { useState } from "react";
 
 const AccountSettingsPageContent = styled.div`
     display: flex;
@@ -26,6 +27,11 @@ const VerifyEmailAddressButton = styled(Button)`
     color: #ffffff;
 `;
 
+const NewsletterButton = styled(Button)`
+    background-color: blue;
+    color: #ffffff;
+`;
+
 function AccountSettings() {
     const { data, loading, error } = useMeQuery({
         fetchPolicy: "cache-and-network",
@@ -35,6 +41,9 @@ function AccountSettings() {
     const location = useLocation();
 
     const [authSendEmail] = useAuthSendVerificationEmailMutation();
+
+    const [unsubscribe] = useUnsubscribeFromNewsletterMutation();
+    const [status, setStatus] = useState<String | null>(null);
     
     return (
         <>
@@ -145,6 +154,46 @@ function AccountSettings() {
                                                                 </Formik>
                                                             </PageBlock>
                                                         </OptionContainer>
+                                                    )}
+                                                    {data?.me?.newsletterSubscribed && (
+                                                        <OptionContainer>
+                                                            <OptionTitle>
+                                                                Unsubscribe from the newsletter
+                                                            </OptionTitle>
+                                                            <PageText>
+                                                                Here you can unsubscribe from the newsletter.
+                                                            </PageText>
+                                                            <PageBlock>
+                                                                <NewsletterButton
+                                                                    type="button"
+                                                                    title="Stop receiving emails from us"
+                                                                    role="button"
+                                                                    aria-label="Stop receiving emails from us"
+                                                                    onClick={async () => {
+                                                                        setStatus(null);
+                                                                        const response = await unsubscribe({
+                                                                            update: (store, { data }) => {
+                                                                                if (data) {
+                                                                                    store.writeQuery<MeQuery>({
+                                                                                        query: MeDocument,
+                                                                                        data: {
+                                                                                            me: data.unsubscribeFromNewsletter.user as User,
+                                                                                        },
+                                                                                    });
+                                                                                }
+                                                                            },
+                                                                        });
+                                                                        
+                                                                        setStatus(response.data?.unsubscribeFromNewsletter.status!);
+                                                                    }}
+                                                                >
+                                                                    Unsubscribe
+                                                                </NewsletterButton>
+                                                            </PageBlock>
+                                                        </OptionContainer>
+                                                    )}
+                                                    {status && (
+                                                        <Status>{status}</Status>
                                                     )}
                                                 </AccountSettingsPageContent>
                                             </>

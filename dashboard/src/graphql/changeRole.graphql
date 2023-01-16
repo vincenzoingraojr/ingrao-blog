@@ -19,6 +19,7 @@ mutation changeRole(
             profilePicture
             createdAt
             updatedAt
+            newsletterSubscribed
             posts {
                 id
                 slug
@@ -28,6 +29,18 @@ mutation changeRole(
                 description
                 slogan
                 postCover
+                content
+                createdAt
+                updatedAt
+            }
+            issues {
+                id
+                newsletterId
+                draft
+                authorId
+                title
+                subject
+                newsletterCover
                 content
                 createdAt
                 updatedAt

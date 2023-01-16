@@ -8,6 +8,7 @@ import {
     OneToMany,
     UpdateDateColumn,
 } from "typeorm";
+import { Newsletter } from "./Newsletter";
 import { Post } from "./Post";
 
 @ObjectType()
@@ -48,6 +49,10 @@ export class User extends BaseEntity {
     @OneToMany(() => Post, (post) => post.author, { nullable: true })
     posts: Post[];
 
+    @Field(() => [Newsletter], { nullable: true, defaultValue: [] })
+    @OneToMany(() => Newsletter, (post) => post.author, { nullable: true })
+    issues: Newsletter[];
+
     @Field(() => Boolean, { nullable: false })
     @Column({ nullable: false })
     verified: boolean;
@@ -68,8 +73,8 @@ export class User extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Field(() => Boolean, { nullable: false, defaultValue: false })
-    @Column({ nullable: false, default: false })
+    @Field(() => Boolean, { nullable: false })
+    @Column({ nullable: false })
     newsletterSubscribed: boolean;
 
     @Column("int", { default: 0 })

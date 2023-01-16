@@ -44,6 +44,7 @@ function Signup() {
                         lastName: "",
                         email: "",
                         password: "",
+                        newsletterSubscribed: false,
                     }}
                     onSubmit={async (
                         values,

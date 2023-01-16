@@ -335,3 +335,31 @@ export const UploadCoverImageButton = styled.div`
         visibility: hidden;
     }
 `;
+
+export const DashStatsContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+
+    @media (min-width: 560px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+`;
+
+export const StatsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    align-items: center;
+`;
+
+export const DataContainer = styled.div`
+    display: block;
+    font-weight: 700;
+    font-size: 64px;
+`;
+
+export const DataTypeContainer = styled(PageText)`
+    font-size: 16px;
+`;

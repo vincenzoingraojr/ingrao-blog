@@ -4,6 +4,7 @@ import { useMeQuery } from "../../generated/graphql";
 import { LoadingContainer, PageText } from "../../styles/global";
 import Close from "../icons/Close";
 import Magnifier from "../icons/Magnifier";
+import SmallIssueComponent from "../layouts/items/SmallIssueComponent";
 import SmallPostComponent from "../layouts/items/SmallPostComponent";
 import UserComponent from "../layouts/items/UserComponent";
 import LoadingComponent from "./LoadingComponent";
@@ -11,6 +12,7 @@ import LoadingComponent from "./LoadingComponent";
 interface SearchBoxComponentProps {
     data: any;
     type: string;
+    nocontrol?: boolean;
 }
 
 const SearchBox = styled.div`
@@ -70,7 +72,7 @@ const SearchBoxContent = styled.div`
     gap: 24px;
 `;
 
-const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, type }) => {
+const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, type, nocontrol }) => {
     const [value, setValue] = useState("");
 
     const emptyQuery = "";
@@ -105,7 +107,7 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                         .toLowerCase()
                         .includes(query.toLowerCase())
                 );
-            } else {
+            } else if (type === "post") {
                 return (
                     dataItem.title
                         .toLowerCase()
@@ -120,6 +122,15 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                         .toLowerCase()
                         .includes(query.toLowerCase())
                 );                
+            } else {
+                return (
+                    dataItem.title
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                    dataItem.subject
+                        .toLowerCase()
+                        .includes(query.toLowerCase())
+                );  
             }
         });
 
@@ -155,8 +166,8 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                                 autoCorrect="off"
                                 autoFocus
                                 aria-required
-                                placeholder={`Search for a ${type === "user" ? "user" : "blog post"}`}
-                                aria-label={`Search for a ${type === "user" ? "user" : "blog post"}`}
+                                placeholder={"Search"}
+                                aria-label={"Search"}
                                 value={value}
                                 onChange={(e) => {
                                     setValue(e.target.value);
@@ -191,17 +202,29 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
                                     <>
                                         {dataItems.map((user: any) => {
                                             return (
-                                                <UserComponent key={user.id} user={user} />
+                                                <UserComponent key={user.id} user={user} nocontrol={nocontrol} />
                                             );
                                         })}
                                     </>
                                 ) : (
                                     <>
-                                        {dataItems.map((post: any) => {
-                                            return (
-                                                <SmallPostComponent key={post.id} post={post} />
-                                            );
-                                        })}
+                                        {type === "post" ? (
+                                            <>
+                                                {dataItems.map((post: any) => {
+                                                    return (
+                                                        <SmallPostComponent key={post.id} post={post} />
+                                                    );
+                                                })}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {dataItems.map((issue: any) => {
+                                                    return (
+                                                        <SmallIssueComponent key={issue.id} issue={issue} />
+                                                    );
+                                                })}
+                                            </>
+                                        )}
                                     </>
                                 )}
                             </>

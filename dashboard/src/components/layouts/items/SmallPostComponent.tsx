@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useDeletePostMutation, useUnpublishPostMutation } from "../../../generated/graphql";
-import postCover from "../../../images/post-cover.svg";
+import postCover from "../../../images/cover.svg";
 import { PageText, TextButton } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
 

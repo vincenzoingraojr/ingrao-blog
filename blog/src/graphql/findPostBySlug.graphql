@@ -15,6 +15,7 @@ query findPostBySlug($slug: String) {
             verified
             role
             profilePicture
+            newsletterSubscribed
             createdAt
             updatedAt
         }

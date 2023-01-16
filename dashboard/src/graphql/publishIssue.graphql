@@ -1,0 +1,9 @@
+mutation publishIssue($newsletterId: String!) {
+    publishIssue(newsletterId: $newsletterId) {
+        errors {
+            field
+            message
+        }
+        status
+    }
+}

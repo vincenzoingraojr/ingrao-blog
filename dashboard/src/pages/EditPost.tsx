@@ -10,7 +10,7 @@ import { useEditPublishedPostMutation, useFindPostQuery, useUnpublishPostMutatio
 import { devices } from "../styles/devices";
 import { Button, ControlContainer, CoverImageButtonsContainer, CoverImageContainer, FlexContainer24, FlexRow24, ImageButtonContainer, LinkButton, LoadingContainer, PageBlock, PageText, PostFormContainer, Status, UploadCoverImageButton } from "../styles/global";
 import { toErrorMap } from "../utils/toErrorMap";
-import postCover from "../images/post-cover.svg";
+import postCover from "../images/cover.svg";
 import Upload from "../components/icons/Upload";
 import Close from "../components/icons/Close";
 import InputField from "../components/input/InputField";

@@ -10,6 +10,7 @@ query findUser($id: Int!) {
         verified
         role
         profilePicture
+        newsletterSubscribed
         createdAt
         updatedAt
         posts {
@@ -21,6 +22,18 @@ query findUser($id: Int!) {
             description
             slogan
             postCover
+            content
+            createdAt
+            updatedAt
+        }
+        issues {
+            id
+            newsletterId
+            draft
+            authorId
+            title
+            subject
+            newsletterCover
             content
             createdAt
             updatedAt

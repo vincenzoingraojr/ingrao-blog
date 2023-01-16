@@ -1,0 +1,29 @@
+query findNewsletterById($newsletterId: String) {
+    findNewsletterById(newsletterId: $newsletterId) {
+        id
+        newsletterId
+        draft
+        authorId
+        author {
+            id
+            firstName
+            lastName
+            email
+            birthDate
+            gender
+            title
+            verified
+            role
+            newsletterSubscribed
+            profilePicture
+            createdAt
+            updatedAt
+        }
+        title
+        subject
+        newsletterCover
+        content
+        createdAt
+        updatedAt
+    }
+}

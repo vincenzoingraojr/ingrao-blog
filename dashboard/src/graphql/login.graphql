@@ -11,6 +11,7 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
             verified
             role
             profilePicture
+            newsletterSubscribed
             createdAt
             updatedAt
             posts {
@@ -22,6 +23,18 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
                 description
                 slogan
                 postCover
+                content
+                createdAt
+                updatedAt
+            }
+            issues {
+                id
+                newsletterId
+                draft
+                authorId
+                title
+                subject
+                newsletterCover
                 content
                 createdAt
                 updatedAt

@@ -7,6 +7,7 @@ interface EditorFieldProps {
     field: string;
     errors: any;
     itemId?: number;
+    newsletter?: boolean;
 }
 
 const EditorFieldWrapper = styled.div`
@@ -32,6 +33,7 @@ const EditorField: FunctionComponent<EditorFieldProps> = ({
     field,
     errors,
     itemId,
+    newsletter
 }) => {
     return (
         <EditorFieldWrapper>
@@ -39,7 +41,7 @@ const EditorField: FunctionComponent<EditorFieldProps> = ({
                 <EditorFieldError>{errors[field]}</EditorFieldError>
             ) : null}
             <EditorFieldContainer>
-                <Field name={field} component={TextEditorComponent} itemId={itemId} />
+                <Field name={field} component={TextEditorComponent} itemId={itemId} newsletter={newsletter} />
             </EditorFieldContainer>
         </EditorFieldWrapper>
     );

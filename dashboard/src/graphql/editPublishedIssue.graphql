@@ -1,0 +1,21 @@
+mutation editPublishedIssue(
+    $newsletterId: String!
+    $title: String
+    $subject: String
+    $newsletterCover: String
+    $content: String
+) {
+    editPublishedIssue(
+        newsletterId: $newsletterId
+        title: $title
+        subject: $subject
+        newsletterCover: $newsletterCover
+        content: $content
+    ) {
+        errors {
+            field
+            message
+        }
+        status
+    }
+}

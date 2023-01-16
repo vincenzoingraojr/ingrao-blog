@@ -25,6 +25,7 @@ mutation editProfile(
             verified
             role
             profilePicture
+            newsletterSubscribed
             createdAt
             updatedAt
             posts {

@@ -2,7 +2,7 @@ import Head from "../components/Head";
 import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
 import styled from "styled-components";
-import { LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText } from "../styles/global";
+import { DashStatsContainer, DataContainer, DataTypeContainer, LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText, StatsContainer } from "../styles/global";
 import { useDashPostFeedQuery, useDraftPostFeedQuery, usePostFeedQuery } from "../generated/graphql";
 import { Link } from "react-router-dom";
 import LoadingComponent from "../components/utils/LoadingComponent";
@@ -13,34 +13,6 @@ const HomePageContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 48px;
-`;
-
-const DashStatsContainer = styled.div`
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 24px;
-
-    @media (min-width: 560px) {
-        grid-template-columns: repeat(3, 1fr);
-    }
-`;
-
-const StatsContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    width: 100%;
-    align-items: center;
-`;
-
-const DataContainer = styled.div`
-    display: block;
-    font-weight: 700;
-    font-size: 64px;
-`;
-
-const DataTypeContainer = styled(PageText)`
-    font-size: 16px;
 `;
 
 const PublicPostsGrid = styled.div`

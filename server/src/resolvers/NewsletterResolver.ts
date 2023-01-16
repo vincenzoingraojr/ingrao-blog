@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 import aws from "aws-sdk";
 import ejs from "ejs";
 import path from "path";
+import { UserResponse } from "./UserResolver";
 
 @ObjectType()
 export class NewsletterResponse {
@@ -96,6 +97,19 @@ export class NewsletterResolver {
         return Newsletter.findOne({ where: { newsletterId }, relations: ["author"] });
     }
 
+    @Query(() => [User])
+    subscribedUsers() {
+        return User.find({
+            order: {
+                updatedAt: "DESC",
+            },
+            where: {
+                newsletterSubscribed: true,
+            },
+            relations: ["posts", "issues"],
+        });
+    }
+
     @Mutation(() => NewsletterResponse)
     @UseMiddleware(isAuth)
     async createIssue(
@@ -152,7 +166,6 @@ export class NewsletterResolver {
     @Mutation(() => NewsletterResponse)
     @UseMiddleware(isAuth)
     async editUnpublishedIssue(
-        @Arg("id", () => Int) id: number,
         @Arg("newsletterId") newsletterId: string,
         @Arg("title", { nullable: true }) title: string,
         @Arg("subject", { nullable: true }) subject: string,
@@ -171,7 +184,7 @@ export class NewsletterResolver {
             });
         } else {
             issue = await Newsletter.findOne({
-                id: id,
+                newsletterId: newsletterId,
             });
 
             if (!issue) {
@@ -187,7 +200,6 @@ export class NewsletterResolver {
                         if (payload.role === "admin" && payload.id !== issue.authorId) {
                             await Newsletter.update(
                                 {
-                                    id: id,
                                     newsletterId: newsletterId,
                                 },
                                 {
@@ -201,7 +213,6 @@ export class NewsletterResolver {
                         } else {
                             await Newsletter.update(
                                 {
-                                    id: id,
                                     authorId: payload.id,
                                     newsletterId: newsletterId,
                                 },
@@ -244,7 +255,7 @@ export class NewsletterResolver {
     @Mutation(() => NewsletterResponse)
     @UseMiddleware(isAuth)
     async publishIssue(
-        @Arg("id", () => Int) id: number,
+        @Arg("newsletterId", () => String) newsletterId: string,
         @Ctx() { payload }: MyContext
     ): Promise<NewsletterResponse> {
         let errors = [];
@@ -263,7 +274,7 @@ export class NewsletterResolver {
             status = "You are not authorizated to publish a newsletter issue.";
         } else {
             issue = await Newsletter.findOne({
-                id: id,
+                newsletterId: newsletterId,
             });
 
             if (!issue) {
@@ -299,7 +310,7 @@ export class NewsletterResolver {
                     if (payload.role === "admin" && payload.id !== issue.authorId) {
                         await Newsletter.update(
                             {
-                                id: id,
+                                newsletterId: newsletterId,
                             },
                             {
                                 draft: false,
@@ -308,7 +319,7 @@ export class NewsletterResolver {
                     } else {
                         await Newsletter.update(
                             {
-                                id: id,
+                                newsletterId: newsletterId,
                                 authorId: payload.id,
                             },
                             {
@@ -380,7 +391,6 @@ export class NewsletterResolver {
     @Mutation(() => NewsletterResponse)
     @UseMiddleware(isAuth)
     async editPublishedIssue(
-        @Arg("id", () => Int) id: number,
         @Arg("newsletterId") newsletterId: string,
         @Arg("title", { nullable: true }) title: string,
         @Arg("subject", { nullable: true }) subject: string,
@@ -396,7 +406,7 @@ export class NewsletterResolver {
             status = "You are not authorizated to edit a published issue.";
         } else {
             issue = await Newsletter.findOne({
-                id: id,
+                newsletterId: newsletterId,
             });
 
             if (!issue) {
@@ -432,7 +442,6 @@ export class NewsletterResolver {
                     if (payload.role === "admin" && payload.id !== issue.authorId) {
                         await Newsletter.update(
                             {
-                                id: id,
                                 newsletterId: newsletterId,
                             },
                             {
@@ -446,7 +455,6 @@ export class NewsletterResolver {
                     } else {
                         await Newsletter.update(
                             {
-                                id: id,
                                 authorId: payload.id,
                                 newsletterId: newsletterId,
                             },
@@ -547,5 +555,63 @@ export class NewsletterResolver {
         }
 
         return true;
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async subscribeToNewsletter(
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let status = "";
+        let user;
+        if (!payload) {
+            status = "You're not authorized to do this action.";
+        } else {
+            await User.update(
+                {
+                    id: payload.id,
+                },
+                {
+                    newsletterSubscribed: true,
+                }
+            );
+
+            user = await User.findOne({ where: { id: payload.id } });
+            status = "You're now subscribed to the newsletter.";
+        }
+
+        return {
+            status,
+            user,
+        }
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async unsubscribeFromNewsletter(
+        @Ctx() { payload }: MyContext
+    ): Promise<UserResponse> {
+        let status = "";
+        let user;
+        if (!payload) {
+            status = "You're not authorized to do this action.";
+        } else {
+            await User.update(
+                {
+                    id: payload.id,
+                },
+                {
+                    newsletterSubscribed: false,
+                }
+            );
+
+            user = await User.findOne({ where: { id: payload.id } });
+            status = "You're no longer subscribed to the newsletter.";
+        }
+
+        return {
+            status,
+            user,
+        }
     }
 }

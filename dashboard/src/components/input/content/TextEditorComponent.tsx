@@ -9,6 +9,7 @@ export interface TextEditorComponentProps {
     field: any;
     form: any;
     itemId?: number;
+    newsletter?: boolean;
 }
 
 const EditorComponentContainer = styled.div`
@@ -26,6 +27,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
     field,
     form,
     itemId,
+    newsletter,
 }) => {
     const [initialContent] = useState<any | undefined>(() => {
         const content = field.value;
@@ -36,15 +38,15 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
         return new Promise(
             async (resolve, reject) => {
                 const xhr = new XMLHttpRequest();
-                let postImageName = "";
+                let itemImageName = "";
                 let directory = "";
-                postImageName = `post-image-${new Date().getTime()}.jpeg`;
+                itemImageName = newsletter ? `issue-image-${new Date().getTime()}.jpeg` : `post-image-${new Date().getTime()}.jpeg`;
                 directory =
                     process.env.REACT_APP_ENV === "development"
-                        ? `local-posts/${itemId}`
-                        : `posts/${itemId}`;
+                        ? (newsletter ? `local-issues/${itemId}` : `local-posts/${itemId}`)
+                        : (newsletter ? `issues/${itemId}` : `posts/${itemId}`);
             
-                let key = `${directory}/${postImageName}`;
+                let key = `${directory}/${itemImageName}`;
                 const { url } = await fetch(
                     `${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`,
                     {

@@ -37,24 +37,32 @@ export type Mutation = {
   authSendVerificationEmail: UserResponse;
   changePassword: UserResponse;
   changeRole: UserResponse;
+  createIssue: NewsletterResponse;
   createPost: PostResponse;
   deleteAccount: ExtendedUserResponse;
+  deleteIssue: Scalars['Boolean'];
   deletePost: Scalars['Boolean'];
   deleteUserFromDashboard: UserResponse;
   editEmailAddress: UserResponse;
   editProfile: UserResponse;
+  editPublishedIssue: NewsletterResponse;
   editPublishedPost: PostResponse;
+  editUnpublishedIssue: NewsletterResponse;
   editUnpublishedPost: PostResponse;
   login?: Maybe<UserResponse>;
   logout: Scalars['Boolean'];
   notAuthModifyPassword: UserResponse;
   passwordSetup: UserResponse;
+  publishIssue: NewsletterResponse;
   publishPost: PostResponse;
   revokeRefreshTokensForUser: Scalars['Boolean'];
   sendMessage?: Maybe<UserResponse>;
   sendRecoveryEmail: UserResponse;
   signup?: Maybe<UserResponse>;
+  subscribeToNewsletter: UserResponse;
+  unpublishIssue: Scalars['Boolean'];
   unpublishPost: Scalars['Boolean'];
+  unsubscribeFromNewsletter: UserResponse;
   verifyEmailAddress: UserResponse;
 };
 
@@ -89,6 +97,11 @@ export type MutationChangeRoleArgs = {
 };
 
 
+export type MutationCreateIssueArgs = {
+  title: Scalars['String'];
+};
+
+
 export type MutationCreatePostArgs = {
   slug: Scalars['String'];
 };
@@ -96,6 +109,11 @@ export type MutationCreatePostArgs = {
 
 export type MutationDeleteAccountArgs = {
   origin: Scalars['String'];
+};
+
+
+export type MutationDeleteIssueArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -126,6 +144,15 @@ export type MutationEditProfileArgs = {
 };
 
 
+export type MutationEditPublishedIssueArgs = {
+  content?: InputMaybe<Scalars['String']>;
+  newsletterCover?: InputMaybe<Scalars['String']>;
+  newsletterId: Scalars['String'];
+  subject?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationEditPublishedPostArgs = {
   content?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
@@ -133,6 +160,15 @@ export type MutationEditPublishedPostArgs = {
   postId: Scalars['Int'];
   slogan?: InputMaybe<Scalars['String']>;
   slug: Scalars['String'];
+  title?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationEditUnpublishedIssueArgs = {
+  content?: InputMaybe<Scalars['String']>;
+  newsletterCover?: InputMaybe<Scalars['String']>;
+  newsletterId: Scalars['String'];
+  subject?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
 };
 
@@ -169,6 +205,11 @@ export type MutationPasswordSetupArgs = {
 };
 
 
+export type MutationPublishIssueArgs = {
+  newsletterId: Scalars['String'];
+};
+
+
 export type MutationPublishPostArgs = {
   postId: Scalars['Int'];
 };
@@ -199,8 +240,14 @@ export type MutationSignupArgs = {
   firstName: Scalars['String'];
   gender: Scalars['String'];
   lastName: Scalars['String'];
+  newsletterSubscribed: Scalars['Boolean'];
   password: Scalars['String'];
   title: Scalars['String'];
+};
+
+
+export type MutationUnpublishIssueArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -211,6 +258,28 @@ export type MutationUnpublishPostArgs = {
 
 export type MutationVerifyEmailAddressArgs = {
   token: Scalars['String'];
+};
+
+export type Newsletter = {
+  __typename?: 'Newsletter';
+  author: User;
+  authorId: Scalars['Float'];
+  content?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  draft: Scalars['Boolean'];
+  id: Scalars['Int'];
+  newsletterCover?: Maybe<Scalars['String']>;
+  newsletterId: Scalars['String'];
+  subject?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['String'];
+};
+
+export type NewsletterResponse = {
+  __typename?: 'NewsletterResponse';
+  errors?: Maybe<Array<FieldError>>;
+  issue?: Maybe<Newsletter>;
+  status?: Maybe<Scalars['String']>;
 };
 
 export type Post = {
@@ -239,14 +308,31 @@ export type PostResponse = {
 export type Query = {
   __typename?: 'Query';
   blogFeed: Array<Post>;
+  dashNewsletterFeed: Array<Newsletter>;
   dashPostFeed: Array<Post>;
   dashUsers: Array<User>;
+  draftNewsletterFeed: Array<Newsletter>;
   draftPostFeed: Array<Post>;
+  findNewsletterById?: Maybe<Newsletter>;
+  findNewsletterIssue?: Maybe<Newsletter>;
   findPost?: Maybe<Post>;
   findPostBySlug?: Maybe<Post>;
   findUser?: Maybe<User>;
   me?: Maybe<User>;
+  newsletterBlogFeed: Array<Newsletter>;
+  newsletterPersonalFeed: Array<Newsletter>;
   postFeed: Array<Post>;
+  subscribedUsers: Array<User>;
+};
+
+
+export type QueryFindNewsletterByIdArgs = {
+  newsletterId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFindNewsletterIssueArgs = {
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -277,7 +363,9 @@ export type User = {
   firstName: Scalars['String'];
   gender: Scalars['String'];
   id: Scalars['Int'];
+  issues?: Maybe<Array<Newsletter>>;
   lastName: Scalars['String'];
+  newsletterSubscribed: Scalars['Boolean'];
   posts?: Maybe<Array<Post>>;
   profilePicture?: Maybe<Scalars['String']>;
   role: Scalars['String'];
@@ -304,7 +392,7 @@ export type AuthSendVerificationEmailMutation = { __typename?: 'Mutation', authS
 export type BlogFeedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BlogFeedQuery = { __typename?: 'Query', blogFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } }> };
+export type BlogFeedQuery = { __typename?: 'Query', blogFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean } }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   currentPassword: Scalars['String'];
@@ -342,14 +430,21 @@ export type EditProfileMutationVariables = Exact<{
 }>;
 
 
-export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+
+export type FindNewsletterByIdQueryVariables = Exact<{
+  newsletterId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type FindNewsletterByIdQuery = { __typename?: 'Query', findNewsletterById?: { __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, newsletterSubscribed: boolean, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined };
 
 export type FindPostBySlugQueryVariables = Exact<{
   slug?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type FindPostBySlugQuery = { __typename?: 'Query', findPostBySlug?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined };
+export type FindPostBySlugQuery = { __typename?: 'Query', findPostBySlug?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } } | null | undefined };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -358,7 +453,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', accessToken?: string | null | undefined, status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', accessToken?: string | null | undefined, status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -370,7 +465,12 @@ export type MeQueryVariables = Exact<{
 }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined };
+
+export type NewsletterBlogFeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NewsletterBlogFeedQuery = { __typename?: 'Query', newsletterBlogFeed: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, newsletterSubscribed: boolean, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } }> };
 
 export type NotAuthModifyPasswordMutationVariables = Exact<{
   token: Scalars['String'];
@@ -406,11 +506,22 @@ export type SignupMutationVariables = Exact<{
   password: Scalars['String'];
   title: Scalars['String'];
   gender: Scalars['String'];
+  newsletterSubscribed: Scalars['Boolean'];
   birthDate: Scalars['DateTime'];
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup?: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
+export type SignupMutation = { __typename?: 'Mutation', signup?: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
+
+export type SubscribeToNewsletterMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubscribeToNewsletterMutation = { __typename?: 'Mutation', subscribeToNewsletter: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined } };
+
+export type UnsubscribeFromNewsletterMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UnsubscribeFromNewsletterMutation = { __typename?: 'Mutation', unsubscribeFromNewsletter: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined } };
 
 export type VerifyEmailAddressMutationVariables = Exact<{
   token: Scalars['String'];
@@ -473,6 +584,7 @@ export const BlogFeedDocument = gql`
       profilePicture
       createdAt
       updatedAt
+      newsletterSubscribed
     }
     title
     description
@@ -650,6 +762,7 @@ export const EditProfileDocument = gql`
       verified
       role
       profilePicture
+      newsletterSubscribed
       createdAt
       updatedAt
       posts {
@@ -705,6 +818,65 @@ export function useEditProfileMutation(baseOptions?: Apollo.MutationHookOptions<
 export type EditProfileMutationHookResult = ReturnType<typeof useEditProfileMutation>;
 export type EditProfileMutationResult = Apollo.MutationResult<EditProfileMutation>;
 export type EditProfileMutationOptions = Apollo.BaseMutationOptions<EditProfileMutation, EditProfileMutationVariables>;
+export const FindNewsletterByIdDocument = gql`
+    query findNewsletterById($newsletterId: String) {
+  findNewsletterById(newsletterId: $newsletterId) {
+    id
+    newsletterId
+    draft
+    authorId
+    author {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      newsletterSubscribed
+      profilePicture
+      createdAt
+      updatedAt
+    }
+    title
+    subject
+    newsletterCover
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFindNewsletterByIdQuery__
+ *
+ * To run a query within a React component, call `useFindNewsletterByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindNewsletterByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindNewsletterByIdQuery({
+ *   variables: {
+ *      newsletterId: // value for 'newsletterId'
+ *   },
+ * });
+ */
+export function useFindNewsletterByIdQuery(baseOptions?: Apollo.QueryHookOptions<FindNewsletterByIdQuery, FindNewsletterByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindNewsletterByIdQuery, FindNewsletterByIdQueryVariables>(FindNewsletterByIdDocument, options);
+      }
+export function useFindNewsletterByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindNewsletterByIdQuery, FindNewsletterByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindNewsletterByIdQuery, FindNewsletterByIdQueryVariables>(FindNewsletterByIdDocument, options);
+        }
+export type FindNewsletterByIdQueryHookResult = ReturnType<typeof useFindNewsletterByIdQuery>;
+export type FindNewsletterByIdLazyQueryHookResult = ReturnType<typeof useFindNewsletterByIdLazyQuery>;
+export type FindNewsletterByIdQueryResult = Apollo.QueryResult<FindNewsletterByIdQuery, FindNewsletterByIdQueryVariables>;
 export const FindPostBySlugDocument = gql`
     query findPostBySlug($slug: String) {
   findPostBySlug(slug: $slug) {
@@ -723,6 +895,7 @@ export const FindPostBySlugDocument = gql`
       verified
       role
       profilePicture
+      newsletterSubscribed
       createdAt
       updatedAt
     }
@@ -778,6 +951,7 @@ export const LoginDocument = gql`
       verified
       role
       profilePicture
+      newsletterSubscribed
       createdAt
       updatedAt
       posts {
@@ -876,6 +1050,7 @@ export const MeDocument = gql`
     profilePicture
     createdAt
     updatedAt
+    newsletterSubscribed
     posts {
       id
       slug
@@ -920,6 +1095,64 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const NewsletterBlogFeedDocument = gql`
+    query newsletterBlogFeed {
+  newsletterBlogFeed {
+    id
+    newsletterId
+    draft
+    authorId
+    author {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      newsletterSubscribed
+      profilePicture
+      createdAt
+      updatedAt
+    }
+    title
+    subject
+    newsletterCover
+    content
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useNewsletterBlogFeedQuery__
+ *
+ * To run a query within a React component, call `useNewsletterBlogFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNewsletterBlogFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewsletterBlogFeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNewsletterBlogFeedQuery(baseOptions?: Apollo.QueryHookOptions<NewsletterBlogFeedQuery, NewsletterBlogFeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NewsletterBlogFeedQuery, NewsletterBlogFeedQueryVariables>(NewsletterBlogFeedDocument, options);
+      }
+export function useNewsletterBlogFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NewsletterBlogFeedQuery, NewsletterBlogFeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NewsletterBlogFeedQuery, NewsletterBlogFeedQueryVariables>(NewsletterBlogFeedDocument, options);
+        }
+export type NewsletterBlogFeedQueryHookResult = ReturnType<typeof useNewsletterBlogFeedQuery>;
+export type NewsletterBlogFeedLazyQueryHookResult = ReturnType<typeof useNewsletterBlogFeedLazyQuery>;
+export type NewsletterBlogFeedQueryResult = Apollo.QueryResult<NewsletterBlogFeedQuery, NewsletterBlogFeedQueryVariables>;
 export const NotAuthModifyPasswordDocument = gql`
     mutation notAuthModifyPassword($token: String!, $confirmPassword: String!, $password: String!) {
   notAuthModifyPassword(
@@ -1042,7 +1275,7 @@ export type SendRecoveryEmailMutationHookResult = ReturnType<typeof useSendRecov
 export type SendRecoveryEmailMutationResult = Apollo.MutationResult<SendRecoveryEmailMutation>;
 export type SendRecoveryEmailMutationOptions = Apollo.BaseMutationOptions<SendRecoveryEmailMutation, SendRecoveryEmailMutationVariables>;
 export const SignupDocument = gql`
-    mutation signup($email: String!, $firstName: String!, $lastName: String!, $password: String!, $title: String!, $gender: String!, $birthDate: DateTime!) {
+    mutation signup($email: String!, $firstName: String!, $lastName: String!, $password: String!, $title: String!, $gender: String!, $newsletterSubscribed: Boolean!, $birthDate: DateTime!) {
   signup(
     email: $email
     firstName: $firstName
@@ -1050,6 +1283,7 @@ export const SignupDocument = gql`
     password: $password
     title: $title
     gender: $gender
+    newsletterSubscribed: $newsletterSubscribed
     birthDate: $birthDate
   ) {
     user {
@@ -1065,6 +1299,7 @@ export const SignupDocument = gql`
       profilePicture
       createdAt
       updatedAt
+      newsletterSubscribed
       posts {
         id
         slug
@@ -1108,6 +1343,7 @@ export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMut
  *      password: // value for 'password'
  *      title: // value for 'title'
  *      gender: // value for 'gender'
+ *      newsletterSubscribed: // value for 'newsletterSubscribed'
  *      birthDate: // value for 'birthDate'
  *   },
  * });
@@ -1119,6 +1355,150 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const SubscribeToNewsletterDocument = gql`
+    mutation subscribeToNewsletter {
+  subscribeToNewsletter {
+    status
+    user {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      newsletterSubscribed
+      createdAt
+      updatedAt
+      posts {
+        id
+        slug
+        draft
+        authorId
+        title
+        description
+        slogan
+        postCover
+        content
+        createdAt
+        updatedAt
+      }
+      issues {
+        id
+        newsletterId
+        draft
+        authorId
+        title
+        subject
+        newsletterCover
+        content
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+export type SubscribeToNewsletterMutationFn = Apollo.MutationFunction<SubscribeToNewsletterMutation, SubscribeToNewsletterMutationVariables>;
+
+/**
+ * __useSubscribeToNewsletterMutation__
+ *
+ * To run a mutation, you first call `useSubscribeToNewsletterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeToNewsletterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [subscribeToNewsletterMutation, { data, loading, error }] = useSubscribeToNewsletterMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSubscribeToNewsletterMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeToNewsletterMutation, SubscribeToNewsletterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SubscribeToNewsletterMutation, SubscribeToNewsletterMutationVariables>(SubscribeToNewsletterDocument, options);
+      }
+export type SubscribeToNewsletterMutationHookResult = ReturnType<typeof useSubscribeToNewsletterMutation>;
+export type SubscribeToNewsletterMutationResult = Apollo.MutationResult<SubscribeToNewsletterMutation>;
+export type SubscribeToNewsletterMutationOptions = Apollo.BaseMutationOptions<SubscribeToNewsletterMutation, SubscribeToNewsletterMutationVariables>;
+export const UnsubscribeFromNewsletterDocument = gql`
+    mutation unsubscribeFromNewsletter {
+  unsubscribeFromNewsletter {
+    status
+    user {
+      id
+      firstName
+      lastName
+      email
+      birthDate
+      gender
+      title
+      verified
+      role
+      profilePicture
+      newsletterSubscribed
+      createdAt
+      updatedAt
+      posts {
+        id
+        slug
+        draft
+        authorId
+        title
+        description
+        slogan
+        postCover
+        content
+        createdAt
+        updatedAt
+      }
+      issues {
+        id
+        newsletterId
+        draft
+        authorId
+        title
+        subject
+        newsletterCover
+        content
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+export type UnsubscribeFromNewsletterMutationFn = Apollo.MutationFunction<UnsubscribeFromNewsletterMutation, UnsubscribeFromNewsletterMutationVariables>;
+
+/**
+ * __useUnsubscribeFromNewsletterMutation__
+ *
+ * To run a mutation, you first call `useUnsubscribeFromNewsletterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsubscribeFromNewsletterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsubscribeFromNewsletterMutation, { data, loading, error }] = useUnsubscribeFromNewsletterMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUnsubscribeFromNewsletterMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeFromNewsletterMutation, UnsubscribeFromNewsletterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnsubscribeFromNewsletterMutation, UnsubscribeFromNewsletterMutationVariables>(UnsubscribeFromNewsletterDocument, options);
+      }
+export type UnsubscribeFromNewsletterMutationHookResult = ReturnType<typeof useUnsubscribeFromNewsletterMutation>;
+export type UnsubscribeFromNewsletterMutationResult = Apollo.MutationResult<UnsubscribeFromNewsletterMutation>;
+export type UnsubscribeFromNewsletterMutationOptions = Apollo.BaseMutationOptions<UnsubscribeFromNewsletterMutation, UnsubscribeFromNewsletterMutationVariables>;
 export const VerifyEmailAddressDocument = gql`
     mutation verifyEmailAddress($token: String!) {
   verifyEmailAddress(token: $token) {

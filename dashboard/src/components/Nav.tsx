@@ -10,6 +10,7 @@ import { useMeQuery } from "../generated/graphql";
 import { useEffect, useState } from "react";
 import Close from "./icons/Close";
 import Arrow from "./icons/Arrow";
+import Mail from "./icons/Mail";
 
 const NavContainer = styled.div`
     display: grid;
@@ -487,6 +488,27 @@ function Nav() {
                                         />
                                     </NavEntryIcon>
                                     <NavEntryText>Create post</NavEntryText>
+                                </>
+                            )}
+                        </NavLink>
+                    </NavEntry>
+                    <NavEntry>
+                        <NavLink
+                            className={(navData: any) =>
+                                navData.isActive ? "active" : ""
+                            }
+                            to="/newsletter"
+                            title="Manage the newsletter"
+                            aria-label="Manage the newsletter"
+                        >
+                            {({ isActive }) => (
+                                <>
+                                    <NavEntryIcon>
+                                        <Mail
+                                            isActive={isActive ? true : false}
+                                        />
+                                    </NavEntryIcon>
+                                    <NavEntryText>Newsletter</NavEntryText>
                                 </>
                             )}
                         </NavLink>

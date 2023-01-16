@@ -8,6 +8,7 @@ import { PageBlock, PageText, TextButton } from "../../../styles/global";
 
 interface UserComponentProps {
     user: any;
+    nocontrol?: boolean;
 }
 
 const UserContainer = styled.div`
@@ -106,6 +107,7 @@ const DeleteUserButton = styled(TextButton)`
 
 const UserComponent: FunctionComponent<UserComponentProps> = ({
     user,
+    nocontrol,
 }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -143,7 +145,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
                     <PostSmallText>
                         <b>{user.email}</b>{" "}Role: {user.role}.
                     </PostSmallText>
-                    {(data && data.me && data.me.id !== user.id && user.role === "writer") && (
+                    {(data && data.me && data.me.id !== user.id && user.role === "writer") || nocontrol && (
                         <PostButtonsContainer>
                             <PageBlock>
                                 <ChangeUserRoleButton

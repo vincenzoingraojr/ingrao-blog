@@ -29,6 +29,7 @@ function SearchPage() {
                                 ) : (
                                     <SearchBoxComponent
                                         data={data?.blogFeed}
+                                        type="post"
                                     />
                                 )}
                             </>

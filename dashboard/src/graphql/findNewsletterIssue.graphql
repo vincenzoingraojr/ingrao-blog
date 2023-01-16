@@ -1,0 +1,29 @@
+query findNewsletterIssue($id: Int) {
+    findNewsletterIssue(id: $id) {
+        id
+        newsletterId
+        draft
+        authorId
+        author {
+            id
+            firstName
+            lastName
+            email
+            birthDate
+            gender
+            title
+            verified
+            role
+            newsletterSubscribed
+            profilePicture
+            createdAt
+            updatedAt
+        }
+        title
+        subject
+        newsletterCover
+        content
+        createdAt
+        updatedAt
+    }
+}

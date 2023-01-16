@@ -30,7 +30,7 @@ import styled from "styled-components";
 import EditorField from "../../components/input/content/EditorField";
 import { debounceAsync } from "../../utils/debounceAsync";
 import AutoSave from "../../components/input/content/AutoSave";
-import postCover from "../../images/post-cover.svg";
+import postCover from "../../images/cover.svg";
 import Close from "../../components/icons/Close";
 import Upload from "../../components/icons/Upload";
 import axios from "axios";

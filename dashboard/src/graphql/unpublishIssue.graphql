@@ -1,0 +1,3 @@
+mutation unpublishIssue($id: Int!) {
+    unpublishIssue(id: $id)
+}

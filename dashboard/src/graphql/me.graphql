@@ -10,6 +10,7 @@ query Me($origin: String!) {
         verified
         role
         profilePicture
+        newsletterSubscribed
         createdAt
         updatedAt
         posts {
@@ -21,6 +22,18 @@ query Me($origin: String!) {
             description
             slogan
             postCover
+            content
+            createdAt
+            updatedAt
+        }
+        issues {
+            id
+            newsletterId
+            draft
+            authorId
+            title
+            subject
+            newsletterCover
             content
             createdAt
             updatedAt

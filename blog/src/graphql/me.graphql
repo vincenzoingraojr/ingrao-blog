@@ -12,6 +12,7 @@ query Me($origin: String!) {
         profilePicture
         createdAt
         updatedAt
+        newsletterSubscribed
         posts {
             id
             slug

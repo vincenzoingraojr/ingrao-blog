@@ -6,7 +6,7 @@ import LoadingComponent from "../../components/utils/LoadingComponent";
 import { useFindPostQuery } from "../../generated/graphql";
 import { LoadingContainer, PageBlock, PageText } from "../../styles/global";
 import UpdatePostComponent from "./UpdatePostComponent";
-import postCover from "../../images/post-cover.svg";
+import postCover from "../../images/cover.svg";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
 import { processDate } from "../../utils/processDate";

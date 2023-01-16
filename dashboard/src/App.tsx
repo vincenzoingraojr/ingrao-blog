@@ -34,6 +34,15 @@ import ChangeRole from "./pages/settings/manage-users/ChangeRole";
 import DeleteUser from "./pages/settings/manage-users/DeleteUser";
 import IsAdmin from "./components/routes/IsAdmin";
 import DeleteAccount from "./pages/settings/DeleteAccount";
+import NewsletterDashboard from "./pages/newsletter/NewsletterDashboard";
+import NewIssue from "./pages/newsletter/NewIssue";
+import PublishIssue from "./pages/newsletter/update-issue/PublishIssue";
+import UpdateIssue from "./pages/newsletter/update-issue/UpdateIssue";
+import IssuePreview from "./pages/newsletter/update-issue/IssuePreview";
+import EditIssue from "./pages/newsletter/EditIssue";
+import ViewIssue from "./pages/newsletter/ViewIssue";
+import IssuesPage from "./pages/newsletter/IssuesPage";
+import SubscribedUsers from "./pages/newsletter/SubscribedUsers";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -160,6 +169,15 @@ function App() {
                     }
                 />
                 <Route
+                    path="/newsletter/issue/:newsletterId"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<ViewIssue />}
+                        />
+                    }
+                />
+                <Route
                     path="/create-post"
                     element={
                         <IsAuthenticated
@@ -183,6 +201,20 @@ function App() {
                     }
                 />
                 <Route
+                    path="/newsletter/new-issue"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Create a new issue"
+                                    modalContent={<NewIssue />}
+                                />
+                            }
+                        />
+                    }
+                />
+                <Route
                     path="/publish-post/:id"
                     element={
                         <IsAuthenticated
@@ -191,6 +223,20 @@ function App() {
                                 <Modal
                                     headerText="Publish this post"
                                     modalContent={<PublishPost />}
+                                />
+                            }
+                        />
+                    }
+                />
+                <Route
+                    path="/newsletter/publish-issue/:newsletterId"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={
+                                <Modal
+                                    headerText="Publish this newsletter issue"
+                                    modalContent={<PublishIssue />}
                                 />
                             }
                         />
@@ -215,11 +261,38 @@ function App() {
                     }
                 />
                 <Route
+                    path="/newsletter/update-issue/:newsletterId"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<UpdateIssue />}
+                        />
+                    }
+                />
+                <Route
+                    path="/newsletter/update-issue/:newsletterId/preview"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<IssuePreview />}
+                        />
+                    }
+                />
+                <Route
                     path="/edit-post/:id"
                     element={
                         <IsAuthenticated
                             isAuth={isAuth}
                             children={<EditPost />}
+                        />
+                    }
+                />
+                <Route
+                    path="/newsletter/edit-issue/:newsletterId"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<EditIssue />}
                         />
                     }
                 />
@@ -384,6 +457,40 @@ function App() {
                         />
                     }
                 />
+                <Route
+                    path="/newsletter"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<NewsletterDashboard />}
+                        />
+                    }
+                />
+                <Route
+                    path="/newsletter/issues"
+                    element={
+                        <IsAuthenticated
+                            isAuth={isAuth}
+                            children={<IssuesPage />}
+                        />
+                    }
+                />
+                <Route 
+                    path="/newsletter/users"
+                    element={
+                        <IsAuthenticated 
+                            isAuth={isAuth}
+                            children={
+                                <IsAdmin
+                                    isAdmin={isAdmin}
+                                    children={
+                                        <SubscribedUsers />
+                                    }
+                                />
+                            }
+                        />
+                    }
+                />
             </Routes>
             {state?.backgroundLocation && (
                 <Routes>
@@ -402,6 +509,20 @@ function App() {
                         }
                     />
                     <Route
+                        path="/newsletter/new-issue"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Create a new issue"
+                                        modalContent={<NewIssue />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                    <Route
                         path="/publish-post/:id"
                         element={
                             <IsAuthenticated
@@ -410,6 +531,20 @@ function App() {
                                     <Modal
                                         headerText="Publish this post"
                                         modalContent={<PublishPost />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                    <Route
+                        path="/newsletter/publish-issue/:newsletterId"
+                        element={
+                            <IsAuthenticated
+                                isAuth={isAuth}
+                                children={
+                                    <Modal
+                                        headerText="Publish this newsletter issue"
+                                        modalContent={<PublishIssue />}
                                     />
                                 }
                             />

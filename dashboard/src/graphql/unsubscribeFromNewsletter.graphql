@@ -1,0 +1,45 @@
+mutation unsubscribeFromNewsletter {
+    unsubscribeFromNewsletter {
+        status
+        user {
+            id
+            firstName
+            lastName
+            email
+            birthDate
+            gender
+            title
+            verified
+            role
+            profilePicture
+            newsletterSubscribed
+            createdAt
+            updatedAt
+            posts {
+                id
+                slug
+                draft
+                authorId
+                title
+                description
+                slogan
+                postCover
+                content
+                createdAt
+                updatedAt
+            }
+            issues {
+                id
+                newsletterId
+                draft
+                authorId
+                title
+                subject
+                newsletterCover
+                content
+                createdAt
+                updatedAt
+            }
+        }
+    }
+}

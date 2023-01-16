@@ -25,6 +25,8 @@ import AboutPage from "./pages/AboutPage";
 import SearchPage from "./pages/SearchPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import NewsletterIndex from "./pages/newsletter/NewsletterIndex";
+import ViewIssue from "./pages/newsletter/ViewIssue";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -230,6 +232,18 @@ function App() {
                     path="/privacy-policy"
                     element={
                         <PrivacyPolicyPage />
+                    }
+                />
+                <Route
+                    path="/newsletter"
+                    element={
+                        <NewsletterIndex />
+                    }
+                />
+                <Route
+                    path="/newsletter/issue/:newsletterId"
+                    element={
+                        <ViewIssue />
                     }
                 />
                 <Route
