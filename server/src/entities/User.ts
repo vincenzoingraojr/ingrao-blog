@@ -68,8 +68,8 @@ export class User extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Field(() => Boolean, { nullable: false })
-    @Column({ nullable: false })
+    @Field(() => Boolean, { nullable: false, defaultValue: false })
+    @Column({ nullable: false, default: false })
     newsletterSubscribed: boolean;
 
     @Column("int", { default: 0 })
