@@ -1,12 +1,23 @@
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import { Link } from "react-router-dom";
 import Head from "../components/Head";
 import DatePickerField from "../components/input/datepicker/DatePickerField";
 import InputField from "../components/input/InputField";
 import SelectField from "../components/input/select/SelectField";
 import { MeDocument, MeQuery, User, useSignupMutation } from "../generated/graphql";
-import { AuthButton, AuthFormContent, AuthHalfInput, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../styles/global";
+import { AuthButton, AuthFormContent, AuthHalfInput, ModalContentContainer, PageBlock, PageText, PageTextMB24, Status } from "../styles/global";
 import { toErrorMap } from "../utils/toErrorMap";
+import styled from "styled-components";
+
+const CheckBoxLabel = styled.label`
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    column-gap: 12px;
+    row-gap: 4px;
+`;
 
 function Signup() {
     const [signup] = useSignupMutation();
@@ -125,6 +136,10 @@ function Signup() {
                                     placeholder="Password"
                                     errors={errors}
                                 />
+                                <CheckBoxLabel>
+                                    <Field type="checkbox" name="newsletterSubscribed" />
+                                    <PageText>By cheking this box, you agree to sign up to the ingrao.blog newsletter.</PageText>
+                                </CheckBoxLabel>
                                 <PageBlock>
                                     <AuthButton
                                         type="submit"
