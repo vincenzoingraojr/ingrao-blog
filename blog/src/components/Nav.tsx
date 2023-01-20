@@ -85,6 +85,33 @@ const NavOptionsContainer = styled.nav`
     gap: 12px;
 `;
 
+const NotAuthNavContainer = styled.div`
+    display: none;
+
+    @media ${devices.tablet} {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 16px;
+    }
+`;
+
+const NotAuthNavLinkContainer = styled.div`
+    display: block;
+
+    a {
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: black;
+    }
+
+    a:hover, a:active {
+        text-decoration: none;
+        color: blue;
+    }
+`;
+
 const ProfileContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -334,7 +361,7 @@ function Nav() {
                     >
                         <Magnifier type="normal" />
                     </ControlContainer>
-                    {data && data.me && (
+                    {data && data.me ? (
                         <ProfileContainer
                             title="Your profile"
                             role="link"
@@ -362,6 +389,35 @@ function Nav() {
                                 />
                             </ProfileImageContainer>
                         </ProfileContainer>
+                    ) : (
+                        <NotAuthNavContainer>
+                            <NotAuthNavLinkContainer>
+                                <Link
+                                    to="/login"
+                                    state={{
+                                        backgroundLocation: location,
+                                    }}
+                                    title="Log in to the blog"
+                                    aria-label="Log in to the blog"
+                                >
+                                   Log in
+                                </Link>
+                                <Outlet />
+                            </NotAuthNavLinkContainer>
+                            <NotAuthNavLinkContainer>
+                                <Link
+                                    to="/signup"
+                                    state={{
+                                        backgroundLocation: location,
+                                    }}
+                                    title="Sign up to the blog"
+                                    aria-label="Sign up to the blog"
+                                >
+                                    Sign up
+                                </Link>
+                                <Outlet />
+                            </NotAuthNavLinkContainer>
+                        </NotAuthNavContainer>
                     )}
                     <ControlContainer
                         title="Open menu"
