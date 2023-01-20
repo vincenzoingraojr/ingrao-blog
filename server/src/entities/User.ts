@@ -8,6 +8,7 @@ import {
     OneToMany,
     UpdateDateColumn,
 } from "typeorm";
+import { Comment } from "./Comment";
 import { Newsletter } from "./Newsletter";
 import { Post } from "./Post";
 
@@ -50,8 +51,12 @@ export class User extends BaseEntity {
     posts: Post[];
 
     @Field(() => [Newsletter], { nullable: true, defaultValue: [] })
-    @OneToMany(() => Newsletter, (post) => post.author, { nullable: true })
+    @OneToMany(() => Newsletter, (issue) => issue.author, { nullable: true })
     issues: Newsletter[];
+
+    @Field(() => [Comment], { nullable: true, defaultValue: [] })
+    @OneToMany(() => Comment, (comment) => comment.author, { nullable: true })
+    comments: Comment[];
 
     @Field(() => Boolean, { nullable: false })
     @Column({ nullable: false })

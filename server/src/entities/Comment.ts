@@ -11,38 +11,26 @@ import {
 import { User } from "./User";
 
 @ObjectType()
-@Entity("newsletter")
-export class Newsletter extends BaseEntity {
+@Entity("comments")
+export class Comment extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
     @Field(() => String, { nullable: false })
     @Column({ type: "uuid", unique: true, nullable: false })
-    newsletterId: string;
+    commentId: string;
 
-    @Field(() => Boolean, { nullable: false })
+    @Field(() => Number, { nullable: false })
     @Column({ nullable: false })
-    draft: boolean;
+    postId: number;
 
     @Field(() => Number, { nullable: false })
     @Column({ nullable: false })
     authorId: number;
 
-    @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true, default: "" })
-    title: string;
-
-    @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true, default: "" })
-    subject: string;
-
-    @Field(() => String, { nullable: true, defaultValue: "" })
-    @Column({ nullable: true, default: "" })
-    newsletterCover: string;
-
     @Field(() => User)
-    @ManyToOne(() => User, (user) => user.issues, { onDelete: "CASCADE" })
+    @ManyToOne(() => User, (user) => user.comments, { onDelete: "CASCADE" })
     author: User;
 
     @Field(() => String, { nullable: true, defaultValue: "" })
