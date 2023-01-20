@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useMeQuery } from "../../../generated/graphql";
@@ -117,6 +117,14 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
         variables: { origin: "dash" },
     });
 
+    const [controls, setControls] = useState(true);
+
+    useEffect(() => {
+        if (nocontrol !== undefined && nocontrol) {
+            setControls(false);
+        }
+    }, [nocontrol]);
+
     return (
         <UserContainer>
             <UserInnerContainer>
@@ -145,7 +153,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
                     <PostSmallText>
                         <b>{user.email}</b>{" "}Role: {user.role}.
                     </PostSmallText>
-                    {(data && data.me && data.me.id !== user.id && user.role === "writer") || nocontrol && (
+                    {(data && data.me && data.me.id !== user.id && user.role === "writer" && controls) && (
                         <PostButtonsContainer>
                             <PageBlock>
                                 <ChangeUserRoleButton

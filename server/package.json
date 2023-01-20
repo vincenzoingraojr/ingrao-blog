@@ -12,6 +12,7 @@
     "dependencies": {
         "@types/cookie-parser": "^1.4.2",
         "@types/cors": "^2.8.12",
+        "@types/draftjs-to-html": "^0.8.1",
         "@types/ejs": "^3.1.0",
         "@types/jsonwebtoken": "^8.5.6",
         "@types/node": "^8.0.29",
@@ -27,6 +28,7 @@
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
+        "draftjs-to-html": "^0.9.1",
         "ejs": "^3.1.6",
         "express": "^4.17.2",
         "graphql": "^15.5.1",

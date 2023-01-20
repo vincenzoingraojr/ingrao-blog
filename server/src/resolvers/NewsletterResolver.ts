@@ -19,6 +19,7 @@ import aws from "aws-sdk";
 import ejs from "ejs";
 import path from "path";
 import { UserResponse } from "./UserResolver";
+import draftToHtml from "draftjs-to-html";
 
 @ObjectType()
 export class NewsletterResponse {
@@ -274,7 +275,10 @@ export class NewsletterResolver {
             status = "You are not authorizated to publish a newsletter issue.";
         } else {
             issue = await Newsletter.findOne({
-                newsletterId: newsletterId,
+                where: {
+                    newsletterId: newsletterId,
+                },
+                relations: ["author"],
             });
 
             if (!issue) {
@@ -328,7 +332,7 @@ export class NewsletterResolver {
                         );
                     }
 
-                    const link = `https://ingrao.blog/newsletter/${issue.newsletterId}`;
+                    const link = `https://ingrao.blog/newsletter/issue/${issue.newsletterId}`;
                     const fullName = `${issue.author.firstName} ${issue.author.lastName}`;
 
                     const newsletterUsers = await User.find({
@@ -346,7 +350,7 @@ export class NewsletterResolver {
                             __dirname,
                             "../helpers/templates/NewsletterIssue.ejs"
                         ),
-                        { link: link, title: issue.title, newsletterCover: issue.newsletterCover, fullName: fullName, content: issue.content},
+                        { link: link, title: issue.title, newsletterCover: issue.newsletterCover, fullName: fullName, content: draftToHtml(JSON.parse(issue.content))},
                         function (error, data) {
                             if (error) {
                                 console.log(error);
@@ -365,7 +369,8 @@ export class NewsletterResolver {
                                             Data: issue?.subject!,
                                         },
                                     },
-                                    Source: "newsletter@ingrao.blog",
+                                    Source: "ingrao.blog <newsletter@ingrao.blog>",
+                                    ReplyToAddresses: ["info@ingrao.blog"],
                                 };
         
                                 ses.sendEmail(params)

@@ -53,7 +53,7 @@ function SubscribedUsers() {
                                                 <PageTextMB48>
                                                     In this page you can manage the ingrao.blog newsletter subscribed users.
                                                 </PageTextMB48>
-                                                <SearchBoxComponent data={subscribedUsersData?.subscribedUsers || []} type="no-control-user" />
+                                                <SearchBoxComponent data={subscribedUsersData?.subscribedUsers || []} type="user" nocontrol={true} />
                                             </>
                                         )}
                                     </>
