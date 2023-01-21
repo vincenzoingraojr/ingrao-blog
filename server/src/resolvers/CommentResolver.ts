@@ -15,7 +15,6 @@ import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
 import { v4 as uuidv4 } from "uuid";
-import { getConnection } from "typeorm";
 
 @ObjectType()
 export class CommentResponse {
@@ -151,18 +150,17 @@ export class CommentResolver {
             });
         } else if (errors.length === 0) {
             try {
-                const result = await getConnection()
-                    .createQueryBuilder()
-                    .update(Comment)
-                    .set({ content })
-                    .where("commentId = :commentId and authorId = :authorId", {
+                await Comment.update(
+                    {
                         commentId,
-                        authorId: payload?.id,
-                    })
-                    .returning("*")
-                    .execute();
-
-                comment = result.raw[0];
+                        authorId: payload.id,
+                    },
+                    {
+                        content: content,
+                    },
+                );
+                
+                comment = await Comment.findOne({ where: { commentId, authorId: payload.id }, relations: ["author"] });
             } catch (error) {
                 console.log(error);
                 errors.push({
