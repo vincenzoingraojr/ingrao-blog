@@ -48,6 +48,12 @@ const CommentUserProfilePicture = styled.div`
     }
 `;
 
+const CommentInfoContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+`;
+
 const CommentUserInfo = styled.div`
     display: flex;
     flex-direction: row;
@@ -65,6 +71,11 @@ const CommentUserStaff = styled(PageText)`
     font-size: 16px;
     color: #ffffff;
     background-color: #000000;
+`;
+
+const CommentDate = styled(PageText)`
+    font-size: 16px;
+    color: #c0c0c0;
 `;
 
 const CommentContentContainer = styled.div`
@@ -116,7 +127,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
 
     useEffect(() => {
         const content = comment.content;
-
+        
         if (content) {
             setContentReady(true);
             setCommentContent(JSON.parse(content));
@@ -138,6 +149,14 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
 
     const [updateComment] = useUpdateCommentMutation();
 
+    let date = new Date(parseInt(comment.createdAt)).toLocaleString("en-us", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+    });
+
     return (
         <CommentBox>
             <CommentComponentContainer>
@@ -153,16 +172,21 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                             alt={`${comment.author.firstName} ${comment.author.lastName}`}
                         />
                     </CommentUserProfilePicture>
-                    <CommentUserInfo>
-                        <CommentUserFullName>
-                            {comment.author.firstName}{" "}{comment.author.lastName}
-                        </CommentUserFullName>
-                        {(comment.author.role === "admin" || comment.author.role === "writer") && (
-                            <CommentUserStaff>
-                                Staff
-                            </CommentUserStaff>
-                        )}
-                    </CommentUserInfo>
+                    <CommentInfoContainer>
+                        <CommentUserInfo>
+                            <CommentUserFullName>
+                                {comment.author.firstName}{" "}{comment.author.lastName}
+                            </CommentUserFullName>
+                            {(comment.author.role === "admin" || comment.author.role === "writer") && (
+                                <CommentUserStaff>
+                                    Staff
+                                </CommentUserStaff>
+                            )}
+                        </CommentUserInfo>
+                        <CommentDate>
+                            {date}
+                        </CommentDate>
+                    </CommentInfoContainer>
                 </CommentUserContainer>
                 <CommentContentContainer>
                     {contentReady && (
@@ -171,6 +195,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                 readOnly={true}
                                 toolbarHidden={true}
                                 initialContentState={commentContent}
+                                contentState={commentContent}
                             />
                         </CommentContent>
                     )}
