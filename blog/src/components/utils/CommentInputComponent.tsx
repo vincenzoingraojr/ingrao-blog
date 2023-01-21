@@ -53,6 +53,9 @@ const CommentInputComponent: FunctionComponent<CommentInputComponentProps> = ({ 
                                             ...commentsData!,
                                         ],
                                     },
+                                    variables: {
+                                        postId: postId,
+                                    },
                                 });
                             }
                         },

@@ -196,6 +196,9 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                                 data: {
                                                     postComments: commentsData,
                                                 },
+                                                variables: {
+                                                    postId: postId,
+                                                },
                                             });
                                         }
                                     },
