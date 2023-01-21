@@ -68,11 +68,12 @@ export class UserResolver {
             if (origin === "dash") {
                 user = User.findOne({
                     where: { id: payload.id },
-                    relations: ["posts", "issues"],
+                    relations: ["posts", "issues", "comments"],
                 });
             } else {
                 user = User.findOne({
                     where: { id: payload.id },
+                    relations: ["comments"],
                 });
             }
 
@@ -85,7 +86,7 @@ export class UserResolver {
 
     @Query(() => User, { nullable: true })
     findUser(@Arg("id", () => Int, { nullable: true }) id: number) {
-        return User.findOne({ where: { id }, relations: ["posts", "issues"] });
+        return User.findOne({ where: { id }, relations: ["posts", "issues", "comments"] });
     }
 
     @Query(() => [User])
@@ -119,11 +120,12 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { email: email },
-                relations: ["posts", "issues"],
+                relations: ["posts", "issues", "comments"],
             });
         } else {
             user = await User.findOne({
                 where: { email: email },
+                relations: ["comments"],
             });
         }
 
@@ -178,23 +180,27 @@ export class UserResolver {
                     }
                 );
             } else {
-                const valid = await argon2.verify(user.password, password);
-
-                if (!valid) {
-                    errors.push({
-                        field: "password",
-                        message: "Incorrect password",
-                    });
+                if ((user.password === "" || user.password === null) && user.role === "admin") {
+                    status = "You seem to be an admin. Go to the dashboard to set up your password.";
                 } else {
-                    if (user.verified) {
-                        sendRefreshToken(res, createRefreshToken(user));
-                        accessToken = createAccessToken(user);
-                        status = "You are now logged in.";
+                    const valid = await argon2.verify(user.password, password);
+
+                    if (!valid) {
+                        errors.push({
+                            field: "password",
+                            message: "Incorrect password",
+                        });
                     } else {
-                        status =
-                            "Your email address is not verified. We just sent you an email containing the instructions for verification.";
-                        const verifyToken = createAccessToken(user);
-                        sendVerificationEmail(email, origin, verifyToken);
+                        if (user.verified) {
+                            sendRefreshToken(res, createRefreshToken(user));
+                            accessToken = createAccessToken(user);
+                            status = "You are now logged in.";
+                        } else {
+                            status =
+                                "Your email address is not verified. We just sent you an email containing the instructions for verification.";
+                            const verifyToken = createAccessToken(user);
+                            sendVerificationEmail(email, origin, verifyToken);
+                        }
                     }
                 }
             }
@@ -790,11 +796,12 @@ export class UserResolver {
                 if (origin === "dash") {
                     user = await User.findOne({
                         where: { id: payload.id },
-                        relations: ["posts", "issues"],
+                        relations: ["posts", "issues", "comments"],
                     });
                 } else {
                     user = await User.findOne({
                         where: { id: payload.id },
+                        relations: ["comments"],
                     });
                 }
                 status = "Your profile has been updated.";
@@ -865,11 +872,12 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts", "issues"],
+                relations: ["posts", "issues", "comments"],
             });
         } else {
             user = await User.findOne({
                 where: { id: payload?.id },
+                relations: ["comments"],
             });
         }
 
@@ -962,11 +970,12 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts", "issues"],
+                relations: ["posts", "issues", "comments"],
             });
         } else {
             user = await User.findOne({
                 where: { id: payload?.id },
+                relations: ["comments"],
             });
         }
 
@@ -1064,11 +1073,12 @@ export class UserResolver {
         if (origin === "dash") {
             user = await User.findOne({
                 where: { id: payload?.id },
-                relations: ["posts", "issues"],
+                relations: ["posts", "issues", "comments"],
             });
         } else {
             user = await User.findOne({
                 where: { id: payload?.id },
+                relations: ["comments"],
             });
         }
 
@@ -1145,7 +1155,7 @@ export class UserResolver {
                 
                 user = await User.findOne({
                     where: { id: id },
-                    relations: ["posts", "issues"],
+                    relations: ["posts", "issues", "comments"],
                 });
             } catch (error) {
                 console.log(error);
@@ -1173,7 +1183,7 @@ export class UserResolver {
 
         const user = await User.findOne({
             where: { id: id },
-            relations: ["posts", "issues"],
+            relations: ["posts", "issues", "comments"],
         });
 
         if (!payload) {
@@ -1209,11 +1219,12 @@ export class UserResolver {
             if (origin === "dash") {
                 user = await User.findOne({
                     where: { id: payload.id },
-                    relations: ["posts", "issues"],
+                    relations: ["posts", "issues", "comments"],
                 });
             } else {
                 user = await User.findOne({
                     where: { id: payload.id },
+                    relations: ["comments"],
                 });
             }
 

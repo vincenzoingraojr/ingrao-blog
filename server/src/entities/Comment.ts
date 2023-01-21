@@ -21,7 +21,7 @@ export class Comment extends BaseEntity {
     @Column({ type: "uuid", unique: true, nullable: false })
     commentId: string;
 
-    @Field(() => Number, { nullable: false })
+    @Field(() => Int, { nullable: false })
     @Column({ nullable: false })
     postId: number;
 
@@ -33,9 +33,17 @@ export class Comment extends BaseEntity {
     @ManyToOne(() => User, (user) => user.comments, { onDelete: "CASCADE" })
     author: User;
 
+    @Field(() => String, { nullable: true })
+    @Column({ nullable: true })
+    isReplyTo: string;
+
     @Field(() => String, { nullable: true, defaultValue: "" })
     @Column({ nullable: true, default: "" })
     content: string;
+
+    @Field(() => Boolean, { nullable: false })
+    @Column({ nullable: false })
+    isDeleted: boolean;
 
     @Field(() => String)
     @CreateDateColumn()

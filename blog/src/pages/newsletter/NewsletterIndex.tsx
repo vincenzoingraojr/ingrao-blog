@@ -59,7 +59,7 @@ function NewsletterIndex() {
                                                                 setStatus(null);
                                                                 const response = await subscribe({
                                                                     update: (store, { data }) => {
-                                                                        if (data) {
+                                                                        if (data && data.subscribeToNewsletter && data.subscribeToNewsletter.user) {
                                                                             store.writeQuery<MeQuery>({
                                                                                 query: MeDocument,
                                                                                 data: {

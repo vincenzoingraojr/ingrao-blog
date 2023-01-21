@@ -17,6 +17,7 @@ import { PostResolver } from "./resolvers/PostResolver";
 import { initAdmin } from "./helpers/initAdmin";
 import { getPresignedUrl } from "./helpers/getPresignedUrl";
 import { NewsletterResolver } from "./resolvers/NewsletterResolver";
+import { CommentResolver } from "./resolvers/CommentResolver";
 
 async function main() {
     const app = express();
@@ -103,7 +104,7 @@ async function main() {
 
     const server = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [UserResolver, PostResolver, NewsletterResolver],
+            resolvers: [UserResolver, PostResolver, NewsletterResolver, CommentResolver],
         }),
         context: ({ req, res }) => ({ req, res }),
     });

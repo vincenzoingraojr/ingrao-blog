@@ -80,3 +80,10 @@ input[type="checkbox"] {
 input[type="checkbox"]:checked {
     background: blue;
 }
+
+.editor-custom-body {
+    padding-left: 12px;
+    padding-right: 12px;
+    max-height: 320px;
+    overflow: auto;
+}

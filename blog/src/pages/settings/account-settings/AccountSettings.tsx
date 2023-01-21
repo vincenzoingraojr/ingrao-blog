@@ -173,7 +173,7 @@ function AccountSettings() {
                                                                         setStatus(null);
                                                                         const response = await unsubscribe({
                                                                             update: (store, { data }) => {
-                                                                                if (data) {
+                                                                                if (data && data.unsubscribeFromNewsletter && data.unsubscribeFromNewsletter.user) {
                                                                                     store.writeQuery<MeQuery>({
                                                                                         query: MeDocument,
                                                                                         data: {

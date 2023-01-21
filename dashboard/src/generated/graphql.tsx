@@ -16,6 +16,27 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  author: User;
+  authorId: Scalars['Float'];
+  commentId: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  id: Scalars['Int'];
+  isDeleted: Scalars['Boolean'];
+  isReplyTo?: Maybe<Scalars['Int']>;
+  postId: Scalars['Int'];
+  updatedAt: Scalars['String'];
+};
+
+export type CommentResponse = {
+  __typename?: 'CommentResponse';
+  comment?: Maybe<Comment>;
+  errors?: Maybe<Array<FieldError>>;
+  status?: Maybe<Scalars['String']>;
+};
+
 export type ExtendedUserResponse = {
   __typename?: 'ExtendedUserResponse';
   accessToken?: Maybe<Scalars['String']>;
@@ -37,9 +58,11 @@ export type Mutation = {
   authSendVerificationEmail: UserResponse;
   changePassword: UserResponse;
   changeRole: UserResponse;
+  createComment: CommentResponse;
   createIssue: NewsletterResponse;
   createPost: PostResponse;
   deleteAccount: ExtendedUserResponse;
+  deleteComment: Scalars['Boolean'];
   deleteIssue: Scalars['Boolean'];
   deletePost: Scalars['Boolean'];
   deleteUserFromDashboard: UserResponse;
@@ -63,6 +86,7 @@ export type Mutation = {
   unpublishIssue: Scalars['Boolean'];
   unpublishPost: Scalars['Boolean'];
   unsubscribeFromNewsletter: UserResponse;
+  updateComment: CommentResponse;
   verifyEmailAddress: UserResponse;
 };
 
@@ -97,6 +121,13 @@ export type MutationChangeRoleArgs = {
 };
 
 
+export type MutationCreateCommentArgs = {
+  content: Scalars['String'];
+  isReplyTo: Scalars['Int'];
+  postId: Scalars['Int'];
+};
+
+
 export type MutationCreateIssueArgs = {
   title: Scalars['String'];
 };
@@ -109,6 +140,12 @@ export type MutationCreatePostArgs = {
 
 export type MutationDeleteAccountArgs = {
   origin: Scalars['String'];
+};
+
+
+export type MutationDeleteCommentArgs = {
+  commentId: Scalars['String'];
+  hasReplies: Scalars['Boolean'];
 };
 
 
@@ -256,6 +293,12 @@ export type MutationUnpublishPostArgs = {
 };
 
 
+export type MutationUpdateCommentArgs = {
+  commentId: Scalars['String'];
+  content: Scalars['String'];
+};
+
+
 export type MutationVerifyEmailAddressArgs = {
   token: Scalars['String'];
 };
@@ -308,6 +351,7 @@ export type PostResponse = {
 export type Query = {
   __typename?: 'Query';
   blogFeed: Array<Post>;
+  commentReplies: Array<Comment>;
   dashNewsletterFeed: Array<Newsletter>;
   dashPostFeed: Array<Post>;
   dashUsers: Array<User>;
@@ -321,8 +365,15 @@ export type Query = {
   me?: Maybe<User>;
   newsletterBlogFeed: Array<Newsletter>;
   newsletterPersonalFeed: Array<Newsletter>;
+  personalComments: Array<Comment>;
+  postComments: Array<Comment>;
   postFeed: Array<Post>;
   subscribedUsers: Array<User>;
+};
+
+
+export type QueryCommentRepliesArgs = {
+  commentId: Scalars['String'];
 };
 
 
@@ -355,9 +406,15 @@ export type QueryMeArgs = {
   origin: Scalars['String'];
 };
 
+
+export type QueryPostCommentsArgs = {
+  postId?: InputMaybe<Scalars['Int']>;
+};
+
 export type User = {
   __typename?: 'User';
   birthDate: Scalars['String'];
+  comments?: Maybe<Array<Comment>>;
   createdAt: Scalars['String'];
   email: Scalars['String'];
   firstName: Scalars['String'];

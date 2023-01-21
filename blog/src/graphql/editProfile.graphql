@@ -41,6 +41,17 @@ mutation editProfile(
                 createdAt
                 updatedAt
             }
+            comments {
+                id
+                commentId
+                postId
+                authorId
+                isReplyTo
+                content
+                isDeleted
+                createdAt
+                updatedAt
+            }
         }
         errors {
             field

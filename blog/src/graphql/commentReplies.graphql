@@ -1,0 +1,28 @@
+query commentReplies($commentId: String!) {
+    commentReplies(commentId: $commentId) {
+        id
+        commentId
+        postId
+        authorId
+        author {
+            id
+            firstName
+            lastName
+            email
+            birthDate
+            gender
+            title
+            verified
+            role
+            profilePicture
+            newsletterSubscribed
+            createdAt
+            updatedAt
+        }
+        isReplyTo
+        content
+        isDeleted
+        createdAt
+        updatedAt
+    }
+}

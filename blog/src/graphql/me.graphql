@@ -26,5 +26,16 @@ query Me($origin: String!) {
             createdAt
             updatedAt
         }
+        comments {
+            id
+            commentId
+            postId
+            authorId
+            isReplyTo
+            content
+            isDeleted
+            createdAt
+            updatedAt
+        }
     }
 }

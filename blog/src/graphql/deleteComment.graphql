@@ -1,0 +1,9 @@
+mutation deleteComment(
+    $commentId: String!
+    $hasReplies: Boolean!
+) {
+    deleteComment(
+        commentId: $commentId
+        hasReplies: $hasReplies
+    )
+}

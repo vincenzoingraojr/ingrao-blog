@@ -1,0 +1,40 @@
+mutation updateComment(
+    $commentId: String!
+    $content: String!
+) {
+    updateComment(
+        commentId: $commentId
+        content: $content
+    ) {
+        comment {
+            id
+            commentId
+            postId
+            authorId
+            author {
+                id
+                firstName
+                lastName
+                email
+                birthDate
+                gender
+                title
+                verified
+                role
+                profilePicture
+                newsletterSubscribed
+                createdAt
+                updatedAt
+            }
+            isReplyTo
+            content
+            isDeleted
+            createdAt
+            updatedAt
+        }
+        errors {
+            field
+            message
+        }
+    }
+}
