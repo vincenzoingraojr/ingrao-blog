@@ -3,16 +3,14 @@ import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-
 import Head from "../components/Head";
 import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
-import { PostCommentsDocument, PostCommentsQuery, useCreateCommentMutation, useFindPostBySlugQuery, useMeQuery, usePostCommentsQuery } from "../generated/graphql";
+import { useFindPostBySlugQuery, useMeQuery, usePostCommentsQuery } from "../generated/graphql";
 import styled from "styled-components";
-import { Button, FlexContainer24, LoadingContainer, PageBlock, PageText } from "../styles/global";
+import { LoadingContainer, PageBlock, PageText } from "../styles/global";
 import LoadingComponent from "../components/utils/LoadingComponent";
 import { devices } from "../styles/devices";
 import { Editor } from "@ingrao-blog/editor";
-import { Form, Formik } from "formik";
-import { toErrorMap } from "../utils/toErrorMap";
-import EditorField from "../components/input/content/EditorField";
 import CommentComponent from "../components/layouts/items/CommentComponent";
+import CommentInputComponent from "../components/utils/CommentInputComponent";
 
 const PostCoverImage = styled.div`
     display: block;
@@ -114,19 +112,6 @@ const CommentSectionTitle = styled.div`
     font-size: 32px;
 `;
 
-const CreateCommentComponent = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding-bottom: 24px;
-    border-bottom: 2px solid black;
-`;
-
-const CreateCommentButton = styled(Button)`
-    background-color: blue;
-    color: #ffffff;
-`;
-
 const CommentFeed = styled.div`
     display: flex;
     flex-direction: column;
@@ -143,7 +128,7 @@ function ViewPost() {
     });
 
     const { data: meData } = useMeQuery({
-        fetchPolicy: "cache-and-network",
+        fetchPolicy: "network-only",
         variables: { origin: "blog" },
     });
 
@@ -178,7 +163,6 @@ function ViewPost() {
 
     const location = useLocation();
 
-    const [createComment] = useCreateCommentMutation();
     const { data: postCommentsData, loading: postCommentsLoading, error: postCommentsError } = usePostCommentsQuery({ variables: { postId: data?.findPostBySlug?.id }, fetchPolicy: "network-only" });
     
     return (
@@ -267,70 +251,7 @@ function ViewPost() {
                                                     <PageText>
                                                         Here you can see all the comments related to the post. You can also create a new comment. I ask you to be polite and help create a positive (and also elegant) environment in this blog.
                                                     </PageText>
-                                                    <CreateCommentComponent>
-                                                        <Formik
-                                                            initialValues={{
-                                                                content: "",
-                                                                postId: data?.findPostBySlug?.id!,
-                                                                isReplyTo: "",
-                                                            }}
-                                                            onSubmit={async (values, { setErrors }) => {
-                                                                const response = await createComment({
-                                                                    variables: values,
-                                                                    update: (store, { data }) => {
-                                                                        if (
-                                                                            data &&
-                                                                            data.createComment &&
-                                                                            data.createComment.comment
-                                                                        ) {
-                                                                            store.writeQuery<PostCommentsQuery>({
-                                                                                query: PostCommentsDocument,
-                                                                                data: {
-                                                                                    postComments: [
-                                                                                        data.createComment.comment,
-                                                                                        ...postCommentsData?.postComments!,
-                                                                                    ],
-                                                                                },
-                                                                            });
-                                                                        }
-                                                                    },
-                                                                });
-                                            
-                                                                if (
-                                                                    response.data?.createComment.errors &&
-                                                                    response.data.createComment.errors.length !== 0
-                                                                ) {
-                                                                    setErrors(toErrorMap(response.data.createComment.errors));
-                                                                }
-                                                            }}
-                                                        >
-                                                            {({
-                                                                errors
-                                                            }) => (
-                                                                <Form>
-                                                                    <FlexContainer24>
-                                                                        <EditorField
-                                                                            field="content"
-                                                                            itemId={data?.findPostBySlug?.id}
-                                                                            errors={
-                                                                                errors
-                                                                            }
-                                                                        />
-                                                                        <PageBlock>
-                                                                            <CreateCommentButton
-                                                                                type="submit"
-                                                                                title="Publish comment"
-                                                                                role="button"
-                                                                                aria-label="Publish comment"
-                                                                            >
-                                                                                Publish comment
-                                                                            </CreateCommentButton>
-                                                                        </PageBlock>
-                                                                    </FlexContainer24>
-                                                                </Form>
-                                                            )}
-                                                        </Formik>
-                                                    </CreateCommentComponent>
+                                                    <CommentInputComponent postId={data?.findPostBySlug?.id!} commentsData={postCommentsData?.postComments} isReplyTo={""} />
                                                     {(postCommentsLoading && !postCommentsData) || postCommentsError ? (
                                                         <LoadingContainer>
                                                             <LoadingComponent />
