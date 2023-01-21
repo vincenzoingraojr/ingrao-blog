@@ -88,7 +88,7 @@ export class CommentResolver {
         let errors = [];
         let comment;
 
-        if (content == "" || content == null) {
+        if (content === "" || content === null) {
             errors.push({
                 field: "content",
                 message: "You can't publish a comment without content",

@@ -29,7 +29,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
 }) => {
     const [initialContent] = useState<any | undefined>(() => {
         const content = field.value;
-        return content ? JSON.parse(content) : "";
+        return content ? JSON.parse(content) : JSON.parse('{"blocks":[{"key":"t5iq","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}');
     });
 
     function uploadImageCallBack(file: File) {
@@ -97,10 +97,14 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                     }}
                     initialContentState={initialContent}
                     onChange={(contentState) => {
-                        form.setFieldValue(
-                            field.name,
-                            JSON.stringify(contentState)
-                        );
+                        if (JSON.stringify(contentState) === '{"blocks":[{"key":"t5iq","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}') {
+                            form.setFieldValue(field.name, "");
+                        } else {
+                            form.setFieldValue(
+                                field.name,
+                                JSON.stringify(contentState)
+                            );
+                        }
                     }}
                 />
             </EditorContainer>
