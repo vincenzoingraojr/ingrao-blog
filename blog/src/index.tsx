@@ -25,6 +25,11 @@ const cache = new InMemoryCache({
                         return incoming;
                     },
                 },
+                commentReplies: {
+                    merge: (_existing = [], incoming) => {
+                        return incoming;
+                    },
+                },
             },
         },
         User: {

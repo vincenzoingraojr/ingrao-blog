@@ -39,7 +39,8 @@ export class CommentResolver {
                 createdAt: "DESC",
             },
             where: {
-                postId
+                postId,
+                isReplyTo: "",
             },
             relations: ["author"],
         });

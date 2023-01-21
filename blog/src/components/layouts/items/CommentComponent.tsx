@@ -2,11 +2,12 @@ import { Editor } from "@ingrao-blog/editor";
 import { Form, Formik } from "formik";
 import { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
-import { PostCommentsDocument, PostCommentsQuery, useDeleteCommentMutation, useMeQuery, usePostCommentsQuery, useUpdateCommentMutation } from "../../../generated/graphql";
+import { PostCommentsDocument, PostCommentsQuery, useCommentRepliesQuery, useDeleteCommentMutation, useMeQuery, usePostCommentsQuery, useUpdateCommentMutation } from "../../../generated/graphql";
 import profilePicture from "../../../images/profile-picture.svg";
 import { Button, FlexContainer24, PageBlock, PageText, Status, TextButton } from "../../../styles/global";
 import { toErrorMap } from "../../../utils/toErrorMap";
 import EditorField from "../../input/content/EditorField";
+import CommentInputComponent from "../../utils/CommentInputComponent";
 
 interface CommentComponentProps {
     comment: any;
@@ -114,9 +115,23 @@ const EditCommentEditorContainer = styled.div`
     margin-left: 64px;
 `;
 
+const ReplyCommentEditorContainer = styled.div`
+    display: block;
+    margin-left: 64px;
+`;
+
 const UpdateCommentButton = styled(Button)`
     background-color: blue;
     color: #ffffff;
+`;
+
+const CommentReplies = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-left: 12px;
+    border-left: 2px solid black;
+    margin-left: 64px;
 `;
 
 const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, postId }) => {
@@ -146,6 +161,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
     const { data: postCommentsData } = usePostCommentsQuery({ variables: { postId }, fetchPolicy: "network-only" });
 
     const [editCommentEditor, setEditCommentEditor] = useState(false);
+    const [replyCommentEditor, setReplyCommentEditor] = useState(false);
 
     const [updateComment] = useUpdateCommentMutation();
 
@@ -156,6 +172,8 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
         hour: "numeric",
         minute: "numeric",
     });
+
+    const { data: commentRepliesData } = useCommentRepliesQuery({ variables: { commentId: comment.commentId }, fetchPolicy: "network-only" });
 
     return (
         <CommentBox>
@@ -206,10 +224,14 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                         role="button"
                         title="Reply to the comment"
                         aria-label="Reply to the comment"
+                        onClick={() => {
+                            setReplyCommentEditor(!replyCommentEditor);
+                            setEditCommentEditor(false);
+                        }}
                     >
                         Reply
                     </ReplyCommentButton>
-                    {meData && (
+                    {meData?.me?.id === comment.authorId && (
                         <>
                             <EditCommentButton
                                 type="button"
@@ -218,6 +240,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                 aria-label="Edit comment"
                                 onClick={() => {
                                     setEditCommentEditor(!editCommentEditor);
+                                    setReplyCommentEditor(false);
                                 }}
                             >
                                 Edit comment
@@ -338,6 +361,26 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                         )}
                     </Formik>
                 </EditCommentEditorContainer>
+            )}
+            {replyCommentEditor && (
+                <ReplyCommentEditorContainer>
+                    <CommentInputComponent postId={postId} commentsData={postCommentsData?.postComments} isReplyTo={comment.commentId} />
+                </ReplyCommentEditorContainer>
+            )}
+            {commentRepliesData?.commentReplies.length !== 0 && (
+                <CommentReplies>
+                    {commentRepliesData?.commentReplies?.map(
+                        (comment) => (
+                            <CommentComponent
+                                key={
+                                    comment.id
+                                }
+                                postId={postId}
+                                comment={comment}
+                            />
+                        )
+                    )}
+                </CommentReplies>
             )}
         </CommentBox>
     );

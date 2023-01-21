@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import styled from "styled-components";
-import { PostCommentsDocument, PostCommentsQuery, useCreateCommentMutation } from "../../generated/graphql";
+import { CommentRepliesDocument, CommentRepliesQuery, PostCommentsDocument, PostCommentsQuery, useCommentRepliesQuery, useCreateCommentMutation } from "../../generated/graphql";
 import { Form, Formik } from "formik";
 import { toErrorMap } from "../../utils/toErrorMap";
 import EditorField from "../input/content/EditorField";
@@ -16,8 +16,6 @@ const CreateCommentComponent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding-bottom: 24px;
-    border-bottom: 2px solid black;
 `;
 
 const CreateCommentButton = styled(Button)`
@@ -27,6 +25,7 @@ const CreateCommentButton = styled(Button)`
 
 const CommentInputComponent: FunctionComponent<CommentInputComponentProps> = ({ postId, commentsData, isReplyTo }) => {
     const [createComment] = useCreateCommentMutation();
+    const { data: commentRepliesData } = useCommentRepliesQuery({ variables: { commentId: isReplyTo }, fetchPolicy: "network-only" });
 
     return (
         <CreateCommentComponent>
@@ -45,18 +44,34 @@ const CommentInputComponent: FunctionComponent<CommentInputComponentProps> = ({ 
                                 data.createComment &&
                                 data.createComment.comment
                             ) {
-                                store.writeQuery<PostCommentsQuery>({
-                                    query: PostCommentsDocument,
-                                    data: {
-                                        postComments: [
-                                            data.createComment.comment,
-                                            ...commentsData!,
-                                        ],
-                                    },
-                                    variables: {
-                                        postId: postId,
-                                    },
-                                });
+                                if (values.isReplyTo === "") {
+                                    store.writeQuery<PostCommentsQuery>({
+                                        query: PostCommentsDocument,
+                                        data: {
+                                            postComments: [
+                                                data.createComment.comment,
+                                                ...commentsData!,
+                                            ],
+                                        },
+                                        variables: {
+                                            postId: postId,
+                                        },
+                                    });
+                                } else {
+                                    store.writeQuery<CommentRepliesQuery>({
+                                        query: CommentRepliesDocument,
+                                        data: {
+                                            commentReplies: [
+                                                data.createComment.comment,
+                                                ...commentRepliesData?.commentReplies!,
+                                            ],
+                                        },
+                                        variables: {
+                                            postId: postId,
+                                            commentId: values.isReplyTo,
+                                        },
+                                    });
+                                }
                             }
                         },
                     });

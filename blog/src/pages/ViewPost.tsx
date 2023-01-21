@@ -112,6 +112,14 @@ const CommentSectionTitle = styled.div`
     font-size: 32px;
 `;
 
+const CommentSectionContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 24px;
+    border-top: 2px solid black;
+`;
+
 const CommentFeed = styled.div`
     display: flex;
     flex-direction: column;
@@ -252,34 +260,36 @@ function ViewPost() {
                                                         Here you can see all the comments related to the post. You can also create a new comment. I ask you to be polite and help create a positive (and also elegant) environment in this blog.
                                                     </PageText>
                                                     <CommentInputComponent postId={data?.findPostBySlug?.id!} commentsData={postCommentsData?.postComments} isReplyTo={""} />
-                                                    {(postCommentsLoading && !postCommentsData) || postCommentsError ? (
-                                                        <LoadingContainer>
-                                                            <LoadingComponent />
-                                                        </LoadingContainer>
-                                                    ) : (
-                                                        <>
-                                                            {postCommentsData?.postComments?.length ===
-                                                            0 ? (
-                                                                <PageText>
-                                                                    There are no comments.
-                                                                </PageText>
-                                                            ) : (
-                                                                <CommentFeed>
-                                                                    {postCommentsData?.postComments?.map(
-                                                                        (comment) => (
-                                                                            <CommentComponent
-                                                                                key={
-                                                                                    comment.id
-                                                                                }
-                                                                                postId={data?.findPostBySlug?.id!}
-                                                                                comment={comment}
-                                                                            />
-                                                                        )
-                                                                    )}
-                                                                </CommentFeed>
-                                                            )}
-                                                        </>
-                                                    )}
+                                                    <CommentSectionContainer>
+                                                        {(postCommentsLoading && !postCommentsData) || postCommentsError ? (
+                                                            <LoadingContainer>
+                                                                <LoadingComponent />
+                                                            </LoadingContainer>
+                                                        ) : (
+                                                            <>
+                                                                {postCommentsData?.postComments?.length ===
+                                                                0 ? (
+                                                                    <PageText>
+                                                                        There are no comments.
+                                                                    </PageText>
+                                                                ) : (
+                                                                    <CommentFeed>
+                                                                        {postCommentsData?.postComments?.map(
+                                                                            (comment) => (
+                                                                                <CommentComponent
+                                                                                    key={
+                                                                                        comment.id
+                                                                                    }
+                                                                                    postId={data?.findPostBySlug?.id!}
+                                                                                    comment={comment}
+                                                                                />
+                                                                            )
+                                                                        )}
+                                                                    </CommentFeed>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </CommentSectionContainer>
                                                 </>
                                             ) : (
                                                 <PageText>
