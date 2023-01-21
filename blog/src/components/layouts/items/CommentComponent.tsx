@@ -1,8 +1,9 @@
 import { Editor } from "@ingrao-blog/editor";
 import { Form, Formik } from "formik";
 import { FunctionComponent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { PostCommentsDocument, PostCommentsQuery, useCommentRepliesQuery, useDeleteCommentMutation, useMeQuery, usePostCommentsQuery, useUpdateCommentMutation } from "../../../generated/graphql";
+import { CommentRepliesDocument, CommentRepliesQuery, PostCommentsDocument, PostCommentsQuery, useCommentRepliesQuery, useDeleteCommentMutation, useMeQuery, usePostCommentsQuery, useUpdateCommentMutation } from "../../../generated/graphql";
 import profilePicture from "../../../images/profile-picture.svg";
 import { Button, FlexContainer24, PageBlock, PageText, Status, TextButton } from "../../../styles/global";
 import { toErrorMap } from "../../../utils/toErrorMap";
@@ -175,6 +176,8 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
 
     const { data: commentRepliesData } = useCommentRepliesQuery({ variables: { commentId: comment.commentId }, fetchPolicy: "network-only" });
 
+    const navigate = useNavigate();
+
     return (
         <CommentBox>
             <CommentComponentContainer>
@@ -201,20 +204,30 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                 </CommentUserStaff>
                             )}
                         </CommentUserInfo>
-                        <CommentDate>
-                            {date}
-                        </CommentDate>
+                        {!comment.isDeleted && (
+                            <CommentDate>
+                                {date}
+                            </CommentDate>
+                        )}
                     </CommentInfoContainer>
                 </CommentUserContainer>
                 <CommentContentContainer>
-                    {contentReady && (
+                    {!comment.isDeleted ? (
+                        <>
+                            {contentReady && (
+                                <CommentContent>
+                                    <Editor
+                                        readOnly={true}
+                                        toolbarHidden={true}
+                                        initialContentState={commentContent}
+                                        contentState={commentContent}
+                                    />
+                                </CommentContent>
+                            )}
+                        </>
+                    ) : (
                         <CommentContent>
-                            <Editor
-                                readOnly={true}
-                                toolbarHidden={true}
-                                initialContentState={commentContent}
-                                contentState={commentContent}
-                            />
+                            <i>The comment has been deleted.</i>
                         </CommentContent>
                     )}
                 </CommentContentContainer>
@@ -251,33 +264,62 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                 title="Delete comment"
                                 aria-label="Delete comment"
                                 onClick={async () => {
+                                    let hasReplies = false;
+
+                                    if (commentRepliesData?.commentReplies.length !== 0) {
+                                        hasReplies = true;
+                                    }
+
                                     await deleteComment({
                                         variables: {
                                             commentId: comment.commentId,
-                                            hasReplies: false,
+                                            hasReplies: hasReplies,
                                         },
                                         update: (store, { data }) => {
                                             if (
                                                 data &&
-                                                data.deleteComment
+                                                data.deleteComment &&
+                                                !hasReplies
                                             ) {
-                                                const commentsData = postCommentsData?.postComments || [];
-                                                const selectedComment = commentsData.find((item) => item.id === comment.id);
-                                                const index = commentsData.indexOf(selectedComment!);
-                                                commentsData.splice(index!, 1);
-                                                
-                                                store.writeQuery<PostCommentsQuery>({
-                                                    query: PostCommentsDocument,
-                                                    data: {
-                                                        postComments: commentsData,
-                                                    },
-                                                    variables: {
-                                                        postId: postId,
-                                                    },
-                                                });
+                                                if (comment.isReplyTo === "") {
+                                                    const commentsData = postCommentsData?.postComments || [];
+                                                    const selectedComment = commentsData.find((item) => item.id === comment.id);
+                                                    const index = commentsData.indexOf(selectedComment!);
+                                                    commentsData.splice(index!, 1);
+                                                    
+                                                    store.writeQuery<PostCommentsQuery>({
+                                                        query: PostCommentsDocument,
+                                                        data: {
+                                                            postComments: commentsData,
+                                                        },
+                                                        variables: {
+                                                            postId: postId,
+                                                        },
+                                                    });
+                                                } else {
+                                                    const commentsData = commentRepliesData?.commentReplies || [];
+                                                    const selectedComment = commentsData.find((item) => item.id === comment.id);
+                                                    const index = commentsData.indexOf(selectedComment!);
+                                                    commentsData.splice(index!, 1);
+                                                    
+                                                    store.writeQuery<CommentRepliesQuery>({
+                                                        query: CommentRepliesDocument,
+                                                        data: {
+                                                            commentReplies: commentsData,
+                                                        },
+                                                        variables: {
+                                                            postId: postId,
+                                                            commentId: comment.isReplyTo,
+                                                        },
+                                                    });
+                                                }
                                             }
                                         },
-                                    });                                  
+                                    });
+                                    
+                                    if (hasReplies) {
+                                        navigate(0);
+                                    }
                                 }}
                             >
                                 Delete comment
