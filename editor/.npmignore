@@ -18,3 +18,4 @@ postcss.config.js
 .npmignore
 yarn.lock
 CHANGELOG.md
+storybook-static
