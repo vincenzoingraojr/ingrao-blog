@@ -102,7 +102,7 @@ function UpdatePost() {
             if (selectedPostCover !== null) {
                 if (existingPostCoverName !== "") {
                     await axios.delete(
-                        `${process.env.REACT_APP_STORAGE_LINK}${
+                        `${process.env.REACT_APP_STORAGE_LINK}/${
                             process.env.REACT_APP_ENV === "development"
                                 ? "local-posts"
                                 : "posts"
@@ -156,7 +156,7 @@ function UpdatePost() {
                 deletePostCover
             ) {
                 await axios.delete(
-                    `${process.env.REACT_APP_STORAGE_LINK}${
+                    `${process.env.REACT_APP_STORAGE_LINK}/${
                         process.env.REACT_APP_ENV === "development"
                             ? "local-posts"
                             : "posts"

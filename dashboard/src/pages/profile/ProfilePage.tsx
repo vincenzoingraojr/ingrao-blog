@@ -248,7 +248,7 @@ function ProfilePage() {
                                                                         ""
                                                                     ) {
                                                                         await axios.delete(
-                                                                            `${process.env.REACT_APP_STORAGE_LINK}${
+                                                                            `${process.env.REACT_APP_STORAGE_LINK}/${
                                                                                 process
                                                                                     .env
                                                                                     .REACT_APP_ENV ===
@@ -325,7 +325,7 @@ function ProfilePage() {
                                                                     deleteProfilePicture
                                                                 ) {
                                                                     await axios.delete(
-                                                                        `${process.env.REACT_APP_STORAGE_LINK}${
+                                                                        `${process.env.REACT_APP_STORAGE_LINK}/${
                                                                             process
                                                                                 .env
                                                                                 .REACT_APP_ENV ===

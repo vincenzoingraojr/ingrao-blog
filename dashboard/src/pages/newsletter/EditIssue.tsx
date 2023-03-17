@@ -191,7 +191,7 @@ function EditIssue() {
                                                     if (selectedIssueCover !== null) {
                                                         if (existingIssueCoverName !== "") {
                                                             await axios.delete(
-                                                                `${process.env.REACT_APP_STORAGE_LINK}${
+                                                                `${process.env.REACT_APP_STORAGE_LINK}/${
                                                                     process.env.REACT_APP_ENV === "development"
                                                                         ? "local-issues"
                                                                         : "issues"
@@ -245,7 +245,7 @@ function EditIssue() {
                                                         deleteIssueCover
                                                     ) {
                                                         await axios.delete(
-                                                            `${process.env.REACT_APP_STORAGE_LINK}${
+                                                            `${process.env.REACT_APP_STORAGE_LINK}/${
                                                                 process.env.REACT_APP_ENV === "development"
                                                                     ? "local-issues"
                                                                     : "issues"

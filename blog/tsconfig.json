@@ -22,7 +22,8 @@
         "noUnusedLocals": true,
         "skipLibCheck": true,
         "allowSyntheticDefaultImports": true,
-        "removeComments": true
+        "removeComments": true,
+        "ignoreDeprecations": "5.0"
     },
     "include": ["src"]
 }
