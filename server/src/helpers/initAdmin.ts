@@ -19,7 +19,7 @@ export async function initAdmin() {
     });
 
     let adminUser = await User.findOne({
-        where: { email: "vincent@ingrao.blog" },
+        where: { email: process.env.PERSONAL_EMAIL },
     });
 
     if (!adminUser && users.length === 0) {
@@ -28,7 +28,7 @@ export async function initAdmin() {
             .insert()
             .into(User)
             .values({
-                email: "vincent@ingrao.blog",
+                email: process.env.PERSONAL_EMAIL,
                 firstName: "Vincenzo Jr.",
                 lastName: "Ingrao",
                 title: "Mr.",
@@ -53,7 +53,7 @@ export async function initAdmin() {
                 } else {
                     const params: aws.SES.SendEmailRequest = {
                         Destination: {
-                            ToAddresses: ["vincent@ingrao.blog"],
+                            ToAddresses: [process.env.PERSONAL_EMAIL!],
                         },
                         Message: {
                             Body: {
