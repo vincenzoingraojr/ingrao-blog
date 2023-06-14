@@ -140,7 +140,7 @@ function UpdateIssue() {
                         setStatus(`Uploading newsletter issue cover: ${percentCompleted}%.`);
                     },
                     headers: {
-                        "Content-Type": "multipart/form-data",
+                        "Content-Type": "image/jpeg",
                     },
                 };
 

@@ -305,7 +305,7 @@ function ProfilePage() {
                                                                             setStatus(`Uploading the profile picture: ${percentCompleted}%.`);
                                                                         },
                                                                         headers: {
-                                                                            "Content-Type": "multipart/form-data",
+                                                                            "Content-Type": "image/jpeg",
                                                                         },
                                                                     };
                                                     

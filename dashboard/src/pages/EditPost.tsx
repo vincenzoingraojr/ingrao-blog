@@ -233,7 +233,7 @@ function EditPost() {
                                                                 setStatus(`Uploading post cover: ${percentCompleted}%.`);
                                                             },
                                                             headers: {
-                                                                "Content-Type": "multipart/form-data",
+                                                                "Content-Type": "image/jpeg",
                                                             },
                                                         };
 

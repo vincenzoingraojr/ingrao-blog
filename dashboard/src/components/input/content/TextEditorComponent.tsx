@@ -61,7 +61,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                     }
                 ).then((res) => res.json());
                 xhr.open("PUT", url);
-                xhr.setRequestHeader("Content-Type", "multipart/form-data");
+                xhr.setRequestHeader("Content-Type", "image/jpeg");
                 xhr.send(file);
                 console.log(xhr);
                 xhr.addEventListener("load", () => {
