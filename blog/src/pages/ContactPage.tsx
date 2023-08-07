@@ -62,7 +62,7 @@ function ContactPage() {
                                     }}
                                 >
                                     {({ errors, status }) => (
-                                        <Form>
+                                        <Form id="contact_form">
                                             {status ? <Status>{status}</Status> : null}
                                             <FlexContainer24>
                                                 <InputField
