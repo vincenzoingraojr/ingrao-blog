@@ -25,6 +25,7 @@ class LayoutComponent extends Component {
     height: this.props.config.defaultSize.height,
     width: this.props.config.defaultSize.width,
     alt: '',
+    caption: '',
   };
 
   componentDidUpdate(prevProps) {
@@ -38,6 +39,7 @@ class LayoutComponent extends Component {
         height: config.defaultSize.height,
         width: config.defaultSize.width,
         alt: '',
+        caption: '',
       });
     } else if (
       config.uploadCallback !== prevProps.config.uploadCallback ||
@@ -92,7 +94,7 @@ class LayoutComponent extends Component {
   };
 
   addImageFromState = () => {
-    const { imgSrc, alt } = this.state;
+    const { imgSrc, alt, caption } = this.state;
     let { height, width } = this.state;
     const { onChange } = this.props;
     if (!isNaN(height)) {
@@ -101,7 +103,7 @@ class LayoutComponent extends Component {
     if (!isNaN(width)) {
       width += 'px';
     }
-    onChange(imgSrc, height, width, alt);
+    onChange(imgSrc, height, width, alt, caption);
   };
 
   showImageURLOption = () => {
@@ -172,6 +174,7 @@ class LayoutComponent extends Component {
       height,
       width,
       alt,
+      caption,
     } = this.state;
     const {
       config: {
@@ -282,6 +285,17 @@ class LayoutComponent extends Component {
             </span>
           </div>
         )}
+        <div className="rdw-image-modal-size">
+          <span className="rdw-image-modal-caption-lbl">Caption</span>
+          <input
+            onChange={this.updateValue}
+            onBlur={this.updateValue}
+            value={caption}
+            name="caption"
+            className="rdw-image-modal-caption-input"
+            placeholder="Caption"
+          />
+        </div>
         <div className="rdw-image-modal-size">
           &#8597;&nbsp;
           <input

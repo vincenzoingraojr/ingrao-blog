@@ -96,7 +96,7 @@ const TextEditorComponent: FunctionComponent<TextEditorComponentProps> = ({
                         ],
                         image: {
                             uploadCallback: uploadImageCallBack,
-                            alt: { present: true, mandatory: false },
+                            alt: { present: true, mandatory: true },
                             showImageLoading: true,
                             previewImage: true,
                         },

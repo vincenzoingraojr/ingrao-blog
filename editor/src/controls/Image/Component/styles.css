@@ -184,3 +184,19 @@
   margin-left: 3px;
   margin-right: 3px;
 }
+.rdw-image-modal-caption-input {
+  width: 70%;
+  height: 20px;
+  margin: none;
+  border: none;
+  border-bottom: 1px solid #000000;
+  border-radius: 0px;
+  font-size: 15px;
+  padding: 0 4px;
+}
+.rdw-image-modal-caption-input:focus {
+  outline: none;
+}
+.rdw-image-modal-caption-lbl {
+  font-size: 12px;
+}
