@@ -47,9 +47,21 @@ class ExtendedUserResponse extends UserResponse {
 }
 
 @ObjectType()
+class ViewByDay {
+    @Field(() => Int, { nullable: false })
+    views: number;
+
+    @Field(() => Date, { nullable: false })
+    date: Date;
+}
+
+@ObjectType()
 export class AnalyticsResponse {
     @Field(() => Int, { nullable: false })
     views: number;
+
+    @Field(() => [ViewByDay], { nullable: false })
+    viewsByDay: ViewByDay[];
 
     @Field(() => Number, { nullable: false })
     viewsVariation: number;
@@ -1403,6 +1415,7 @@ export class UserResolver {
         let viewsVariation = 0;
         let uniqueVisitors = 0;
         let uniqueVisitorsVariation = 0;
+        let viewsByDay: { views: number; date: Date }[] = [];
 
         const viewLogs = await ViewLog.find({
             where: {
@@ -1437,10 +1450,30 @@ export class UserResolver {
 
         if (viewLogs && views > 0) {
             uniqueVisitors = new Set(viewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
+            viewsByDay = viewLogs.reduce((acc, viewLog) => {
+                const date = new Date(viewLog.createdAt);
+                const dateIndex = acc.findIndex((item) => {
+                    return (
+                        item.date.getDate() === date.getDate() &&
+                        item.date.getMonth() === date.getMonth() &&
+                        item.date.getFullYear() === date.getFullYear()
+                    );
+                });
+                if (dateIndex === -1) {
+                    acc.push({
+                        views: 1,
+                        date,
+                    });
+                } else {
+                    acc[dateIndex].views += 1;
+                }
+                return acc;
+            }, [] as { views: number; date: Date }[]);
         }
 
         return {
             views,
+            viewsByDay,
             viewsVariation,
             uniqueVisitors,
             uniqueVisitorsVariation,

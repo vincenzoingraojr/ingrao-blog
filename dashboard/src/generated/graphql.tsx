@@ -21,6 +21,7 @@ export type AnalyticsResponse = {
   uniqueVisitors: Scalars['Int'];
   uniqueVisitorsVariation: Scalars['Float'];
   views: Scalars['Int'];
+  viewsByDay: Array<ViewByDay>;
   viewsVariation: Scalars['Float'];
 };
 
@@ -314,7 +315,7 @@ export type MutationVerifyEmailAddressArgs = {
 
 
 export type MutationViewPageArgs = {
-  url: Scalars['String'];
+  pathname: Scalars['String'];
 };
 
 export type Newsletter = {
@@ -452,6 +453,12 @@ export type UserResponse = {
   errors?: Maybe<Array<FieldError>>;
   status?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
+};
+
+export type ViewByDay = {
+  __typename?: 'ViewByDay';
+  date: Scalars['DateTime'];
+  views: Scalars['Int'];
 };
 
 export type AddDashUserMutationVariables = Exact<{
@@ -742,7 +749,7 @@ export type SubscribedUsersQuery = { __typename?: 'Query', subscribedUsers: Arra
 export type SummaryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SummaryQuery = { __typename?: 'Query', summary: { __typename?: 'AnalyticsResponse', views: number, viewsVariation: number, uniqueVisitors: number, uniqueVisitorsVariation: number } };
+export type SummaryQuery = { __typename?: 'Query', summary: { __typename?: 'AnalyticsResponse', views: number, viewsVariation: number, uniqueVisitors: number, uniqueVisitorsVariation: number, viewsByDay: Array<{ __typename?: 'ViewByDay', views: number, date: any }> } };
 
 export type UnpublishIssueMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -2787,6 +2794,10 @@ export const SummaryDocument = gql`
     query summary {
   summary {
     views
+    viewsByDay {
+      views
+      date
+    }
     viewsVariation
     uniqueVisitors
     uniqueVisitorsVariation

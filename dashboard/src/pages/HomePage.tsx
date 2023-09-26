@@ -8,6 +8,27 @@ import { Link } from "react-router-dom";
 import LoadingComponent from "../components/utils/LoadingComponent";
 import PostComponent from "../components/layouts/items/PostComponent";
 import { devices } from "../styles/devices";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    ChartData,
+    Point,
+    Filler,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+  
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    Filler,
+);
 
 const HomePageContainer = styled.div`
     display: flex;
@@ -71,13 +92,110 @@ export const InfoTypeContainer = styled(PageText)`
     font-size: 16px;
 `;
 
+const AnalyticsChart = styled.div`
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    canvas {
+        display: block;
+        box-sizing: border-box;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    @media ${devices.tablet} {
+        height: auto;
+
+        canvas {
+            height: auto !important;
+        }
+    }
+`;
+
 function HomePage() {
     const { data: dashPostsData } = useDashPostFeedQuery({ fetchPolicy: "cache-and-network" });
     const { data, loading, error } = usePostFeedQuery({ fetchPolicy: "cache-and-network" });
     const { data: draftPostsData } = useDraftPostFeedQuery({ fetchPolicy: "cache-and-network" });
     
     const { data: analyticsData } = useSummaryQuery({ fetchPolicy: "cache-and-network" });
-    
+
+    const formatter = Intl.NumberFormat("en-US", { notation: "compact" });
+
+    const options = {
+        responsive: true,
+        interaction: {
+            mode: "index" as const,
+            intersect: false,
+        },
+        plugins: {
+            label: {
+                font: {
+                    family: "Roboto Condensed",
+                    size: 12,
+                },
+                color: "#000000",
+            },
+            tooltip: {
+                mode: "index" as const,
+                intersect: false,
+                titleColor: "#ffffff",
+                titleFont: {
+                    family: "Roboto Condensed",
+                    weight: "normal" as const,
+                },
+                bodyColor: "#ffffff",
+                bodyFont: {
+                    family: "Roboto Condensed",
+                    weight: "normal" as const,
+                },
+                backgroundColor: "#000000",
+            },
+        },
+        stacked: false,
+        scales: {
+            y: {
+                type: "linear" as const,
+                display: true,
+                position: "left" as const,
+                ticks: {
+                    font: {
+                        family: "Roboto Condensed",
+                        size: 12,
+                    },
+                },
+                min: 0,
+            },
+            x: {
+                type: "category" as const,
+                display: true,
+                position: "bottom" as const,
+                ticks: {
+                    font: {
+                        family: "Roboto Condensed",
+                        size: 12,
+                    },
+                },
+                grid: {
+                    display: false,
+                },
+            },
+        },
+    };
+
+    const chartData: ChartData<"line", (string | Point | null)[], unknown> = {
+        labels: analyticsData?.summary.viewsByDay.map((day) => new Date(day.date).toLocaleString("en-us", { month: "2-digit", day: "2-digit", year: "2-digit" })) || [],
+        datasets: [
+            {
+                label: "Views",
+                data: analyticsData?.summary.viewsByDay.map((day) => formatter.format(day.views)) || [],
+                fill: true,
+                backgroundColor: "#000000",
+                borderColor: "#000000",
+            },
+        ],
+    };
+
     return (
         <>
             <Head
@@ -107,7 +225,7 @@ function HomePage() {
                             </PageBlock>
                             <AnalyticsStatsContainer>
                                 <AnalyticsStatContainer>
-                                    <InfoContainer>{analyticsData?.summary.views}</InfoContainer>
+                                    <InfoContainer>{formatter.format(analyticsData?.summary.views as number || 0)}</InfoContainer>
                                     <InfoTypeContainer>Total number of visits in the last 28 days</InfoTypeContainer>
                                 </AnalyticsStatContainer>
                                 <AnalyticsStatContainer>
@@ -115,7 +233,7 @@ function HomePage() {
                                     <InfoTypeContainer>Change in the number of visits compared to the previous 28-day period</InfoTypeContainer>
                                 </AnalyticsStatContainer>
                                 <AnalyticsStatContainer>
-                                    <InfoContainer>{analyticsData?.summary.uniqueVisitors}</InfoContainer>
+                                    <InfoContainer>{formatter.format(analyticsData?.summary.uniqueVisitors as number || 0)}</InfoContainer>
                                     <InfoTypeContainer>Number of unique visitors in the last 28 days</InfoTypeContainer>
                                 </AnalyticsStatContainer>
                                 <AnalyticsStatContainer>
@@ -123,6 +241,9 @@ function HomePage() {
                                     <InfoTypeContainer>Change in the number of unique visitors compared to the previous 28-day period</InfoTypeContainer>
                                 </AnalyticsStatContainer>
                             </AnalyticsStatsContainer>
+                            <AnalyticsChart>
+                                <Line data={chartData} options={options} />
+                            </AnalyticsChart>
                         </AnalyticsContainer>
                         <PageBlock>
                             <OptionContainer>

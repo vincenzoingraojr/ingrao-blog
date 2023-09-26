@@ -1,6 +1,10 @@
 query summary {
     summary {
         views
+        viewsByDay {
+            views
+            date
+        }
         viewsVariation
         uniqueVisitors
         uniqueVisitorsVariation
