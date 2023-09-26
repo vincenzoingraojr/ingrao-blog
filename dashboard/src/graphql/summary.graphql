@@ -1,0 +1,8 @@
+query summary {
+    summary {
+        views
+        viewsVariation
+        uniqueVisitors
+        uniqueVisitorsVariation
+    }
+}

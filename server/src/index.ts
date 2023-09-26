@@ -18,6 +18,8 @@ import { initAdmin } from "./helpers/initAdmin";
 import { getPresignedUrl } from "./helpers/getPresignedUrl";
 import { NewsletterResolver } from "./resolvers/NewsletterResolver";
 import { CommentResolver } from "./resolvers/CommentResolver";
+import { createUniqueIdentifier } from "./helpers/createUniqueIdentifier";
+import { v4 as uuidv4 } from "uuid";
 
 async function main() {
     const app = express();
@@ -54,6 +56,11 @@ async function main() {
 
     app.post("/", async (req, res) => {
         const token = req.cookies.cke;
+        const identifier = req.cookies.uid;
+
+        if (!identifier) {
+            createUniqueIdentifier(res, uuidv4());
+        }
 
         if (!token) {
             return res.send({ ok: false, accessToken: "", role: "" });

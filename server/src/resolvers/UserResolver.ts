@@ -1,4 +1,4 @@
-import { User } from "../entities/User";
+import { User, ViewLog } from "../entities/User";
 import {
     Arg,
     Ctx,
@@ -10,7 +10,7 @@ import {
     Resolver,
     UseMiddleware,
 } from "type-graphql";
-import { getConnection, getRepository} from "typeorm";
+import { MoreThan, getConnection, getRepository} from "typeorm";
 import argon2 from "argon2";
 import { MyContext } from "../types";
 import { sendRefreshToken } from "../auth/sendRefreshToken";
@@ -44,6 +44,21 @@ export class UserResponse {
 class ExtendedUserResponse extends UserResponse {
     @Field(() => Boolean, { nullable: true })
     ok?: boolean;
+}
+
+@ObjectType()
+export class AnalyticsResponse {
+    @Field(() => Int, { nullable: false })
+    views: number;
+
+    @Field(() => Number, { nullable: false })
+    viewsVariation: number;
+
+    @Field(() => Int, { nullable: false })
+    uniqueVisitors: number;
+
+    @Field(() => Number, { nullable: false })
+    uniqueVisitorsVariation: number;
 }
 
 @Resolver(User)
@@ -1347,6 +1362,88 @@ export class UserResolver {
         return {
             errors,
             status,
+        };
+    }
+
+    @Mutation(() => Boolean)
+    @UseMiddleware(isAuth)
+    async viewPage(
+        @Arg("pathname", { nullable: false }) pathname: string,
+        @Ctx() { payload, req }: MyContext
+    ) {
+        const uniqueIdentifier = req.cookies["uid"];
+
+        if (!uniqueIdentifier) {
+            return false;
+        }
+
+        if (!payload) {
+            await ViewLog.create({
+                pathname,
+                uniqueIdentifier,
+                isAuth: false,
+            }).save();
+
+            return true;
+        } else {
+            await ViewLog.create({
+                pathname,
+                userId: payload.id,
+                uniqueIdentifier,
+                isAuth: true,
+            }).save();
+
+            return true;
+        }
+    }
+
+    @Query(() => AnalyticsResponse)
+    async summary() {
+        let views = 0;
+        let viewsVariation = 0;
+        let uniqueVisitors = 0;
+        let uniqueVisitorsVariation = 0;
+
+        const viewLogs = await ViewLog.find({
+            where: {
+                createdAt: MoreThan(new Date(Date.now() - 28 * 24 * 60 * 60 * 1000))
+            },
+        });
+
+        views = viewLogs.length;
+
+        const viewLogRepository = getRepository(ViewLog);
+
+        const startDate = new Date(Date.now() - 56 * 24 * 60 * 60 * 1000);
+        const endDate = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000);
+
+        const pastViewLogs = await viewLogRepository
+            .createQueryBuilder("viewLog")
+            .where("viewLog.createdAt >= :startDate", { startDate })
+            .andWhere("viewLog.createdAt < :endDate", { endDate })
+            .getMany();
+
+        const pastViews = pastViewLogs.length;
+
+        if (pastViewLogs && pastViews > 0) {
+            viewsVariation = ((views - pastViews) / pastViews) * 100;
+        
+            const pastUniqueVisitors = new Set(pastViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
+
+            if (pastUniqueVisitors > 0) {
+                uniqueVisitorsVariation = ((uniqueVisitors - pastUniqueVisitors) / pastUniqueVisitors) * 100;
+            }
+        }
+
+        if (viewLogs && views > 0) {
+            uniqueVisitors = new Set(viewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
+        }
+
+        return {
+            views,
+            viewsVariation,
+            uniqueVisitors,
+            uniqueVisitorsVariation,
         };
     }
 }

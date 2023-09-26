@@ -16,6 +16,14 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AnalyticsResponse = {
+  __typename?: 'AnalyticsResponse';
+  uniqueVisitors: Scalars['Int'];
+  uniqueVisitorsVariation: Scalars['Float'];
+  views: Scalars['Int'];
+  viewsVariation: Scalars['Float'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   author: User;
@@ -88,6 +96,7 @@ export type Mutation = {
   unsubscribeFromNewsletter: UserResponse;
   updateComment: CommentResponse;
   verifyEmailAddress: UserResponse;
+  viewPage: Scalars['Boolean'];
 };
 
 
@@ -303,6 +312,11 @@ export type MutationVerifyEmailAddressArgs = {
   token: Scalars['String'];
 };
 
+
+export type MutationViewPageArgs = {
+  pathname: Scalars['String'];
+};
+
 export type Newsletter = {
   __typename?: 'Newsletter';
   author: User;
@@ -369,6 +383,7 @@ export type Query = {
   postComments: Array<Comment>;
   postFeed: Array<Post>;
   subscribedUsers: Array<User>;
+  summary: AnalyticsResponse;
 };
 
 
@@ -630,6 +645,13 @@ export type VerifyEmailAddressMutationVariables = Exact<{
 
 
 export type VerifyEmailAddressMutation = { __typename?: 'Mutation', verifyEmailAddress: { __typename?: 'UserResponse', status?: string | null | undefined } };
+
+export type ViewPageMutationVariables = Exact<{
+  pathname: Scalars['String'];
+}>;
+
+
+export type ViewPageMutation = { __typename?: 'Mutation', viewPage: boolean };
 
 
 export const AuthSendVerificationEmailDocument = gql`
@@ -2031,3 +2053,34 @@ export function useVerifyEmailAddressMutation(baseOptions?: Apollo.MutationHookO
 export type VerifyEmailAddressMutationHookResult = ReturnType<typeof useVerifyEmailAddressMutation>;
 export type VerifyEmailAddressMutationResult = Apollo.MutationResult<VerifyEmailAddressMutation>;
 export type VerifyEmailAddressMutationOptions = Apollo.BaseMutationOptions<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>;
+export const ViewPageDocument = gql`
+    mutation viewPage($pathname: String!) {
+  viewPage(pathname: $pathname)
+}
+    `;
+export type ViewPageMutationFn = Apollo.MutationFunction<ViewPageMutation, ViewPageMutationVariables>;
+
+/**
+ * __useViewPageMutation__
+ *
+ * To run a mutation, you first call `useViewPageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useViewPageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [viewPageMutation, { data, loading, error }] = useViewPageMutation({
+ *   variables: {
+ *      pathname: // value for 'pathname'
+ *   },
+ * });
+ */
+export function useViewPageMutation(baseOptions?: Apollo.MutationHookOptions<ViewPageMutation, ViewPageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ViewPageMutation, ViewPageMutationVariables>(ViewPageDocument, options);
+      }
+export type ViewPageMutationHookResult = ReturnType<typeof useViewPageMutation>;
+export type ViewPageMutationResult = Apollo.MutationResult<ViewPageMutation>;
+export type ViewPageMutationOptions = Apollo.BaseMutationOptions<ViewPageMutation, ViewPageMutationVariables>;

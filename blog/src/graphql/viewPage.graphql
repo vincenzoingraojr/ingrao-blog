@@ -1,0 +1,3 @@
+mutation viewPage($pathname: String!) {
+    viewPage(pathname: $pathname)
+}

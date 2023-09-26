@@ -1,6 +1,7 @@
 import { FunctionComponent, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useLocation } from "react-router-dom";
+import { useViewPageMutation } from "../generated/graphql";
 
 interface HeadProps {
     title: string;
@@ -14,6 +15,16 @@ const Head: FunctionComponent<HeadProps> = ({ title, description, blogPost, imag
 
     useEffect(() => {
         window.scrollTo(0, 0);
+    }, [pathname]);
+
+    const [viewPage] = useViewPageMutation();
+
+    useEffect(() => {
+        viewPage({
+            variables: {
+                pathname,
+            },
+        });
     }, [pathname]);
 
     return (

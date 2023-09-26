@@ -16,6 +16,14 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AnalyticsResponse = {
+  __typename?: 'AnalyticsResponse';
+  uniqueVisitors: Scalars['Int'];
+  uniqueVisitorsVariation: Scalars['Float'];
+  views: Scalars['Int'];
+  viewsVariation: Scalars['Float'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   author: User;
@@ -25,7 +33,7 @@ export type Comment = {
   createdAt: Scalars['String'];
   id: Scalars['Int'];
   isDeleted: Scalars['Boolean'];
-  isReplyTo?: Maybe<Scalars['Int']>;
+  isReplyTo?: Maybe<Scalars['String']>;
   postId: Scalars['Int'];
   updatedAt: Scalars['String'];
 };
@@ -88,6 +96,7 @@ export type Mutation = {
   unsubscribeFromNewsletter: UserResponse;
   updateComment: CommentResponse;
   verifyEmailAddress: UserResponse;
+  viewPage: Scalars['Boolean'];
 };
 
 
@@ -123,7 +132,7 @@ export type MutationChangeRoleArgs = {
 
 export type MutationCreateCommentArgs = {
   content: Scalars['String'];
-  isReplyTo: Scalars['Int'];
+  isReplyTo: Scalars['String'];
   postId: Scalars['Int'];
 };
 
@@ -303,6 +312,11 @@ export type MutationVerifyEmailAddressArgs = {
   token: Scalars['String'];
 };
 
+
+export type MutationViewPageArgs = {
+  url: Scalars['String'];
+};
+
 export type Newsletter = {
   __typename?: 'Newsletter';
   author: User;
@@ -369,6 +383,7 @@ export type Query = {
   postComments: Array<Comment>;
   postFeed: Array<Post>;
   subscribedUsers: Array<User>;
+  summary: AnalyticsResponse;
 };
 
 
@@ -723,6 +738,11 @@ export type SubscribedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SubscribedUsersQuery = { __typename?: 'Query', subscribedUsers: Array<{ __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined }> };
+
+export type SummaryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SummaryQuery = { __typename?: 'Query', summary: { __typename?: 'AnalyticsResponse', views: number, viewsVariation: number, uniqueVisitors: number, uniqueVisitorsVariation: number } };
 
 export type UnpublishIssueMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -2763,6 +2783,43 @@ export function useSubscribedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type SubscribedUsersQueryHookResult = ReturnType<typeof useSubscribedUsersQuery>;
 export type SubscribedUsersLazyQueryHookResult = ReturnType<typeof useSubscribedUsersLazyQuery>;
 export type SubscribedUsersQueryResult = Apollo.QueryResult<SubscribedUsersQuery, SubscribedUsersQueryVariables>;
+export const SummaryDocument = gql`
+    query summary {
+  summary {
+    views
+    viewsVariation
+    uniqueVisitors
+    uniqueVisitorsVariation
+  }
+}
+    `;
+
+/**
+ * __useSummaryQuery__
+ *
+ * To run a query within a React component, call `useSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSummaryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSummaryQuery(baseOptions?: Apollo.QueryHookOptions<SummaryQuery, SummaryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SummaryQuery, SummaryQueryVariables>(SummaryDocument, options);
+      }
+export function useSummaryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SummaryQuery, SummaryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SummaryQuery, SummaryQueryVariables>(SummaryDocument, options);
+        }
+export type SummaryQueryHookResult = ReturnType<typeof useSummaryQuery>;
+export type SummaryLazyQueryHookResult = ReturnType<typeof useSummaryLazyQuery>;
+export type SummaryQueryResult = Apollo.QueryResult<SummaryQuery, SummaryQueryVariables>;
 export const UnpublishIssueDocument = gql`
     mutation unpublishIssue($id: Int!) {
   unpublishIssue(id: $id)

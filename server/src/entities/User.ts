@@ -85,3 +85,31 @@ export class User extends BaseEntity {
     @Column("int", { default: 0 })
     tokenVersion: number;
 }
+
+@ObjectType()
+@Entity("view-logs")
+export class ViewLog extends BaseEntity {
+    @Field(() => Int)
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Field(() => String, { nullable: false })
+    @Column({ nullable: false })
+    pathname: string;
+
+    @Field(() => String, { nullable: false })
+    @Column({ type: "uuid", unique: false, nullable: false })
+    uniqueIdentifier: string;
+
+    @Field(() => Number, { nullable: true })
+    @Column({ nullable: true })
+    userId: number;
+
+    @Field(() => Boolean)
+    @Column()
+    isAuth: boolean;
+
+    @Field(() => String, { nullable: false })
+    @CreateDateColumn({ nullable: false })
+    createdAt: Date;
+}
