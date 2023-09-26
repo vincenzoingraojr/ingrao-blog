@@ -22,6 +22,7 @@ import {
     Legend,
 } from "chart.js";
 import { Line, Pie } from "react-chartjs-2";
+import { useEffect, useState } from "react";
   
 ChartJS.register(
     CategoryScale,
@@ -289,14 +290,32 @@ function HomePage() {
 
     const { data: userFrequenciesData } = useUserFrequenciesQuery({ fetchPolicy: "cache-and-network" });
 
+    const [pieLabels, setPieLabels] = useState<string[]>(["Authenticated users", "Unauthenticated users"]);
+    const [pieColors, setPieColors] = useState<string[]>(["#c0c0c0", "#0000ff"]);
+
+    useEffect(() => {
+        if (userFrequenciesData) {
+            if (userFrequenciesData.userFrequencies.authenticatedUsers === 0) {
+                setPieLabels(["Unauthenticated users"]);
+                setPieColors(["#0000ff"]);
+            } else if (userFrequenciesData.userFrequencies.unAuthenticatedUsers === 0) {
+                setPieLabels(["Authenticated users"]);
+                setPieColors(["#c0c0c0"]);
+            } else {
+                setPieLabels(["Authenticated users", "Unauthenticated users"]);
+                setPieColors(["#c0c0c0", "#0000ff"]);
+            }
+        }
+    }, [userFrequenciesData]);
+
     const pieData = {
-        labels: ["Authenticated users", "Unauthenticated users"],
+        labels: pieLabels,
         datasets: [
             {
                 data: [userFrequenciesData?.userFrequencies.authenticatedUsers as number, userFrequenciesData?.userFrequencies.unAuthenticatedUsers as number].filter((data) => data > 0),
                 fill: true,
-                backgroundColor: ["#c0c0c0", "#0000ff"],
-                borderColor: ["#c0c0c0", "#0000ff"],
+                backgroundColor: pieColors,
+                borderColor: pieColors,
             },
         ],
     }
