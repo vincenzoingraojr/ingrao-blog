@@ -73,6 +73,15 @@ export class AnalyticsResponse {
     uniqueVisitorsVariation: number;
 }
 
+@ObjectType()
+export class UserFrequenciesResponse {
+    @Field(() => Int, { nullable: false })
+    authenticatedUsers: number;
+
+    @Field(() => Int, { nullable: false })
+    unAuthenticatedUsers: number;
+}
+
 @Resolver(User)
 export class UserResolver {
     @Query(() => User, { nullable: true })
@@ -1477,6 +1486,26 @@ export class UserResolver {
             viewsVariation,
             uniqueVisitors,
             uniqueVisitorsVariation,
+        };
+    }
+
+    @Query(() => UserFrequenciesResponse)
+    async userFrequencies() {
+        const viewLogs = await ViewLog.find({
+            where: {
+                createdAt: MoreThan(new Date(Date.now() - 28 * 24 * 60 * 60 * 1000))
+            },
+        });
+
+        const authenticatedViewLogs = viewLogs.filter((viewLog) => viewLog.isAuth);
+        const unAuthenticatedViewLogs = viewLogs.filter((viewLog) => !viewLog.isAuth);
+
+        const authenticatedUsers = new Set(authenticatedViewLogs.map((viewLog) => viewLog.userId)).size;
+        const unAuthenticatedUsers = new Set(unAuthenticatedViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
+
+        return {
+            authenticatedUsers,
+            unAuthenticatedUsers,
         };
     }
 }

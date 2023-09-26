@@ -3,7 +3,7 @@ import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
 import styled from "styled-components";
 import { DashStatsContainer, DataContainer, DataTypeContainer, LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText, StatsContainer } from "../styles/global";
-import { useDashPostFeedQuery, useDraftPostFeedQuery, usePostFeedQuery, useSummaryQuery } from "../generated/graphql";
+import { useDashPostFeedQuery, useDraftPostFeedQuery, usePostFeedQuery, useSummaryQuery, useUserFrequenciesQuery } from "../generated/graphql";
 import { Link } from "react-router-dom";
 import LoadingComponent from "../components/utils/LoadingComponent";
 import PostComponent from "../components/layouts/items/PostComponent";
@@ -18,16 +18,20 @@ import {
     ChartData,
     Point,
     Filler,
+    ArcElement,
+    Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Line, Pie } from "react-chartjs-2";
   
 ChartJS.register(
     CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
+    ArcElement,
     Tooltip,
     Filler,
+    Legend,
 );
 
 const HomePageContainer = styled.div`
@@ -113,6 +117,37 @@ const AnalyticsChart = styled.div`
     }
 `;
 
+const OtherAnalyticsContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+
+    @media (min-width: 650px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+`;
+
+const PieChartContainer = styled.div`
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    canvas {
+        display: block;
+        box-sizing: border-box;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    @media ${devices.tablet} {
+        height: auto;
+
+        canvas {
+            height: auto !important;
+        }
+    }
+`;
+
 function HomePage() {
     const { data: dashPostsData } = useDashPostFeedQuery({ fetchPolicy: "cache-and-network" });
     const { data, loading, error } = usePostFeedQuery({ fetchPolicy: "cache-and-network" });
@@ -135,6 +170,17 @@ function HomePage() {
                     size: 12,
                 },
                 color: "#000000",
+            },
+            legend: {
+                display: true,
+                position: "top" as const,
+                labels: {
+                    font: {
+                        family: "Roboto Condensed",
+                        size: 12,
+                    },
+                    color: "#000000",
+                },
             },
             tooltip: {
                 mode: "index" as const,
@@ -183,6 +229,51 @@ function HomePage() {
         },
     };
 
+    const pieOptions = {
+        responsive: true,
+        interaction: {
+            mode: "index" as const,
+            intersect: false,
+        },
+        plugins: {
+            tooltip: {
+                mode: "index" as const,
+                intersect: false,
+                titleColor: "#ffffff",
+                titleFont: {
+                    family: "Roboto Condensed",
+                    weight: "normal" as const,
+                },
+                bodyColor: "#ffffff",
+                bodyFont: {
+                    family: "Roboto Condensed",
+                    weight: "normal" as const,
+                },
+                backgroundColor: "#000000",
+            },
+            legend: {
+                display: true,
+                position: "top" as const,
+                labels: {
+                    font: {
+                        family: "Roboto Condensed",
+                        size: 12,
+                    },
+                    color: "#000000",
+                },
+            },
+        },
+        stacked: false,
+        scales: {
+            y: {
+                display: false,
+            },
+            x: {
+                display: false,
+            },
+        },
+    };
+
     const chartData: ChartData<"line", (string | Point | null)[], unknown> = {
         labels: analyticsData?.summary.viewsByDay.map((day) => new Date(day.date).toLocaleString("en-us", { month: "2-digit", day: "2-digit", year: "2-digit" })) || [],
         datasets: [
@@ -195,6 +286,20 @@ function HomePage() {
             },
         ],
     };
+
+    const { data: userFrequenciesData } = useUserFrequenciesQuery({ fetchPolicy: "cache-and-network" });
+
+    const pieData = {
+        labels: ["Authenticated users", "Unauthenticated users"],
+        datasets: [
+            {
+                data: [userFrequenciesData?.userFrequencies.authenticatedUsers as number, userFrequenciesData?.userFrequencies.unAuthenticatedUsers],
+                fill: true,
+                backgroundColor: ["#c0c0c0", "#0000ff"],
+                borderColor: ["#c0c0c0", "#0000ff"],
+            },
+        ],
+    }
 
     return (
         <>
@@ -244,6 +349,11 @@ function HomePage() {
                             <AnalyticsChart>
                                 <Line data={chartData} options={options} />
                             </AnalyticsChart>
+                            <OtherAnalyticsContainer>
+                                <PieChartContainer>
+                                    <Pie data={pieData} options={pieOptions} />
+                                </PieChartContainer>
+                            </OtherAnalyticsContainer>
                         </AnalyticsContainer>
                         <PageBlock>
                             <OptionContainer>

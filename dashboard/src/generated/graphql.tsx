@@ -385,6 +385,7 @@ export type Query = {
   postFeed: Array<Post>;
   subscribedUsers: Array<User>;
   summary: AnalyticsResponse;
+  userFrequencies: UserFrequenciesResponse;
 };
 
 
@@ -445,6 +446,12 @@ export type User = {
   title: Scalars['String'];
   updatedAt: Scalars['String'];
   verified: Scalars['Boolean'];
+};
+
+export type UserFrequenciesResponse = {
+  __typename?: 'UserFrequenciesResponse';
+  authenticatedUsers: Scalars['Int'];
+  unAuthenticatedUsers: Scalars['Int'];
 };
 
 export type UserResponse = {
@@ -769,6 +776,11 @@ export type UnsubscribeFromNewsletterMutationVariables = Exact<{ [key: string]: 
 
 
 export type UnsubscribeFromNewsletterMutation = { __typename?: 'Mutation', unsubscribeFromNewsletter: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, updatedAt: string }> | null | undefined } | null | undefined } };
+
+export type UserFrequenciesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserFrequenciesQuery = { __typename?: 'Query', userFrequencies: { __typename?: 'UserFrequenciesResponse', authenticatedUsers: number, unAuthenticatedUsers: number } };
 
 export type VerifyEmailAddressMutationVariables = Exact<{
   token: Scalars['String'];
@@ -2965,6 +2977,41 @@ export function useUnsubscribeFromNewsletterMutation(baseOptions?: Apollo.Mutati
 export type UnsubscribeFromNewsletterMutationHookResult = ReturnType<typeof useUnsubscribeFromNewsletterMutation>;
 export type UnsubscribeFromNewsletterMutationResult = Apollo.MutationResult<UnsubscribeFromNewsletterMutation>;
 export type UnsubscribeFromNewsletterMutationOptions = Apollo.BaseMutationOptions<UnsubscribeFromNewsletterMutation, UnsubscribeFromNewsletterMutationVariables>;
+export const UserFrequenciesDocument = gql`
+    query userFrequencies {
+  userFrequencies {
+    authenticatedUsers
+    unAuthenticatedUsers
+  }
+}
+    `;
+
+/**
+ * __useUserFrequenciesQuery__
+ *
+ * To run a query within a React component, call `useUserFrequenciesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserFrequenciesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserFrequenciesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserFrequenciesQuery(baseOptions?: Apollo.QueryHookOptions<UserFrequenciesQuery, UserFrequenciesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserFrequenciesQuery, UserFrequenciesQueryVariables>(UserFrequenciesDocument, options);
+      }
+export function useUserFrequenciesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserFrequenciesQuery, UserFrequenciesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserFrequenciesQuery, UserFrequenciesQueryVariables>(UserFrequenciesDocument, options);
+        }
+export type UserFrequenciesQueryHookResult = ReturnType<typeof useUserFrequenciesQuery>;
+export type UserFrequenciesLazyQueryHookResult = ReturnType<typeof useUserFrequenciesLazyQuery>;
+export type UserFrequenciesQueryResult = Apollo.QueryResult<UserFrequenciesQuery, UserFrequenciesQueryVariables>;
 export const VerifyEmailAddressDocument = gql`
     mutation verifyEmailAddress($token: String!) {
   verifyEmailAddress(token: $token) {

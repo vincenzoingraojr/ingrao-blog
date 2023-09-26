@@ -1,0 +1,6 @@
+query userFrequencies {
+    userFrequencies {
+        authenticatedUsers
+        unAuthenticatedUsers
+    }
+}
