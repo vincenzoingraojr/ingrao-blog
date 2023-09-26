@@ -293,7 +293,7 @@ function HomePage() {
         labels: ["Authenticated users", "Unauthenticated users"],
         datasets: [
             {
-                data: [userFrequenciesData?.userFrequencies.authenticatedUsers as number, userFrequenciesData?.userFrequencies.unAuthenticatedUsers],
+                data: [userFrequenciesData?.userFrequencies.authenticatedUsers as number, userFrequenciesData?.userFrequencies.unAuthenticatedUsers as number].filter((data) => data > 0),
                 fill: true,
                 backgroundColor: ["#c0c0c0", "#0000ff"],
                 borderColor: ["#c0c0c0", "#0000ff"],
