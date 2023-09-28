@@ -160,6 +160,7 @@ function HomePage() {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         interaction: {
             mode: "index" as const,
             intersect: false,
@@ -232,6 +233,7 @@ function HomePage() {
 
     const pieOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         interaction: {
             mode: "index" as const,
             intersect: false,
