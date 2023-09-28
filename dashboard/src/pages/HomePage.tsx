@@ -282,8 +282,9 @@ function HomePage() {
                 label: "Views",
                 data: analyticsData?.summary.viewsByDay.map((day) => formatter.format(day.views)) || [],
                 fill: true,
-                backgroundColor: "#000000",
+                backgroundColor: "#c0c0c0",
                 borderColor: "#000000",
+                pointBackgroundColor: "#000000",
             },
         ],
     };
