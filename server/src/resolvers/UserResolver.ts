@@ -1500,7 +1500,7 @@ export class UserResolver {
         const authenticatedViewLogs = viewLogs.filter((viewLog) => viewLog.isAuth);
         const unAuthenticatedViewLogs = viewLogs.filter((viewLog) => !viewLog.isAuth);
 
-        const authenticatedUsers = new Set(authenticatedViewLogs.map((viewLog) => viewLog.userId)).size;
+        const authenticatedUsers = new Set(authenticatedViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
         const unAuthenticatedUsers = new Set(unAuthenticatedViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
 
         return {
