@@ -1432,8 +1432,6 @@ export class UserResolver {
             },
         });
 
-        views = viewLogs.length;
-
         const viewLogRepository = getRepository(ViewLog);
 
         const startDate = new Date(Date.now() - 56 * 24 * 60 * 60 * 1000);
@@ -1445,9 +1443,10 @@ export class UserResolver {
             .andWhere("viewLog.createdAt < :endDate", { endDate })
             .getMany();
 
-        const pastViews = pastViewLogs.length;
 
-        if (pastViewLogs && pastViews > 0) {
+        if (pastViewLogs && pastViewLogs.length > 0) {
+            const pastViews = pastViewLogs.length;
+
             viewsVariation = ((views - pastViews) / pastViews) * 100;
         
             const pastUniqueVisitors = new Set(pastViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
@@ -1457,7 +1456,8 @@ export class UserResolver {
             }
         }
 
-        if (viewLogs && views > 0) {
+        if (viewLogs && viewLogs.length > 0) {
+            views = viewLogs.length;
             uniqueVisitors = new Set(viewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
             viewsByDay = viewLogs.reduce((acc, viewLog) => {
                 const date = new Date(viewLog.createdAt);
@@ -1496,13 +1496,24 @@ export class UserResolver {
                 createdAt: MoreThan(new Date(Date.now() - 28 * 24 * 60 * 60 * 1000))
             },
         });
-
-        const authenticatedViewLogs = viewLogs.filter((viewLog) => viewLog.isAuth);
-        const unAuthenticatedViewLogs = viewLogs.filter((viewLog) => !viewLog.isAuth);
-
-        const authenticatedUsers = new Set(authenticatedViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
-        const unAuthenticatedUsers = new Set(unAuthenticatedViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
-
+    
+        const userCounts = new Map<string, boolean>();
+    
+        for (const viewLog of viewLogs) {
+            userCounts.set(viewLog.uniqueIdentifier, viewLog.isAuth);
+        }
+    
+        let authenticatedUsers = 0;
+        let unAuthenticatedUsers = 0;
+    
+        for (const isAuth of userCounts.values()) {
+            if (isAuth) {
+                authenticatedUsers++;
+            } else {
+                unAuthenticatedUsers++;
+            }
+        }
+    
         return {
             authenticatedUsers,
             unAuthenticatedUsers,
