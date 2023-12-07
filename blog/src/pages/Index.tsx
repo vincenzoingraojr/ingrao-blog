@@ -3,15 +3,14 @@ import PageLayout from "../components/layouts/PageLayout";
 import styled from "styled-components";
 import { Post, useBlogFeedQuery } from "../generated/graphql";
 import { devices } from "../styles/devices";
-import { LoadingContainer } from "../styles/global";
+import { LoadingContainer, OptionTitle, PageText } from "../styles/global";
 import LoadingComponent from "../components/utils/LoadingComponent";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Arrow from "../components/icons/Arrow";
+import PostComponent from "../components/layouts/items/PostComponent";
+import { useNavigate } from "react-router-dom";
 
 const IndexPageWrapper = styled.div`
     display: flex;
-    align-items: center;
     padding-left: 16px;
     padding-right: 16px;
     min-height: calc(100vh - 140px);
@@ -22,215 +21,198 @@ const IndexPageWrapper = styled.div`
 `;
 
 const IndexContainer = styled.div`
-    display: block;
-    height: calc(100vh - 140px);
+    display: flex;
     width: 100%;
-    background-color: #ffffff;
-
-    @media ${devices.tablet} {
-        height: calc(100vh - 172px);
-    }
+    flex-direction: column;
+    gap: 48px;
 `;
 
-const IndexItemContainer = styled.div`
+const LatestPostContainer = styled.div`
+    display: block;
+    width: 100%;
+    padding-top: 48px;
+`;
+
+const PostFeedContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 48px;
+`;
+
+const PostGrid = styled.div`
     display: grid;
-    height: calc(100vh - 140px);
-    width: 100%;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    grid-column-gap: 0px;
-    grid-row-gap: 0px; 
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
 
-    @media ${devices.tablet} {
-        height: calc(100vh - 172px);
+    @media (min-width: 560px) {
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+    }
+
+    @media ${devices.laptopS} {
+        grid-template-columns: repeat(3, 1fr);
     }
 `;
 
-const IndexItemImageContainer = styled.div`
+const LatestPostComponent = styled.div`
     display: block;
-    height: calc(100vh - 220px);
     width: 100%;
-    grid-area: 1 / 1 / 2 / 2;
+    cursor: pointer;
+`;
 
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+const LatestPostInnerContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 
-    @media ${devices.tablet} {
-        height: calc(100vh - 172px);
-        grid-area: 1 / 1 / 3 / 2;
+    @media (min-width: 560px) {
+        flex-direction: row;
+        gap: 18px;
     }
 `;
 
-const IndexItemInfoContainer = styled.div`
-    display: block;
-    height: calc(100vh - 220px);
-    width: 100%;
-    grid-area: 1 / 2 / 2 / 3; 
-
-    @media ${devices.tablet} {
-        height: calc(100vh - 252px);
-    }
+const LatestPostHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 `;
 
-const IndexItemInfoBox = styled.div`
-    display: block;
-    height: calc(100vh - 220px);
-    width: 100%;
-    padding-top: 24px;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 24px;
-    overflow: auto;
-
-    @media ${devices.tablet} {
-        padding-left: 24px;
-        padding-right: 24px;
-        height: calc(100vh - 252px);
-    }
-`;
-
-const IndexItemSlogan = styled.div`
+const HeadText = styled.div`
     display: inline-block;
     font-weight: 700;
     text-transform: uppercase;
     border-bottom: 4px solid #000000;
-    margin-bottom: 16px;
 `;
 
-const IndexItemTitle = styled.div`
+const LatestPostImage = styled.div`
     display: block;
+    width: 100%;
+    height: auto;
 
-    a {
-        font-weight: 700;
-        color: black;
-        font-size: 32px;
-        text-decoration: none;
+    img {
+        width: inherit;
+        height: inherit;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        object-position: center;
     }
 
-    a:hover, a:active {
+    @media (min-width: 560px) {
+        width: 50%;
+    }
+`;
+
+const LatestPostBody = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+`;
+
+const LatestPostTitle = styled(PageText)`
+    font-family: "Source Serif Pro", serif;
+    font-weight: 700;
+    font-size: 30px;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
         text-decoration: underline;
     }
-
-    @media ${devices.tablet} {
-        a {
-            font-size: 44px;
-        }
-    }
 `;
 
-const CommandModule = styled.div`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
-    background-color: transparent;
-    grid-area: 2 / 1 / 3 / 3;
-    height: 80px;
-
-    @media ${devices.tablet} {
-        background-color: #c0c0c0;
-        grid-area: 2 / 2 / 3 / 3;
-    }
+const LatestPostSmallText = styled(PageText)`
+    font-size: 16px;
 `;
-
-const PostsCount = styled.div`
-    display: flex;
-    width: 100%;
-    height: 80px;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 32px;
-`;
-
-const CommandModuleControl = styled.div.attrs(
-    (props: { rotateArrow: boolean }) => props
-)`
-    display: flex;
-    cursor: pointer;
-    width: 100%;
-    height: 80px;
-    align-items: center;
-    justify-content: center;
-    transform: ${(props) => (props.rotateArrow ? "rotate(180deg)" : "rotate(0deg)")};
-    transform-origin: center;
-`; 
 
 function Index() {
     const { data, loading, error } = useBlogFeedQuery({ fetchPolicy: "cache-and-network" });
-    const [position, setPosition] = useState(0);
-    const [post, setPost] = useState<Post | undefined>(data?.blogFeed[position]);
+    
+    const [latestPost, setLatestPost] = useState<Post>();
+    const [otherPosts, setOtherPosts] = useState<Post[]>(data?.blogFeed || []);
 
     useEffect(() => {
-        let x = data?.blogFeed!;
-        if (x !== undefined) {
-            if (position > x.length! - 1) {
-                setPosition(0);
-            }
-            if (position < 0) {
-                setPosition(x.length! - 1);
-            }
-            setPost(x[position]);
+        if (data && data.blogFeed) {
+            setLatestPost(data.blogFeed[0]);
+            setOtherPosts(data.blogFeed.filter((_, i) => i !== 0));
         }
-    }, [data?.blogFeed, position]);
-    
+    }, [data]);
+
+    const navigate = useNavigate();
+
+    let date = "";
+    date = new Date(parseInt(latestPost?.updatedAt as string)).toLocaleString("en-us", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
+
     return (
         <>
             <Head title="Index | ingrao.blog" description="This is the index page of ingrao.blog." />
             <PageLayout content={
                 <IndexPageWrapper>
-                    {(loading && !data) || error ? (
+                    {loading || !data || error ? (
                         <LoadingContainer>
                             <LoadingComponent />
                         </LoadingContainer>
                     ) : (
                         <IndexContainer>
-                            <IndexItemContainer>
-                                <IndexItemImageContainer>
-                                    <img src={post?.postCover!} title={post?.title!} alt={post?.title!} />
-                                </IndexItemImageContainer>
-                                <IndexItemInfoContainer>
-                                    <IndexItemInfoBox>
-                                        <IndexItemSlogan>
-                                            {post?.slogan}
-                                        </IndexItemSlogan>
-                                        <IndexItemTitle>
-                                            <Link to={`/post/${post?.slug!}`} title={post?.title!} aria-label={post?.title!}>
-                                                {post?.title}
-                                            </Link>
-                                        </IndexItemTitle>
-                                    </IndexItemInfoBox>
-                                </IndexItemInfoContainer>
-                                <CommandModule>
-                                    <PostsCount>{position + 1}/{data?.blogFeed.length}</PostsCount>
-                                    <CommandModuleControl
-                                        role="button"
-                                        title="Previous post"
-                                        aria-label="Previous post"
-                                        rotateArrow={false}
-                                        onClick={() => {
-                                            setPosition(position - 1);
-                                        }}
-                                    >
-                                        <Arrow type="index" />
-                                    </CommandModuleControl>
-                                    <CommandModuleControl
-                                        role="button"
-                                        title="Next post"
-                                        aria-label="Next post"
-                                        rotateArrow={true}
-                                        onClick={() => {
-                                            setPosition(position + 1);
-                                        }}
-                                    >
-                                        <Arrow type="index" />
-                                    </CommandModuleControl>
-                                </CommandModule>
-                            </IndexItemContainer>
+                            <LatestPostContainer>
+                                <LatestPostComponent
+                                    onClick={() => {
+                                        navigate(`/post/${latestPost?.slug}`);
+                                    }}
+                                    role="link"
+                                    title={latestPost?.title as string}
+                                    aria-label={latestPost?.title as string}
+                                >
+                                    <LatestPostInnerContainer>
+                                        <LatestPostImage>
+                                            <img
+                                                src={
+                                                    latestPost?.postCover as string
+                                                }
+                                                title={
+                                                    latestPost?.title as string
+                                                }
+                                                alt={
+                                                    latestPost?.title as string
+                                                }
+                                            />
+                                        </LatestPostImage>
+                                        <LatestPostBody>
+                                            <LatestPostHeader>
+                                                <HeadText>
+                                                    {latestPost?.slogan}
+                                                </HeadText>
+                                            </LatestPostHeader>
+                                            <LatestPostTitle>
+                                                {latestPost?.title}
+                                            </LatestPostTitle>
+                                            <PageText>{latestPost?.description}</PageText>
+                                            <LatestPostSmallText>
+                                                Written by{" "}
+                                                <b>
+                                                    {latestPost?.author.firstName} {latestPost?.author.lastName}
+                                                </b>
+                                            </LatestPostSmallText>
+                                            <LatestPostSmallText>
+                                                Published on {date}
+                                            </LatestPostSmallText>
+                                        </LatestPostBody>
+                                    </LatestPostInnerContainer>
+                                </LatestPostComponent>
+                            </LatestPostContainer>
+                            <PostFeedContainer>
+                                <OptionTitle>
+                                    Other posts
+                                </OptionTitle>
+                                <PostGrid>
+                                    {otherPosts.map((post) => (
+                                        <PostComponent post={post} key={post.id} />
+                                    ))}
+                                </PostGrid>
+                            </PostFeedContainer>
                         </IndexContainer>
                     )}
                 </IndexPageWrapper>

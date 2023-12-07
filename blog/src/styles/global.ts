@@ -221,7 +221,7 @@ export const LoadingContainer = styled.div`
     width: 100%;
     align-items: center;
     justify-content: center;
-    height: 42px;
+    height: 80px;
 `;
 
 export const OptionsContainer = styled.div`

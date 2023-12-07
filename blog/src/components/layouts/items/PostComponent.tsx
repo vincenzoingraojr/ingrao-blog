@@ -53,6 +53,7 @@ const PostBody = styled.div`
 `;
 
 const PostTitle = styled(PageText)`
+    font-family: "Source Serif Pro", serif;
     font-weight: 700;
     font-size: 24px;
     text-decoration: none;
