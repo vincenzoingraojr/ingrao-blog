@@ -74,7 +74,10 @@ input[type="checkbox"] {
     background: transparent;
     width: 18px;
     height: 18px;
-    appearance: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
 }
 
 input[type="checkbox"]:checked {

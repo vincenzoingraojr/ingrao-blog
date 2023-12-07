@@ -63,10 +63,12 @@ const LatestPostComponent = styled.div`
 const LatestPostInnerContainer = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: unset;
     gap: 16px;
 
     @media (min-width: 560px) {
         flex-direction: row;
+        align-items: center;
         gap: 18px;
     }
 `;
@@ -108,7 +110,7 @@ const LatestPostBody = styled.div`
 const LatestPostTitle = styled(PageText)`
     font-family: "Source Serif Pro", serif;
     font-weight: 700;
-    font-size: 30px;
+    font-size: 36px;
     text-decoration: none;
 
     &:hover,
