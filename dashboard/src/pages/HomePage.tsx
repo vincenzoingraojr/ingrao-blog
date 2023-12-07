@@ -74,7 +74,7 @@ export const AnalyticsStatsContainer = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
 
-    @media (min-width: 650px) {
+    @media ${devices.tablet} {
         grid-template-columns: repeat(4, 1fr);
     }
 `;
