@@ -1443,19 +1443,6 @@ export class UserResolver {
             .andWhere("viewLog.createdAt < :endDate", { endDate })
             .getMany();
 
-
-        if (pastViewLogs && pastViewLogs.length > 0) {
-            const pastViews = pastViewLogs.length;
-
-            viewsVariation = ((views - pastViews) / pastViews) * 100;
-        
-            const pastUniqueVisitors = new Set(pastViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
-
-            if (pastUniqueVisitors > 0) {
-                uniqueVisitorsVariation = ((uniqueVisitors - pastUniqueVisitors) / pastUniqueVisitors) * 100;
-            }
-        }
-
         if (viewLogs && viewLogs.length > 0) {
             views = viewLogs.length;
             uniqueVisitors = new Set(viewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
@@ -1478,6 +1465,18 @@ export class UserResolver {
                 }
                 return acc;
             }, [] as { views: number; date: Date }[]);
+            
+            if (pastViewLogs && pastViewLogs.length > 0) {
+                const pastViews = pastViewLogs.length;
+    
+                viewsVariation = ((views - pastViews) / pastViews) * 100;
+            
+                const pastUniqueVisitors = new Set(pastViewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
+    
+                if (pastUniqueVisitors > 0) {
+                    uniqueVisitorsVariation = ((uniqueVisitors - pastUniqueVisitors) / pastUniqueVisitors) * 100;
+                }
+            }
         }
 
         return {
