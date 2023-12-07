@@ -61,13 +61,13 @@ const LatestPostComponent = styled.div`
 `;
 
 const LatestPostInnerContainer = styled.div`
-    display: flex;
-    flex-direction: column;
+    display: grid;
     align-items: unset;
+    grid-template-columns: repeat(1, 1fr);
     gap: 16px;
 
     @media (min-width: 560px) {
-        flex-direction: row;
+        grid-template-columns: repeat(2, 1fr);
         align-items: center;
         gap: 18px;
     }
@@ -89,15 +89,14 @@ const HeadText = styled.div`
 const LatestPostImage = styled.div`
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
 
     img {
-        width: 100%;
-        height: auto;
-    }
-
-    @media (min-width: 560px) {
-        width: 50%;
+        width: inherit;
+        height: inherit;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        object-position: center;
     }
 `;
 
