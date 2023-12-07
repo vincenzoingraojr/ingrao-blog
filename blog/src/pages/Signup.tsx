@@ -11,10 +11,9 @@ import styled from "styled-components";
 
 const CheckBoxLabel = styled.label`
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     align-content: center;
     justify-content: flex-start;
-    flex-wrap: wrap;
     column-gap: 12px;
     row-gap: 4px;
 `;

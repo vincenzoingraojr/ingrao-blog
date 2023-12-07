@@ -90,11 +90,8 @@ const LatestPostImage = styled.div`
     height: auto;
 
     img {
-        width: inherit;
-        height: inherit;
-        aspect-ratio: 1 / 1;
-        object-fit: cover;
-        object-position: center;
+        width: 100%;
+        height: auto;
     }
 
     @media (min-width: 560px) {
