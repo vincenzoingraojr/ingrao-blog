@@ -356,7 +356,7 @@ function HomePage() {
                                     <InfoTypeContainer>Total number of visits in the last 28 days</InfoTypeContainer>
                                 </AnalyticsStatContainer>
                                 <AnalyticsStatContainer>
-                                    <InfoContainer>{analyticsData?.summary.uniqueVisitorsVariation.toFixed(1)}%</InfoContainer>
+                                    <InfoContainer>{analyticsData?.summary.viewsVariation.toFixed(1)}%</InfoContainer>
                                     <InfoTypeContainer>Change in the number of visits compared to the previous 28-day period</InfoTypeContainer>
                                 </AnalyticsStatContainer>
                                 <AnalyticsStatContainer>
