@@ -116,6 +116,10 @@ const LatestPostTitle = styled(PageText)`
     &:focus {
         text-decoration: underline;
     }
+
+    @media ${devices.tablet} {
+        font-size: 42px;
+    }
 `;
 
 const LatestPostSmallText = styled(PageText)`
