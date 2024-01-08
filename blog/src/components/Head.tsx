@@ -25,7 +25,7 @@ const Head: FunctionComponent<HeadProps> = ({ title, description, blogPost, imag
                 pathname,
             },
         });
-    }, [pathname]);
+    }, [pathname, viewPage]);
 
     return (
         <Helmet>
