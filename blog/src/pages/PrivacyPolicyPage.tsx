@@ -20,7 +20,7 @@ function PrivacyPolicyPage() {
                         content={
                             <WritingContainer>
                                 <p>
-                                    Created on November 12, 2022. Updated on December 5, 2022.
+                                    Created on January 8, 2024.
                                 </p>
                                 <p>
                                     With this document I want to point out how user data is used by <b>ingrao.blog</b>. This website is not using and will never use external analytics services (such as Google Analytics) to measure and acquire user-related information for purposes other than the proper functioning of the website, including IP addresses and device information. This website does not use persistent identifiers or cookies to identify users for advertising purposes, but uses <b>only one cookie</b> for the authentication system.
