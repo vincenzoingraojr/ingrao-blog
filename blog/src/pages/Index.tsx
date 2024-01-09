@@ -25,19 +25,19 @@ const IndexContainer = styled.div`
     width: 100%;
     flex-direction: column;
     gap: 48px;
+    padding-top: 48px;
+    padding-bottom: 48px;
 `;
 
 const LatestPostContainer = styled.div`
     display: block;
     width: 100%;
-    padding-top: 48px;
 `;
 
 const PostFeedContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding-bottom: 48px;
 `;
 
 const PostGrid = styled.div`
@@ -205,16 +205,18 @@ function Index() {
                                     </LatestPostInnerContainer>
                                 </LatestPostComponent>
                             </LatestPostContainer>
-                            <PostFeedContainer>
-                                <OptionTitle>
-                                    Other posts
-                                </OptionTitle>
-                                <PostGrid>
-                                    {otherPosts.map((post) => (
-                                        <PostComponent post={post} key={post.id} />
-                                    ))}
-                                </PostGrid>
-                            </PostFeedContainer>
+                            {otherPosts.length > 0 && (
+                                <PostFeedContainer>
+                                    <OptionTitle>
+                                        Other posts
+                                    </OptionTitle>
+                                    <PostGrid>
+                                        {otherPosts.map((post) => (
+                                            <PostComponent post={post} key={post.id} />
+                                        ))}
+                                    </PostGrid>
+                                </PostFeedContainer>
+                            )}
                         </IndexContainer>
                     )}
                 </IndexPageWrapper>
