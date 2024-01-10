@@ -125,7 +125,7 @@ function ViewIssue() {
     return (
         <>
             <Head
-                title={`${data?.findNewsletterById?.title} | dashboard.ingrao.blog`}
+                title={`${data?.findNewsletterById?.title} | ingrao.blog`}
                 description={`In this page you can read "${data?.findNewsletterById?.title}", a newsletter issue by ${data?.findNewsletterById?.author.firstName} ${data?.findNewsletterById?.author.lastName}.`}
                 blogPost={true}
                 image={data?.findNewsletterById?.newsletterCover!}
