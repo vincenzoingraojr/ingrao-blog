@@ -58,7 +58,7 @@ export class Post extends BaseEntity {
     createdAt: Date;
 
     @Field(() => Boolean, { nullable: true, defaultValue: false })
-    @Column({ nullable: true, default: true })
+    @Column({ nullable: true, default: false })
     isEdited: boolean;
 
     @Field(() => String)
