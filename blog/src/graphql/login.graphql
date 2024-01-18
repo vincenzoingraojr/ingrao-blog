@@ -25,6 +25,7 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
                 postCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
             comments {
@@ -36,6 +37,7 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
                 content
                 isDeleted
                 createdAt
+                isEdited
                 updatedAt
             }
         }

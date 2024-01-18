@@ -25,6 +25,7 @@ query blogFeed {
         postCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

@@ -1,7 +1,8 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { PageText } from "../../../styles/global";
+import { processDate } from "../../../utils/processDate";
 
 interface PostComponentProps {
     post: any;
@@ -73,12 +74,24 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
 }) => {
     const navigate = useNavigate();
 
-    let date = "";
-    date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+    const [date, setDate] = useState("");
+
+    useEffect(() => {
+        if (post) {
+            const publishDate = new Date(parseInt(post.createdAt)).toLocaleString("en-us", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+            });
+
+            if (post.isEdited) {
+                const updatedPostDate = processDate(post.updatedAt);
+                setDate(`${publishDate}, updated ${updatedPostDate}`);
+            } else {
+                setDate(publishDate);
+            }
+        }
+    }, [post]);
 
     return (
         <PostContainer

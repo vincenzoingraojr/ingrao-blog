@@ -39,6 +39,7 @@ mutation editProfile(
                 postCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
             comments {
@@ -50,6 +51,7 @@ mutation editProfile(
                 content
                 isDeleted
                 createdAt
+                isEdited
                 updatedAt
             }
         }

@@ -1,7 +1,8 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { PageText } from "../../../styles/global";
+import { processDate } from "../../../utils/processDate";
 
 interface SmallPostComponentProps {
     post: any;
@@ -73,13 +74,24 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
 }) => {
     const navigate = useNavigate();
 
-    let date = "";
+    const [date, setDate] = useState("");
 
-    date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+    useEffect(() => {
+        if (post) {
+            const publishDate = new Date(parseInt(post.createdAt)).toLocaleString("en-us", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+            });
+
+            if (post.isEdited) {
+                const updatedPostDate = processDate(post.updatedAt);
+                setDate(`${publishDate}, updated ${updatedPostDate}`);
+            } else {
+                setDate(publishDate);
+            }
+        }
+    }, [post]);
 
     return (
         <SmallPostContainer
@@ -118,7 +130,7 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
                         {post.title}
                     </SmallPostTitle>
                     <PostSmallText>
-                        Published on {date}, by {post.author.firstName} {post.author.lastName}
+                        {date} | By <b>{post.author.firstName} {post.author.lastName}</b>
                     </PostSmallText>                        
                 </SmallPostBody>
             </SmallPostInnerContainer>

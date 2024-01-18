@@ -24,6 +24,7 @@ query newsletterBlogFeed {
         newsletterCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

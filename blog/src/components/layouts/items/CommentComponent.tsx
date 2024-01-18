@@ -9,6 +9,7 @@ import { Button, FlexContainer24, PageBlock, PageText, Status, TextButton } from
 import { toErrorMap } from "../../../utils/toErrorMap";
 import EditorField from "../../input/content/EditorField";
 import CommentInputComponent from "../../utils/CommentInputComponent";
+import { processDate } from "../../../utils/processDate";
 
 interface CommentComponentProps {
     comment: any;
@@ -165,14 +166,26 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
     const [replyCommentEditor, setReplyCommentEditor] = useState(false);
 
     const [updateComment] = useUpdateCommentMutation();
+    const [date, setDate] = useState("");
 
-    let date = new Date(parseInt(comment.createdAt)).toLocaleString("en-us", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-    });
+    useEffect(() => {
+        if (comment) {
+            const publishDate = new Date(parseInt(comment.createdAt)).toLocaleString("en-us", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+            });
+
+            if (comment.isEdited) {
+                const updatedCommentDate = processDate(comment.updatedAt);
+                setDate(`${publishDate}, updated ${updatedCommentDate}`);
+            } else {
+                setDate(publishDate);
+            }
+        }
+    }, [comment]);
 
     const { data: commentRepliesData } = useCommentRepliesQuery({ variables: { commentId: comment.commentId }, fetchPolicy: "network-only" });
 

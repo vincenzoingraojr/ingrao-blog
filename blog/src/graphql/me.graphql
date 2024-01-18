@@ -24,6 +24,7 @@ query Me($origin: String!) {
             postCover
             content
             createdAt
+            isEdited
             updatedAt
         }
         comments {
@@ -35,6 +36,7 @@ query Me($origin: String!) {
             content
             isDeleted
             createdAt
+            isEdited
             updatedAt
         }
     }

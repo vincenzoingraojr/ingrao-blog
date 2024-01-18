@@ -186,10 +186,9 @@ function PostPreview() {
                                                     day: "numeric",
                                                     year: "numeric",
                                                 })}
-                                                , updated{" "}
-                                                {processDate(
+                                                {data?.findPost?.createdAt !== data?.findPost?.updatedAt && `, updated ${processDate(
                                                     data?.findPost?.updatedAt!
-                                                )}
+                                                )}`}
                                             </PostPreviewDate>
                                         </PostPreviewInfo>
                                         <PostPreviewImage>

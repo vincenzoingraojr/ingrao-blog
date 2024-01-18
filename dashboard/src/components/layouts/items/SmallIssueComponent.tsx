@@ -104,11 +104,18 @@ const SmallIssueComponent: FunctionComponent<SmallIssueComponentProps> = ({
     if (issue.draft) {
         date = processDate(issue.updatedAt);
     } else {
-        date = new Date(parseInt(issue.updatedAt)).toLocaleString("en-us", {
+        const publishDate = new Date(parseInt(issue.createdAt)).toLocaleString("en-us", {
             month: "long",
             day: "numeric",
             year: "numeric",
         });
+
+        if (issue.isEdited) {
+            const updatedIssueDate = processDate(issue.updatedAt);
+            date = publishDate + ", updated " + updatedIssueDate;
+        } else {
+            date = publishDate;
+        }
     }
 
     const [deleteIssue] = useDeleteIssueMutation();
@@ -159,7 +166,7 @@ const SmallIssueComponent: FunctionComponent<SmallIssueComponentProps> = ({
                         {issue.title}
                     </SmallIssueTitle>
                     <IssueSmallText>
-                        {issue.draft ? <>Updated</> : <>Published on</>} {date}, by {issue.author.firstName} {issue.author.lastName}
+                        {issue.draft && <>Updated</>} {date} | By <b>{issue.author.firstName} {issue.author.lastName}</b>
                     </IssueSmallText>
                     <IssueButtonsContainer>
                         {issue.draft ? (

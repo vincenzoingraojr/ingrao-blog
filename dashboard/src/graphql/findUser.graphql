@@ -24,6 +24,7 @@ query findUser($id: Int!) {
             postCover
             content
             createdAt
+            isEdited
             updatedAt
         }
         issues {
@@ -36,6 +37,7 @@ query findUser($id: Int!) {
             newsletterCover
             content
             createdAt
+            isEdited
             updatedAt
         }
     }

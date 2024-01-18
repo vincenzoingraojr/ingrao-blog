@@ -104,11 +104,18 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
     if (post.draft) {
         date = processDate(post.updatedAt);
     } else {
-        date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
+        const publishDate = new Date(parseInt(post.createdAt)).toLocaleString("en-us", {
             month: "long",
             day: "numeric",
             year: "numeric",
         });
+
+        if (post.isEdited) {
+            const updatedPostDate = processDate(post.updatedAt);
+            date = publishDate + ", updated " + updatedPostDate;
+        } else {
+            date = publishDate;
+        }
     }
 
     const [deletePost] = useDeletePostMutation();
@@ -165,7 +172,7 @@ const SmallPostComponent: FunctionComponent<SmallPostComponentProps> = ({
                         )}
                     </SmallPostTitle>
                     <PostSmallText>
-                        {post.draft ? <>Updated</> : <>Published on</>} {date}, by {post.author.firstName} {post.author.lastName}
+                        {post.draft && <>Updated</>} {date} | By <b>{post.author.firstName} {post.author.lastName}</b>
                     </PostSmallText>
                     <PostButtonsContainer>
                         {post.draft ? (

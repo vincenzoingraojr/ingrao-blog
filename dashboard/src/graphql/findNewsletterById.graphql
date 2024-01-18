@@ -24,6 +24,7 @@ query findNewsletterById($newsletterId: String) {
         newsletterCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

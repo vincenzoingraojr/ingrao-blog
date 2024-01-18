@@ -25,6 +25,7 @@ query findPost($id: Int) {
         postCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

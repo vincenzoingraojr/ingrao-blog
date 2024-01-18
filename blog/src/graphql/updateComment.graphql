@@ -30,6 +30,7 @@ mutation updateComment(
             content
             isDeleted
             createdAt
+            isEdited
             updatedAt
         }
         errors {

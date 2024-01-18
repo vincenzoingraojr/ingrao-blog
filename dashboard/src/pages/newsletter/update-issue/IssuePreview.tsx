@@ -179,10 +179,9 @@ function IssuePreview() {
                                                     day: "numeric",
                                                     year: "numeric",
                                                 })}
-                                                , updated{" "}
-                                                {processDate(
+                                                {data?.findNewsletterById?.createdAt !== data?.findNewsletterById?.updatedAt && `, updated ${processDate(
                                                     data?.findNewsletterById?.updatedAt!
-                                                )}
+                                                )}`}
                                             </IssuePreviewDate>
                                         </IssuePreviewInfo>
                                         <IssuePreviewImage>

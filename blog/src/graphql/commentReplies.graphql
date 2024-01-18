@@ -23,6 +23,7 @@ query commentReplies($commentId: String!) {
         content
         isDeleted
         createdAt
+        isEdited
         updatedAt
     }
 }

@@ -99,11 +99,18 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
     if (post.draft) {
         date = processDate(post.updatedAt);
     } else {
-        date = new Date(parseInt(post.updatedAt)).toLocaleString("en-us", {
+        const publishDate = new Date(parseInt(post.createdAt)).toLocaleString("en-us", {
             month: "long",
             day: "numeric",
             year: "numeric",
         });
+
+        if (post.isEdited) {
+            const updatedPostDate = processDate(post.updatedAt);
+            date = publishDate + ", updated " + updatedPostDate;
+        } else {
+            date = publishDate;
+        }
     }
 
     const [deletePost] = useDeletePostMutation();

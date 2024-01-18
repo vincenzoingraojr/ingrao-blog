@@ -100,16 +100,17 @@ export class CommentResolver {
                 field: "content",
                 message: "You are not authorized to comment on this post",
             });
-        } else if (errors.length === 0) {
+        } else if (errors.length === 0 && payload) {
             try {
                 comment = await Comment.create({
                     content: content,
                     commentId: uuidv4(),
                     postId: postId,
-                    authorId: payload!.id,
+                    authorId: payload.id,
                     isReplyTo: isReplyTo,
                     author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
                     isDeleted: false,
+                    isEdited: false,
                 }).save();
             } catch (error) {
                 console.log(error);
@@ -158,6 +159,7 @@ export class CommentResolver {
                     },
                     {
                         content: content,
+                        isEdited: true,
                     },
                 );
                 

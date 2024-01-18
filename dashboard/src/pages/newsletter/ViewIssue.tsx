@@ -10,6 +10,7 @@ import LoadingComponent from "../../components/utils/LoadingComponent";
 import { devices } from "../../styles/devices";
 import Arrow from "../../components/icons/Arrow";
 import { Editor } from "@ingrao-blog/editor";
+import { processDate } from "../../utils/processDate";
 
 const IssueCoverImage = styled.div`
     display: block;
@@ -146,6 +147,25 @@ function ViewIssue() {
             setIssueContent(undefined);
         }
     }, [data?.findNewsletterById?.content]);
+
+    const [date, setDate] = useState("");
+
+    useEffect(() => {
+        if (data && data.findNewsletterById) {
+            const publishDate = new Date(parseInt(data.findNewsletterById.createdAt)).toLocaleString("en-us", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+            });
+
+            if (data.findNewsletterById.isEdited) {
+                const updatedIssueDate = processDate(data.findNewsletterById.updatedAt);
+                setDate(`Published on ${publishDate}, updated ${updatedIssueDate}`);
+            } else {
+                setDate(publishDate);
+            }
+        }
+    }, [data]);
     
     return (
         <>
@@ -215,16 +235,7 @@ function ViewIssue() {
                                             </PageBlock>
                                             <PageText>|</PageText>
                                             <IssueDate>
-                                                {new Date(
-                                                    parseInt(
-                                                        data?.findNewsletterById
-                                                            ?.updatedAt!
-                                                    )
-                                                ).toLocaleString("en-us", {
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    year: "numeric",
-                                                })}
+                                                {date}
                                             </IssueDate>
                                         </IssueInfo>
                                         <IssueCoverImage>

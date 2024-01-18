@@ -25,6 +25,7 @@ query postFeed {
         postCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

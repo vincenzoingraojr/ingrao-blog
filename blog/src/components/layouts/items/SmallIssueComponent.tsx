@@ -1,7 +1,8 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { PageText } from "../../../styles/global";
+import { processDate } from "../../../utils/processDate";
 
 interface SmallIssueComponentProps {
     issue: any;
@@ -73,13 +74,24 @@ const SmallIssueComponent: FunctionComponent<SmallIssueComponentProps> = ({
 }) => {
     const navigate = useNavigate();
 
-    let date = "";
+    const [date, setDate] = useState("");
 
-    date = new Date(parseInt(issue.updatedAt)).toLocaleString("en-us", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+    useEffect(() => {
+        if (issue) {
+            const publishDate = new Date(parseInt(issue.createdAt)).toLocaleString("en-us", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+            });
+
+            if (issue.isEdited) {
+                const updatedIssueDate = processDate(issue.updatedAt);
+                setDate(`${publishDate}, updated ${updatedIssueDate}`);
+            } else {
+                setDate(publishDate);
+            }
+        }
+    }, [issue]);
 
     return (
         <SmallIssueContainer
@@ -118,7 +130,7 @@ const SmallIssueComponent: FunctionComponent<SmallIssueComponentProps> = ({
                         {issue.title}
                     </SmallIssueTitle>
                     <IssueSmallText>
-                        Published on {date}, by {issue.author.firstName} {issue.author.lastName}
+                        {date} | By <b>{issue.author.firstName} {issue.author.lastName}</b>
                     </IssueSmallText>                        
                 </SmallIssueBody>
             </SmallIssueInnerContainer>

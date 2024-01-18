@@ -25,6 +25,7 @@ query dashPostFeed {
         postCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

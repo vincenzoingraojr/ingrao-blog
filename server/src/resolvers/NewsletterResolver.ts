@@ -142,6 +142,7 @@ export class NewsletterResolver {
                         author: await User.findOne({
                             where: { id: payload.id, role: payload.role },
                         }),
+                        isEdited: false,
                     }).save();
 
                     status = "Newsletter issue created successfully.";
@@ -455,6 +456,7 @@ export class NewsletterResolver {
                                 newsletterCover: newsletterCover,
                                 content: content,
                                 draft: false,
+                                isEdited: true,
                             }
                         );
                     } else {
@@ -472,6 +474,7 @@ export class NewsletterResolver {
                                 author: await User.findOne({
                                     where: { id: payload.id, role: payload.role },
                                 }),
+                                isEdited: true,
                             }
                         );
                     }
@@ -510,6 +513,7 @@ export class NewsletterResolver {
                 },
                 {
                     draft: true,
+                    isEdited: false,
                 }
             );
         } else {
@@ -520,6 +524,7 @@ export class NewsletterResolver {
                 },
                 {
                     draft: true,
+                    isEdited: false,
                 }
             );
         }

@@ -26,6 +26,7 @@ mutation subscribeToNewsletter {
                 postCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
             issues {
@@ -38,6 +39,7 @@ mutation subscribeToNewsletter {
                 newsletterCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
             comments {
@@ -49,6 +51,7 @@ mutation subscribeToNewsletter {
                 content
                 isDeleted
                 createdAt
+                isEdited
                 updatedAt
             }
         }

@@ -25,6 +25,7 @@ query findPostBySlug($slug: String) {
         postCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

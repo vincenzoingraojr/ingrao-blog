@@ -10,6 +10,7 @@ import LoadingComponent from "../components/utils/LoadingComponent";
 import { devices } from "../styles/devices";
 import Arrow from "../components/icons/Arrow";
 import { Editor } from "@ingrao-blog/editor";
+import { processDate } from "../utils/processDate";
 
 const PostCoverImage = styled.div`
     display: block;
@@ -147,6 +148,30 @@ function ViewPost() {
         }
     }, [data?.findPostBySlug?.content]);
     
+    const [date, setDate] = useState("");
+
+    useEffect(() => {
+        if (data && data.findPostBySlug) {
+            const publishDate = new Date(
+                parseInt(
+                    data.findPostBySlug
+                        .createdAt
+                )
+            ).toLocaleString("en-us", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+            });
+
+            if (data.findPostBySlug.isEdited) {
+                const updatedPostDate = processDate(data.findPostBySlug.updatedAt);
+                setDate(`Published on ${publishDate}, updated ${updatedPostDate}`);
+            } else {
+                setDate(publishDate);
+            }
+        }
+    }, [data]);
+
     return (
         <>
             <Head
@@ -218,16 +243,7 @@ function ViewPost() {
                                             </PageBlock>
                                             <PageText>|</PageText>
                                             <PostDate>
-                                                {new Date(
-                                                    parseInt(
-                                                        data?.findPostBySlug
-                                                            ?.updatedAt!
-                                                    )
-                                                ).toLocaleString("en-us", {
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    year: "numeric",
-                                                })}
+                                                {date}
                                             </PostDate>
                                         </PostInfo>
                                         <PostCoverImage>

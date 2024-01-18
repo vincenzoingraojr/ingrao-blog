@@ -124,6 +124,7 @@ export class PostResolver {
                         slug: slug.toLowerCase(),
                         draft: true,
                         authorId: payload.id,
+                        isEdited: false,
                         author: await User.findOne({
                             where: { id: payload.id, role: payload.role },
                         }),
@@ -424,6 +425,7 @@ export class PostResolver {
                                 postCover: postCover,
                                 content: content,
                                 draft: false,
+                                isEdited: true,
                             }
                         );
                     } else {
@@ -443,6 +445,7 @@ export class PostResolver {
                                 author: await User.findOne({
                                     where: { id: payload.id, role: payload.role },
                                 }),
+                                isEdited: true,
                             }
                         );
                     }
@@ -481,6 +484,7 @@ export class PostResolver {
                 },
                 {
                     draft: true,
+                    isEdited: false,
                 }
             );
         } else {
@@ -491,6 +495,7 @@ export class PostResolver {
                 },
                 {
                     draft: true,
+                    isEdited: false,
                 }
             );
         }

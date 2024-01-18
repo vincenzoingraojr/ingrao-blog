@@ -24,6 +24,7 @@ query subscribedUsers {
             postCover
             content
             createdAt
+            isEdited
             updatedAt
         }
         issues {
@@ -36,6 +37,7 @@ query subscribedUsers {
             newsletterCover
             content
             createdAt
+            isEdited
             updatedAt
         }
     }

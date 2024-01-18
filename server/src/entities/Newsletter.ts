@@ -53,6 +53,10 @@ export class Newsletter extends BaseEntity {
     @CreateDateColumn()
     createdAt: Date;
 
+    @Field(() => Boolean, { nullable: true, defaultValue: false })
+    @Column({ nullable: true, default: true })
+    isEdited: boolean;
+
     @Field(() => String)
     @UpdateDateColumn()
     updatedAt: Date;

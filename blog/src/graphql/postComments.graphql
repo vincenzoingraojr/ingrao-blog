@@ -23,6 +23,7 @@ query postComments($postId: Int) {
         content
         isDeleted
         createdAt
+        isEdited
         updatedAt
     }
 }

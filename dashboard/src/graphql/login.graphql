@@ -25,6 +25,7 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
                 postCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
             issues {
@@ -37,6 +38,7 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
                 newsletterCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
         }

@@ -24,6 +24,7 @@ query dashUsers {
             postCover
             content
             createdAt
+            isEdited
             updatedAt
         }
         issues {
@@ -36,6 +37,7 @@ query dashUsers {
             newsletterCover
             content
             createdAt
+            isEdited
             updatedAt
         }
     }

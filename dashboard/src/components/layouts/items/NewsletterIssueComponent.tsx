@@ -99,11 +99,18 @@ const NewsletterIssueComponent: FunctionComponent<IssueComponentProps> = ({
     if (issue.draft) {
         date = processDate(issue.updatedAt);
     } else {
-        date = new Date(parseInt(issue.updatedAt)).toLocaleString("en-us", {
+        const publishDate = new Date(parseInt(issue.createdAt)).toLocaleString("en-us", {
             month: "long",
             day: "numeric",
             year: "numeric",
         });
+
+        if (issue.isEdited) {
+            const updatedIssueDate = processDate(issue.updatedAt);
+            date = publishDate + ", updated " + updatedIssueDate;
+        } else {
+            date = publishDate;
+        }
     }
 
     const [deleteIssue] = useDeleteIssueMutation();
@@ -153,7 +160,7 @@ const NewsletterIssueComponent: FunctionComponent<IssueComponentProps> = ({
                         </b>
                     </IssueSmallText>
                     <IssueSmallText>
-                        {issue.draft ? <>Updated</> : <>Published on</>} {date}
+                        {issue.draft && <>Updated</>} {date}
                     </IssueSmallText>
                     {issue.draft && (
                         <IssueButtonsContainer>

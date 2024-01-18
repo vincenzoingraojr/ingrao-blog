@@ -26,6 +26,7 @@ mutation createPost($slug: String!) {
             postCover
             content
             createdAt
+            isEdited
             updatedAt
         }
         status

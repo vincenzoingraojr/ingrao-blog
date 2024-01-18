@@ -8,6 +8,7 @@ import LoadingComponent from "../components/utils/LoadingComponent";
 import { useEffect, useState } from "react";
 import PostComponent from "../components/layouts/items/PostComponent";
 import { useNavigate } from "react-router-dom";
+import { processDate } from "../utils/processDate";
 
 const IndexPageWrapper = styled.div`
     display: flex;
@@ -141,12 +142,24 @@ function Index() {
 
     const navigate = useNavigate();
 
-    let date = "";
-    date = new Date(parseInt(latestPost?.updatedAt as string)).toLocaleString("en-us", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+    const [date, setDate] = useState("");
+
+    useEffect(() => {
+        if (latestPost) {
+            const publishDate = new Date(parseInt(latestPost.createdAt)).toLocaleString("en-us", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+            });
+
+            if (latestPost.isEdited) {
+                const updatedPostDate = processDate(latestPost.updatedAt);
+                setDate(`${publishDate}, updated ${updatedPostDate}`);
+            } else {
+                setDate(publishDate);
+            }
+        }
+    }, [latestPost]);
 
     return (
         <>

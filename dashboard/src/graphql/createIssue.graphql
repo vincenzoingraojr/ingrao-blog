@@ -25,6 +25,7 @@ mutation createIssue($title: String!) {
             newsletterCover
             content
             createdAt
+            isEdited
             updatedAt
         }
         status

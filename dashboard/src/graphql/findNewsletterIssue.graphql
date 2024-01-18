@@ -24,6 +24,7 @@ query findNewsletterIssue($id: Int) {
         newsletterCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }

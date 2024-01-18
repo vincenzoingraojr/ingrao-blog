@@ -23,6 +23,7 @@ query personalComments {
         content
         isDeleted
         createdAt
+        isEdited
         updatedAt
     }
 }

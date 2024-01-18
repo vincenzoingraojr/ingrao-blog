@@ -24,6 +24,7 @@ query Me($origin: String!) {
             postCover
             content
             createdAt
+            isEdited
             updatedAt
         }
         issues {
@@ -36,6 +37,7 @@ query Me($origin: String!) {
             newsletterCover
             content
             createdAt
+            isEdited
             updatedAt
         }
     }

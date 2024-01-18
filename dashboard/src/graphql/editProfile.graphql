@@ -39,6 +39,7 @@ mutation editProfile(
                 postCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
             issues {
@@ -51,6 +52,7 @@ mutation editProfile(
                 newsletterCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
         }

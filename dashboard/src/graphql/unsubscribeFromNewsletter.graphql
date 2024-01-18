@@ -26,6 +26,7 @@ mutation unsubscribeFromNewsletter {
                 postCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
             issues {
@@ -38,6 +39,7 @@ mutation unsubscribeFromNewsletter {
                 newsletterCover
                 content
                 createdAt
+                isEdited
                 updatedAt
             }
         }

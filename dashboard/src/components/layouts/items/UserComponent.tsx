@@ -151,7 +151,7 @@ const UserComponent: FunctionComponent<UserComponentProps> = ({
                         )}
                     </UserMainInfoContainer>
                     <PostSmallText>
-                        <b>{user.email}</b>{" "}Role: {user.role}.
+                        <b>{user.email}</b>{" "}|{" "}Role: {user.role}.
                     </PostSmallText>
                     {(data && data.me && data.me.id !== user.id && user.role === "writer" && controls) && (
                         <PostButtonsContainer>

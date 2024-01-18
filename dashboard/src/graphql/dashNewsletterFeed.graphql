@@ -24,6 +24,7 @@ query dashNewsletterFeed {
         newsletterCover
         content
         createdAt
+        isEdited
         updatedAt
     }
 }
