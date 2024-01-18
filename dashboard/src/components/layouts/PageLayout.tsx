@@ -99,17 +99,17 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
                     </FooterItem>
                     <FooterItem>
                         <a
-                            href="https://twitter.com/vincentingraojr"
+                            href="https://x.com/vincentingraojr"
                             target="_blank"
-                            title="Vincenzo Ingrao Jr.'s official Twitter account"
+                            title="Vincenzo Ingrao Jr.'s official X account"
                             rel="noreferrer"
-                            aria-label="Vincenzo Ingrao Jr.'s official Twitter account"
+                            aria-label="Vincenzo Ingrao Jr.'s official X account"
                         >
-                            Twitter
+                            X
                         </a>
                     </FooterItem>
                     <FooterItem>
-                        v0.1.0
+                        v1.0.0
                     </FooterItem>
                 </FooterContainer>
             </PageLayoutContainer>
