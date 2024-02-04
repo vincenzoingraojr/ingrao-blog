@@ -3,9 +3,10 @@
 }
 .rdw-link-decorator-icon {
   position: absolute;
-  left: 40%;
+  left: 90%;
   top: 0;
   cursor: pointer;
   background-color: white;
   height: 14px;
+  width: 28px;
 }

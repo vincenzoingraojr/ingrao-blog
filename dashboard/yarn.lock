@@ -1721,10 +1721,10 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
-"@ingrao-blog/editor@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@ingrao-blog/editor/-/editor-0.2.0.tgz#0e5e022be872a0c550c570abc55af2038cb6ae0e"
-  integrity sha512-HzQJK8ovvjzD5rvZZ6XxHImScPnCs2ZCwqvGcQ7cSCcIAIUNNAoOnAJjbpQki4/PICbX/zP18MtgKpEgfWieOg==
+"@ingrao-blog/editor@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@ingrao-blog/editor/-/editor-0.2.1.tgz#f8acd8e89a3cca81ec8781b97ebc64462599e6d2"
+  integrity sha512-x+TIrnjz//K3UmiNJzP/eLj3mUtqAOdCbdbOMt2o28j1HHT6necHbijrVtw0nnl8BTDLSOUeBz+iG5NoQhNuNg==
   dependencies:
     classnames "^2.2.6"
     draftjs-utils "^0.10.2"
