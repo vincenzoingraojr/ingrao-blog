@@ -10,7 +10,7 @@ import {
     Resolver,
     UseMiddleware,
 } from "type-graphql";
-import { MoreThan, Not, Repository } from "typeorm";
+import { And, LessThan, MoreThan, Not, Repository } from "typeorm";
 import argon2 from "argon2";
 import { AuthContext } from "../types";
 import { sendRefreshToken } from "../auth/sendRefreshToken";
@@ -53,8 +53,8 @@ class ViewByDay {
     @Field(() => Int, { nullable: false })
     views: number;
 
-    @Field(() => Date, { nullable: false })
-    date: Date;
+    @Field(() => String, { nullable: false })
+    date: string;
 }
 
 @ObjectType()
@@ -1442,7 +1442,7 @@ export class UserResolver {
 
         const viewLogsDateArray = createDateArray(pinDate, new Date());
 
-        const viewLogs = await ViewLog.find({
+        const viewLogs = await this.viewLogRepository.find({
             where: {
                 createdAt: MoreThan(pinDate)
             },
@@ -1450,18 +1450,18 @@ export class UserResolver {
 
         const startDate = new Date(Date.now() - 56 * 24 * 60 * 60 * 1000);
 
-        const pastViewLogs = await this.viewLogRepository
-            .createQueryBuilder("viewLog")
-            .where("viewLog.createdAt >= :startDate", { startDate })
-            .andWhere("viewLog.createdAt < :endDate", { pinDate })
-            .getMany();
+        const pastViewLogs = await this.viewLogRepository.find({
+            where: {
+                createdAt: And(MoreThan(startDate), LessThan(pinDate)),
+            },
+        });
 
         if (viewLogs && viewLogs.length > 0) {
             views = viewLogs.length;
             uniqueVisitors = new Set(viewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
             viewsByDay = viewLogsDateArray.map((date) => {
-                const formattedDate = date.toISOString().split('T')[0];
-                const views = viewLogs.filter((log) => log.createdAt.toISOString().split('T')[0] === formattedDate).length;
+                const formattedDate = date.toISOString().split("T")[0];
+                const views = viewLogs.filter((log) => log.createdAt.toISOString().split("T")[0] === formattedDate).length;
             
                 return {
                     date: formattedDate,

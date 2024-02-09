@@ -468,7 +468,7 @@ export type UserResponse = {
 
 export type ViewByDay = {
   __typename?: 'ViewByDay';
-  date: Scalars['DateTime'];
+  date: Scalars['String'];
   views: Scalars['Int'];
 };
 
@@ -760,7 +760,7 @@ export type SubscribedUsersQuery = { __typename?: 'Query', subscribedUsers: Arra
 export type SummaryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SummaryQuery = { __typename?: 'Query', summary: { __typename?: 'AnalyticsResponse', views: number, viewsVariation: number, uniqueVisitors: number, uniqueVisitorsVariation: number, viewsByDay: Array<{ __typename?: 'ViewByDay', views: number, date: any }> } };
+export type SummaryQuery = { __typename?: 'Query', summary: { __typename?: 'AnalyticsResponse', views: number, viewsVariation: number, uniqueVisitors: number, uniqueVisitorsVariation: number, viewsByDay: Array<{ __typename?: 'ViewByDay', views: number, date: string }> } };
 
 export type UnpublishIssueMutationVariables = Exact<{
   id: Scalars['Int'];
