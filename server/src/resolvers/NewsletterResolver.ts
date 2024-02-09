@@ -12,7 +12,7 @@ import {
 } from "type-graphql";
 import { FieldError } from "./common";
 import { isAuth } from "../middleware/isAuth";
-import { MyContext } from "../types";
+import { AuthContext } from "../types";
 import { User } from "../entities/User";
 import { v4 as uuidv4 } from "uuid";
 import aws from "aws-sdk";
@@ -20,6 +20,8 @@ import ejs from "ejs";
 import path from "path";
 import { UserResponse } from "./UserResolver";
 import draftToHtml from "draftjs-to-html";
+import { Repository } from "typeorm";
+import appDataSource from "../dataSource";
 
 @ObjectType()
 export class NewsletterResponse {
@@ -35,9 +37,17 @@ export class NewsletterResponse {
 
 @Resolver(Newsletter)
 export class NewsletterResolver {
+    private readonly newsletterRepository: Repository<Newsletter>;
+    private readonly userRepository: Repository<User>;
+
+    constructor() {
+        this.newsletterRepository = appDataSource.getRepository(Newsletter);
+        this.userRepository = appDataSource.getRepository(User);
+    }
+
     @Query(() => [Newsletter])
     newsletterBlogFeed() {
-        return Newsletter.find({
+        return this.newsletterRepository.find({
             order: {
                 createdAt: "DESC",
             },
@@ -50,8 +60,8 @@ export class NewsletterResolver {
 
     @Query(() => [Newsletter])
     @UseMiddleware(isAuth)
-    newsletterPersonalFeed(@Ctx() { payload }: MyContext) {
-        return Newsletter.find({
+    newsletterPersonalFeed(@Ctx() { payload }: AuthContext) {
+        return this.newsletterRepository.find({
             order: {
                 createdAt: "DESC",
             },
@@ -65,7 +75,7 @@ export class NewsletterResolver {
 
     @Query(() => [Newsletter])
     dashNewsletterFeed() {
-        return Newsletter.find({
+        return this.newsletterRepository.find({
             order: {
                 updatedAt: "DESC",
             },
@@ -75,8 +85,8 @@ export class NewsletterResolver {
 
     @Query(() => [Newsletter])
     @UseMiddleware(isAuth)
-    draftNewsletterFeed(@Ctx() { payload }: MyContext) {
-        return Newsletter.find({
+    draftNewsletterFeed(@Ctx() { payload }: AuthContext) {
+        return this.newsletterRepository.find({
             order: {
                 updatedAt: "DESC",
             },
@@ -90,17 +100,17 @@ export class NewsletterResolver {
 
     @Query(() => Newsletter, { nullable: true })
     findNewsletterIssue(@Arg("id", () => Int, { nullable: true }) id: number) {
-        return Newsletter.findOne({ where: { id }, relations: ["author"] });
+        return this.newsletterRepository.findOne({ where: { id }, relations: ["author"] });
     }
 
     @Query(() => Newsletter, { nullable: true })
     findNewsletterById(@Arg("newsletterId", () => String, { nullable: true }) newsletterId: string) {
-        return Newsletter.findOne({ where: { newsletterId }, relations: ["author"] });
+        return this.newsletterRepository.findOne({ where: { newsletterId }, relations: ["author"] });
     }
 
     @Query(() => [User])
     subscribedUsers() {
-        return User.find({
+        return this.userRepository.find({
             order: {
                 updatedAt: "DESC",
             },
@@ -115,7 +125,7 @@ export class NewsletterResolver {
     @UseMiddleware(isAuth)
     async createIssue(
         @Arg("title") title: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<NewsletterResponse> {
         let errors = [];
         let issue;
@@ -134,14 +144,14 @@ export class NewsletterResolver {
                 });
             } else {
                 try {
-                    issue = await Newsletter.create({
-                        title: title,
+                    issue = await this.newsletterRepository.create({
+                        title,
                         draft: true,
                         newsletterId: uuidv4(),
                         authorId: payload.id,
-                        author: await User.findOne({
+                        author: await this.userRepository.findOne({
                             where: { id: payload.id, role: payload.role },
-                        }),
+                        }) as User,
                         isEdited: false,
                     }).save();
 
@@ -173,7 +183,7 @@ export class NewsletterResolver {
         @Arg("subject", { nullable: true }) subject: string,
         @Arg("newsletterCover", { nullable: true }) newsletterCover: string,
         @Arg("content", { nullable: true }) content: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<NewsletterResponse> {
         let errors = [];
         let issue;
@@ -185,8 +195,10 @@ export class NewsletterResolver {
                 message: "You are not authorized to update a newsletter issue",
             });
         } else {
-            issue = await Newsletter.findOne({
-                newsletterId: newsletterId,
+            issue = await this.newsletterRepository.findOne({
+                where: {
+                    newsletterId,
+                },
             });
 
             if (!issue) {
@@ -200,36 +212,36 @@ export class NewsletterResolver {
                 } else {
                     try {
                         if (payload.role === "admin" && payload.id !== issue.authorId) {
-                            await Newsletter.update(
+                            await this.newsletterRepository.update(
                                 {
-                                    newsletterId: newsletterId,
+                                    newsletterId,
                                 },
                                 {
                                     draft: true,
-                                    title: title,
-                                    subject: subject,
-                                    newsletterCover: newsletterCover,
-                                    content: content,
+                                    title,
+                                    subject,
+                                    newsletterCover,
+                                    content,
                                 }
                             );
                         } else {
-                            await Newsletter.update(
+                            await this.newsletterRepository.update(
                                 {
                                     authorId: payload.id,
-                                    newsletterId: newsletterId,
+                                    newsletterId,
                                 },
                                 {
                                     draft: true,
-                                    title: title,
-                                    subject: subject,
-                                    newsletterCover: newsletterCover,
-                                    content: content,
-                                    author: await User.findOne({
+                                    title,
+                                    subject,
+                                    newsletterCover,
+                                    content,
+                                    author: await this.userRepository.findOne({
                                         where: {
                                             id: payload.id,
                                             role: payload.role,
                                         },
-                                    }),
+                                    }) as User,
                                 }
                             );
                         }
@@ -258,10 +270,10 @@ export class NewsletterResolver {
     @UseMiddleware(isAuth)
     async publishIssue(
         @Arg("newsletterId", () => String) newsletterId: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<NewsletterResponse> {
         let errors = [];
-        let issue: Newsletter | undefined;
+        let issue: Newsletter | undefined | null;
         let status = "";
 
         const ses = new aws.SES({
@@ -275,9 +287,9 @@ export class NewsletterResolver {
         if (!payload || (payload && payload.role === "user")) {
             status = "You are not authorizated to publish a newsletter issue.";
         } else {
-            issue = await Newsletter.findOne({
+            issue = await this.newsletterRepository.findOne({
                 where: {
-                    newsletterId: newsletterId,
+                    newsletterId,
                 },
                 relations: ["author"],
             });
@@ -313,18 +325,18 @@ export class NewsletterResolver {
 
                 if (errors.length === 0) {
                     if (payload.role === "admin" && payload.id !== issue.authorId) {
-                        await Newsletter.update(
+                        await this.newsletterRepository.update(
                             {
-                                newsletterId: newsletterId,
+                                newsletterId,
                             },
                             {
                                 draft: false,
                             }
                         );
                     } else {
-                        await Newsletter.update(
+                        await this.newsletterRepository.update(
                             {
-                                newsletterId: newsletterId,
+                                newsletterId,
                                 authorId: payload.id,
                             },
                             {
@@ -336,7 +348,7 @@ export class NewsletterResolver {
                     const link = `https://ingrao.blog/newsletter/issue/${issue.newsletterId}`;
                     const fullName = `${issue.author.firstName} ${issue.author.lastName}`;
 
-                    const newsletterUsers = await User.find({
+                    const newsletterUsers = await this.userRepository.find({
                         where: {
                             newsletterSubscribed: true,
                         },
@@ -353,7 +365,7 @@ export class NewsletterResolver {
                         ),
                         { link: link, title: issue.title, newsletterCover: issue.newsletterCover, fullName: fullName, content: draftToHtml(JSON.parse(issue.content))},
                         function (error, data) {
-                            if (error) {
+                            if (error || !issue) {
                                 console.log(error);
                             } else {
                                 const params: aws.SES.SendEmailRequest = {
@@ -367,7 +379,7 @@ export class NewsletterResolver {
                                             },
                                         },
                                         Subject: {
-                                            Data: issue?.subject!,
+                                            Data: issue.subject,
                                         },
                                     },
                                     Source: "ingrao.blog <newsletter@ingrao.blog>",
@@ -402,7 +414,7 @@ export class NewsletterResolver {
         @Arg("subject", { nullable: true }) subject: string,
         @Arg("newsletterCover", { nullable: true }) newsletterCover: string,
         @Arg("content", { nullable: true }) content: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<NewsletterResponse> {
         let errors = [];
         let issue;
@@ -411,8 +423,10 @@ export class NewsletterResolver {
         if (!payload || (payload && payload.role === "user")) {
             status = "You are not authorizated to edit a published issue.";
         } else {
-            issue = await Newsletter.findOne({
-                newsletterId: newsletterId,
+            issue = await this.newsletterRepository.findOne({
+                where: {
+                    newsletterId: newsletterId,                    
+                },
             });
 
             if (!issue) {
@@ -446,34 +460,34 @@ export class NewsletterResolver {
 
                 if (errors.length === 0) {
                     if (payload.role === "admin" && payload.id !== issue.authorId) {
-                        await Newsletter.update(
+                        await this.newsletterRepository.update(
                             {
-                                newsletterId: newsletterId,
+                                newsletterId,
                             },
                             {
-                                title: title,
-                                subject: subject,
-                                newsletterCover: newsletterCover,
-                                content: content,
+                                title,
+                                subject,
+                                newsletterCover,
+                                content,
                                 draft: false,
                                 isEdited: true,
                             }
                         );
                     } else {
-                        await Newsletter.update(
+                        await this.newsletterRepository.update(
                             {
                                 authorId: payload.id,
-                                newsletterId: newsletterId,
+                                newsletterId,
                             },
                             {
-                                title: title,
-                                subject: subject,
-                                newsletterCover: newsletterCover,
-                                content: content,
+                                title,
+                                subject,
+                                newsletterCover,
+                                content,
                                 draft: false,
-                                author: await User.findOne({
+                                author: await this.userRepository.findOne({
                                     where: { id: payload.id, role: payload.role },
-                                }),
+                                }) as User,
                                 isEdited: true,
                             }
                         );
@@ -494,22 +508,22 @@ export class NewsletterResolver {
     @UseMiddleware(isAuth)
     async unpublishIssue(
         @Arg("id", () => Int) id: number,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ) {
         if (!payload || (payload && payload.role === "user")) {
             return false;
         }
 
-        const issue = await Newsletter.findOne({
-            id: id,
+        const issue = await this.newsletterRepository.findOne({
+            where: { id },
         });
 
         if (!issue) {
             return false;
         } else if (payload.role === "admin" && payload.id !== issue.authorId) {
-            await Newsletter.update(
+            await this.newsletterRepository.update(
                 {
-                    id: id,
+                    id,
                 },
                 {
                     draft: true,
@@ -517,9 +531,9 @@ export class NewsletterResolver {
                 }
             );
         } else {
-            await Newsletter.update(
+            await this.newsletterRepository.update(
                 {
-                    id: id,
+                    id,
                     authorId: payload.id,
                 },
                 {
@@ -536,27 +550,27 @@ export class NewsletterResolver {
     @UseMiddleware(isAuth)
     async deleteIssue(
         @Arg("id", () => Int) id: number,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ) {
         if (!payload || (payload && payload.role === "user")) {
             return false;
         }
 
-        const issue = await Newsletter.findOne({
-            id: id,
+        const issue = await this.newsletterRepository.findOne({
+            where: { id },
         });
 
         if (!issue) {
             return false;
         } else if (payload.role === "admin" && payload.id !== issue.authorId) {
-            await Newsletter.delete({ id: id }).catch(
+            await this.newsletterRepository.delete({ id }).catch(
                 (error) => {
                     console.error(error);
                     return false;
                 }
             );
         } else {
-            await Newsletter.delete({ id: id, authorId: payload.id }).catch(
+            await this.newsletterRepository.delete({ id, authorId: payload.id }).catch(
                 (error) => {
                     console.error(error);
                     return false;
@@ -570,14 +584,14 @@ export class NewsletterResolver {
     @Mutation(() => UserResponse)
     @UseMiddleware(isAuth)
     async subscribeToNewsletter(
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let status = "";
         let user;
         if (!payload) {
             status = "You're not authorized to do this action.";
         } else {
-            await User.update(
+            await this.userRepository.update(
                 {
                     id: payload.id,
                 },
@@ -586,7 +600,7 @@ export class NewsletterResolver {
                 }
             );
 
-            user = await User.findOne({ where: { id: payload.id } });
+            user = await this.userRepository.findOne({ where: { id: payload.id } });
             status = "You're now subscribed to the newsletter.";
         }
 
@@ -599,14 +613,14 @@ export class NewsletterResolver {
     @Mutation(() => UserResponse)
     @UseMiddleware(isAuth)
     async unsubscribeFromNewsletter(
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let status = "";
         let user;
         if (!payload) {
             status = "You're not authorized to do this action.";
         } else {
-            await User.update(
+            await this.userRepository.update(
                 {
                     id: payload.id,
                 },
@@ -615,7 +629,7 @@ export class NewsletterResolver {
                 }
             );
 
-            user = await User.findOne({ where: { id: payload.id } });
+            user = await this.userRepository.findOne({ where: { id: payload.id } });
             status = "You're no longer subscribed to the newsletter.";
         }
 

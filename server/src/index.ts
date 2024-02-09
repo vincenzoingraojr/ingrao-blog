@@ -1,7 +1,6 @@
 import "dotenv/config";
 import "reflect-metadata";
 import express from "express";
-import { createConnection } from "typeorm";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/UserResolver";
@@ -20,6 +19,7 @@ import { NewsletterResolver } from "./resolvers/NewsletterResolver";
 import { CommentResolver } from "./resolvers/CommentResolver";
 import { createUniqueIdentifier } from "./helpers/createUniqueIdentifier";
 import { v4 as uuidv4 } from "uuid";
+import appDataSource from "./dataSource";
 
 async function main() {
     const app = express();
@@ -54,7 +54,17 @@ async function main() {
 
     app.use(express.json());
 
+    await appDataSource.initialize()
+        .then(() => {
+            console.log("Data source ready.");
+        })
+        .catch((error) => {
+            console.error("Error during data source initialization", error);
+        });
+
     app.post("/", async (req, res) => {
+        const userRepository = appDataSource.getRepository(User);
+
         const token = req.cookies.cke;
         const identifier = req.cookies.uid;
 
@@ -75,7 +85,7 @@ async function main() {
             return res.send({ ok: false, accessToken: "", role: "" });
         }
 
-        const user = await User.findOne({ id: payload.id });
+        const user = await userRepository.findOne({ where: { id: payload.id } });
 
         if (!user) {
             return res.send({ ok: false, accessToken: "", role: "" });
@@ -88,25 +98,6 @@ async function main() {
         sendRefreshToken(res, createRefreshToken(user));
 
         return res.send({ ok: true, accessToken: createAccessToken(user), role: user.role });
-    });
-
-    await createConnection({
-        type: "postgres",
-        url: process.env.DATABASE_URL,
-        synchronize: true,
-        logging: false,
-        entities: ["src/entities/*.ts"],
-        migrations: ["src/migrations/*.ts"],
-        subscribers: ["src/subscribers/*.ts"],
-        cli: {
-            entitiesDir: "src/entities",
-            migrationsDir: "src/migrations",
-            subscribersDir: "src/subscribers",
-        },
-        ssl:
-            process.env.NODE_ENV === "production"
-                ? { rejectUnauthorized: false }
-                : false,
     });
 
     const server = new ApolloServer({

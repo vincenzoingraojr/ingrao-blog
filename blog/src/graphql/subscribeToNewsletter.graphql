@@ -28,6 +28,7 @@ mutation subscribeToNewsletter {
                 createdAt
                 isEdited
                 updatedAt
+                publishedOn
             }
             issues {
                 id

@@ -27,5 +27,6 @@ query findPostBySlug($slug: String) {
         createdAt
         isEdited
         updatedAt
+        publishedOn
     }
 }

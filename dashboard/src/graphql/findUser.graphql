@@ -26,6 +26,7 @@ query findUser($id: Int!) {
             createdAt
             isEdited
             updatedAt
+            publishedOn
         }
         issues {
             id

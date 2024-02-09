@@ -27,5 +27,6 @@ query postFeed {
         createdAt
         isEdited
         updatedAt
+        publishedOn
     }
 }

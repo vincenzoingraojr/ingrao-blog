@@ -28,6 +28,7 @@ mutation createPost($slug: String!) {
             createdAt
             isEdited
             updatedAt
+            publishedOn
         }
         status
         errors {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export interface MyContext {
+export interface AuthContext {
     req: Request;
     res: Response;
     payload?: {

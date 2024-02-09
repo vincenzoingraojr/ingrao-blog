@@ -43,6 +43,7 @@ mutation addDashUser(
                 createdAt
                 isEdited
                 updatedAt
+                publishedOn
             }
             issues {
                 id

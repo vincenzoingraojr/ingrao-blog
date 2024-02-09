@@ -27,5 +27,6 @@ query dashPostFeed {
         createdAt
         isEdited
         updatedAt
+        publishedOn
     }
 }

@@ -34,7 +34,7 @@ export type Comment = {
   createdAt: Scalars['String'];
   id: Scalars['Int'];
   isDeleted: Scalars['Boolean'];
-  isEdited: Scalars['Boolean'];
+  isEdited?: Maybe<Scalars['Boolean']>;
   isReplyTo?: Maybe<Scalars['String']>;
   postId: Scalars['Int'];
   updatedAt: Scalars['String'];
@@ -327,7 +327,7 @@ export type Newsletter = {
   createdAt: Scalars['String'];
   draft: Scalars['Boolean'];
   id: Scalars['Int'];
-  isEdited: Scalars['Boolean'];
+  isEdited?: Maybe<Scalars['Boolean']>;
   newsletterCover?: Maybe<Scalars['String']>;
   newsletterId: Scalars['String'];
   subject?: Maybe<Scalars['String']>;
@@ -351,8 +351,9 @@ export type Post = {
   description?: Maybe<Scalars['String']>;
   draft: Scalars['Boolean'];
   id: Scalars['Int'];
-  isEdited: Scalars['Boolean'];
+  isEdited?: Maybe<Scalars['Boolean']>;
   postCover?: Maybe<Scalars['String']>;
+  publishedOn?: Maybe<Scalars['String']>;
   slogan?: Maybe<Scalars['String']>;
   slug: Scalars['String'];
   title?: Maybe<Scalars['String']>;
@@ -481,7 +482,7 @@ export type AuthSendVerificationEmailMutation = { __typename?: 'Mutation', authS
 export type BlogFeedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BlogFeedQuery = { __typename?: 'Query', blogFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean } }> };
+export type BlogFeedQuery = { __typename?: 'Query', blogFeed: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean } }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   currentPassword: Scalars['String'];
@@ -498,7 +499,7 @@ export type CommentRepliesQueryVariables = Exact<{
 }>;
 
 
-export type CommentRepliesQuery = { __typename?: 'Query', commentReplies: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } }> };
+export type CommentRepliesQuery = { __typename?: 'Query', commentReplies: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } }> };
 
 export type CreateCommentMutationVariables = Exact<{
   content: Scalars['String'];
@@ -507,7 +508,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentResponse', errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined, comment?: { __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } } | null | undefined } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentResponse', errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined, comment?: { __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } } | null | undefined } };
 
 export type DeleteAccountMutationVariables = Exact<{
   origin: Scalars['String'];
@@ -543,21 +544,21 @@ export type EditProfileMutationVariables = Exact<{
 }>;
 
 
-export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
 
 export type FindNewsletterByIdQueryVariables = Exact<{
   newsletterId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type FindNewsletterByIdQuery = { __typename?: 'Query', findNewsletterById?: { __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, newsletterSubscribed: boolean, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined };
+export type FindNewsletterByIdQuery = { __typename?: 'Query', findNewsletterById?: { __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, newsletterSubscribed: boolean, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } } | null | undefined };
 
 export type FindPostBySlugQueryVariables = Exact<{
   slug?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type FindPostBySlugQuery = { __typename?: 'Query', findPostBySlug?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } } | null | undefined };
+export type FindPostBySlugQuery = { __typename?: 'Query', findPostBySlug?: { __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } } | null | undefined };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -566,7 +567,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', accessToken?: string | null | undefined, status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', accessToken?: string | null | undefined, status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -578,12 +579,12 @@ export type MeQueryVariables = Exact<{
 }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined } | null | undefined };
 
 export type NewsletterBlogFeedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NewsletterBlogFeedQuery = { __typename?: 'Query', newsletterBlogFeed: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, newsletterSubscribed: boolean, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } }> };
+export type NewsletterBlogFeedQuery = { __typename?: 'Query', newsletterBlogFeed: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, newsletterSubscribed: boolean, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string } }> };
 
 export type NotAuthModifyPasswordMutationVariables = Exact<{
   token: Scalars['String'];
@@ -597,14 +598,14 @@ export type NotAuthModifyPasswordMutation = { __typename?: 'Mutation', notAuthMo
 export type PersonalCommentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PersonalCommentsQuery = { __typename?: 'Query', personalComments: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } }> };
+export type PersonalCommentsQuery = { __typename?: 'Query', personalComments: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } }> };
 
 export type PostCommentsQueryVariables = Exact<{
   postId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type PostCommentsQuery = { __typename?: 'Query', postComments: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } }> };
+export type PostCommentsQuery = { __typename?: 'Query', postComments: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } }> };
 
 export type SendMessageMutationVariables = Exact<{
   name: Scalars['String'];
@@ -636,17 +637,17 @@ export type SignupMutationVariables = Exact<{
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup?: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
+export type SignupMutation = { __typename?: 'Mutation', signup?: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, createdAt: string, updatedAt: string, newsletterSubscribed: boolean, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } | null | undefined };
 
 export type SubscribeToNewsletterMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SubscribeToNewsletterMutation = { __typename?: 'Mutation', subscribeToNewsletter: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined } | null | undefined } };
+export type SubscribeToNewsletterMutation = { __typename?: 'Mutation', subscribeToNewsletter: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined } | null | undefined } };
 
 export type UnsubscribeFromNewsletterMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UnsubscribeFromNewsletterMutation = { __typename?: 'Mutation', unsubscribeFromNewsletter: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string }> | null | undefined } | null | undefined } };
+export type UnsubscribeFromNewsletterMutation = { __typename?: 'Mutation', unsubscribeFromNewsletter: { __typename?: 'UserResponse', status?: string | null | undefined, user?: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string, posts?: Array<{ __typename?: 'Post', id: number, slug: string, draft: boolean, authorId: number, title?: string | null | undefined, description?: string | null | undefined, slogan?: string | null | undefined, postCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, publishedOn?: string | null | undefined }> | null | undefined, issues?: Array<{ __typename?: 'Newsletter', id: number, newsletterId: string, draft: boolean, authorId: number, title?: string | null | undefined, subject?: string | null | undefined, newsletterCover?: string | null | undefined, content?: string | null | undefined, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined, comments?: Array<{ __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string }> | null | undefined } | null | undefined } };
 
 export type UpdateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
@@ -654,7 +655,7 @@ export type UpdateCommentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'CommentResponse', comment?: { __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited: boolean, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
+export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'CommentResponse', comment?: { __typename?: 'Comment', id: number, commentId: string, postId: number, authorId: number, isReplyTo?: string | null | undefined, content?: string | null | undefined, isDeleted: boolean, createdAt: string, isEdited?: boolean | null | undefined, updatedAt: string, author: { __typename?: 'User', id: number, firstName: string, lastName: string, email: string, birthDate: string, gender: string, title: string, verified: boolean, role: string, profilePicture?: string | null | undefined, newsletterSubscribed: boolean, createdAt: string, updatedAt: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message: string }> | null | undefined } };
 
 export type VerifyEmailAddressMutationVariables = Exact<{
   token: Scalars['String'];
@@ -734,6 +735,7 @@ export const BlogFeedDocument = gql`
     createdAt
     isEdited
     updatedAt
+    publishedOn
   }
 }
     `;
@@ -1075,6 +1077,7 @@ export const EditProfileDocument = gql`
         createdAt
         isEdited
         updatedAt
+        publishedOn
       }
       comments {
         id
@@ -1218,6 +1221,7 @@ export const FindPostBySlugDocument = gql`
     createdAt
     isEdited
     updatedAt
+    publishedOn
   }
 }
     `;
@@ -1279,6 +1283,7 @@ export const LoginDocument = gql`
         createdAt
         isEdited
         updatedAt
+        publishedOn
       }
       comments {
         id
@@ -1389,6 +1394,7 @@ export const MeDocument = gql`
       createdAt
       isEdited
       updatedAt
+      publishedOn
     }
     comments {
       id
@@ -1769,6 +1775,7 @@ export const SignupDocument = gql`
         createdAt
         isEdited
         updatedAt
+        publishedOn
       }
       comments {
         id
@@ -1855,6 +1862,7 @@ export const SubscribeToNewsletterDocument = gql`
         createdAt
         isEdited
         updatedAt
+        publishedOn
       }
       issues {
         id
@@ -1941,6 +1949,7 @@ export const UnsubscribeFromNewsletterDocument = gql`
         createdAt
         isEdited
         updatedAt
+        publishedOn
       }
       issues {
         id

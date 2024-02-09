@@ -16,6 +16,7 @@ const ContactButton = styled(Button)`
 
 function ContactPage() {
     const [sendMessage] = useSendMessageMutation();
+    
     return (
         <>
             <Head

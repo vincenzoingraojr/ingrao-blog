@@ -41,6 +41,7 @@ mutation editProfile(
                 createdAt
                 isEdited
                 updatedAt
+                publishedOn
             }
             issues {
                 id

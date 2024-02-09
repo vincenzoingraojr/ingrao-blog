@@ -12,8 +12,10 @@ import {
 } from "type-graphql";
 import { FieldError } from "./common";
 import { isAuth } from "../middleware/isAuth";
-import { MyContext } from "../types";
+import { AuthContext } from "../types";
 import { User } from "../entities/User";
+import { Repository } from "typeorm";
+import appDataSource from "../dataSource";
 
 @ObjectType()
 export class PostResponse {
@@ -29,11 +31,19 @@ export class PostResponse {
 
 @Resolver(Post)
 export class PostResolver {
+    private readonly postRepository: Repository<Post>;
+    private readonly userRepository: Repository<User>;
+    
+    constructor() {
+        this.postRepository = appDataSource.getRepository(Post);
+        this.userRepository = appDataSource.getRepository(User);
+    }
+
     @Query(() => [Post])
     blogFeed() {
-        return Post.find({
+        return this.postRepository.find({
             order: {
-                createdAt: "DESC",
+                publishedOn: "DESC",
             },
             where: {
                 draft: false,
@@ -44,10 +54,10 @@ export class PostResolver {
 
     @Query(() => [Post])
     @UseMiddleware(isAuth)
-    postFeed(@Ctx() { payload }: MyContext) {
-        return Post.find({
+    postFeed(@Ctx() { payload }: AuthContext) {
+        return this.postRepository.find({
             order: {
-                createdAt: "DESC",
+                publishedOn: "DESC",
             },
             where: {
                 authorId: payload?.id,
@@ -59,7 +69,7 @@ export class PostResolver {
 
     @Query(() => [Post])
     dashPostFeed() {
-        return Post.find({
+        return this.postRepository.find({
             order: {
                 updatedAt: "DESC",
             },
@@ -69,8 +79,8 @@ export class PostResolver {
 
     @Query(() => [Post])
     @UseMiddleware(isAuth)
-    draftPostFeed(@Ctx() { payload }: MyContext) {
-        return Post.find({
+    draftPostFeed(@Ctx() { payload }: AuthContext) {
+        return this.postRepository.find({
             order: {
                 updatedAt: "DESC",
             },
@@ -84,19 +94,19 @@ export class PostResolver {
 
     @Query(() => Post, { nullable: true })
     findPost(@Arg("id", () => Int, { nullable: true }) id: number) {
-        return Post.findOne({ where: { id }, relations: ["author"] });
+        return this.postRepository.findOne({ where: { id }, relations: ["author"] });
     }
 
     @Query(() => Post, { nullable: true })
     findPostBySlug(@Arg("slug", () => String, { nullable: true }) slug: string) {
-        return Post.findOne({ where: { slug }, relations: ["author"] });
+        return this.postRepository.findOne({ where: { slug }, relations: ["author"] });
     }
 
     @Mutation(() => PostResponse)
     @UseMiddleware(isAuth)
     async createPost(
         @Arg("slug") slug: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<PostResponse> {
         let errors = [];
         let post;
@@ -120,14 +130,14 @@ export class PostResolver {
                 });
             } else {
                 try {
-                    post = await Post.create({
+                    post = await this.postRepository.create({
                         slug: slug.toLowerCase(),
                         draft: true,
                         authorId: payload.id,
                         isEdited: false,
-                        author: await User.findOne({
+                        author: await this.userRepository.findOne({
                             where: { id: payload.id, role: payload.role },
-                        }),
+                        }) as User,
                     }).save();
 
                     status = "Post created successfully.";
@@ -160,7 +170,7 @@ export class PostResolver {
         @Arg("slogan", { nullable: true }) slogan: string,
         @Arg("postCover", { nullable: true }) postCover: string,
         @Arg("content", { nullable: true }) content: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<PostResponse> {
         let errors = [];
         let post;
@@ -172,8 +182,10 @@ export class PostResolver {
                 message: "You are not authorized to update a post",
             });
         } else {
-            post = await Post.findOne({
-                id: postId,
+            post = await this.postRepository.findOne({
+                where: {
+                    id: postId,
+                },
             });
 
             if (!post) {
@@ -192,40 +204,40 @@ export class PostResolver {
                 } else {
                     try {
                         if (payload.role === "admin" && payload.id !== post.authorId) {
-                            await Post.update(
+                            await this.postRepository.update(
                                 {
                                     id: postId,
                                 },
                                 {
-                                    slug: slug,
+                                    slug,
                                     draft: true,
-                                    title: title,
-                                    description: description,
-                                    slogan: slogan,
-                                    postCover: postCover,
-                                    content: content,
+                                    title,
+                                    description,
+                                    slogan,
+                                    postCover,
+                                    content,
                                 }
                             );
                         } else {
-                            await Post.update(
+                            await this.postRepository.update(
                                 {
                                     id: postId,
                                     authorId: payload.id,
                                 },
                                 {
-                                    slug: slug,
+                                    slug,
                                     draft: true,
-                                    title: title,
-                                    description: description,
-                                    slogan: slogan,
-                                    postCover: postCover,
-                                    content: content,
+                                    title,
+                                    description,
+                                    slogan,
+                                    postCover,
+                                    content,
                                     author: await User.findOne({
                                         where: {
                                             id: payload.id,
                                             role: payload.role,
                                         },
-                                    }),
+                                    }) as User,
                                 }
                             );
                         }
@@ -254,7 +266,7 @@ export class PostResolver {
     @UseMiddleware(isAuth)
     async publishPost(
         @Arg("postId", () => Int) postId: number,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<PostResponse> {
         let errors = [];
         let post;
@@ -263,8 +275,10 @@ export class PostResolver {
         if (!payload || (payload && payload.role === "user")) {
             status = "You are not authorizated to publish a post.";
         } else {
-            post = await Post.findOne({
-                id: postId,
+            post = await this.postRepository.findOne({
+                where: {
+                    id: postId,
+                }
             });
 
             if (!post) {
@@ -310,22 +324,24 @@ export class PostResolver {
 
                 if (errors.length === 0) {
                     if (payload.role === "admin" && payload.id !== post.authorId) {
-                        await Post.update(
+                        await this.postRepository.update(
                             {
                                 id: postId,
                             },
                             {
                                 draft: false,
+                                publishedOn: new Date(),
                             }
                         );
                     } else {
-                        await Post.update(
+                        await this.postRepository.update(
                             {
                                 id: postId,
                                 authorId: payload.id,
                             },
                             {
                                 draft: false,
+                                publishedOn: new Date(),
                             }
                         );
                     }
@@ -351,7 +367,7 @@ export class PostResolver {
         @Arg("slogan", { nullable: true }) slogan: string,
         @Arg("postCover", { nullable: true }) postCover: string,
         @Arg("content", { nullable: true }) content: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<PostResponse> {
         let errors = [];
         let post;
@@ -360,8 +376,10 @@ export class PostResolver {
         if (!payload || (payload && payload.role === "user")) {
             status = "You are not authorizated to edit a published post.";
         } else {
-            post = await Post.findOne({
-                id: postId,
+            post = await this.postRepository.findOne({
+                where: { 
+                    id: postId,
+                },
             });
 
             if (!post) {
@@ -413,38 +431,38 @@ export class PostResolver {
 
                 if (errors.length === 0) {
                     if (payload.role === "admin" && payload.id !== post.authorId) {
-                        await Post.update(
+                        await this.postRepository.update(
                             {
                                 id: postId,
                             },
                             {
-                                slug: slug,
-                                title: title,
-                                description: description,
-                                slogan: slogan,
-                                postCover: postCover,
-                                content: content,
+                                slug,
+                                title,
+                                description,
+                                slogan,
+                                postCover,
+                                content,
                                 draft: false,
                                 isEdited: true,
                             }
                         );
                     } else {
-                        await Post.update(
+                        await this.postRepository.update(
                             {
                                 id: postId,
                                 authorId: payload.id,
                             },
                             {
-                                slug: slug,
-                                title: title,
-                                description: description,
-                                slogan: slogan,
-                                postCover: postCover,
-                                content: content,
+                                slug,
+                                title,
+                                description,
+                                slogan,
+                                postCover,
+                                content,
                                 draft: false,
                                 author: await User.findOne({
                                     where: { id: payload.id, role: payload.role },
-                                }),
+                                }) as User,
                                 isEdited: true,
                             }
                         );
@@ -465,20 +483,22 @@ export class PostResolver {
     @UseMiddleware(isAuth)
     async unpublishPost(
         @Arg("postId", () => Int) postId: number,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ) {
         if (!payload || (payload && payload.role === "user")) {
             return false;
         }
 
-        const post = await Post.findOne({
-            id: postId,
+        const post = await this.postRepository.findOne({
+            where: {
+                id: postId,
+            },
         });
 
         if (!post) {
             return false;
         } else if (payload.role === "admin" && payload.id !== post.authorId) {
-            await Post.update(
+            await this.postRepository.update(
                 {
                     id: postId,
                 },
@@ -488,7 +508,7 @@ export class PostResolver {
                 }
             );
         } else {
-            await Post.update(
+            await this.postRepository.update(
                 {
                     id: postId,
                     authorId: payload.id,
@@ -507,27 +527,29 @@ export class PostResolver {
     @UseMiddleware(isAuth)
     async deletePost(
         @Arg("postId", () => Int) postId: number,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ) {
         if (!payload || (payload && payload.role === "user")) {
             return false;
         }
 
-        const post = await Post.findOne({
-            id: postId,
+        const post = await this.postRepository.findOne({
+            where: {
+                id: postId,
+            },
         });
 
         if (!post) {
             return false;
         } else if (payload.role === "admin" && payload.id !== post.authorId) {
-            await Post.delete({ id: postId }).catch(
+            await this.postRepository.delete({ id: postId }).catch(
                 (error) => {
                     console.error(error);
                     return false;
                 }
             );
         } else {
-            await Post.delete({ id: postId, authorId: payload.id }).catch(
+            await this.postRepository.delete({ id: postId, authorId: payload.id }).catch(
                 (error) => {
                     console.error(error);
                     return false;

@@ -70,6 +70,7 @@ const ViewPostButton = styled(LinkButton)`
     color: #ffffff;
     background-color: #000000;
 `;
+
 function EditPost() {
     const navigate = useNavigate();
     const params = useParams();

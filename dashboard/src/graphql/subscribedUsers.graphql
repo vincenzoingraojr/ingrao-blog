@@ -26,6 +26,7 @@ query subscribedUsers {
             createdAt
             isEdited
             updatedAt
+            publishedOn
         }
         issues {
             id

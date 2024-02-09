@@ -27,5 +27,6 @@ query draftPostFeed {
         createdAt
         isEdited
         updatedAt
+        publishedOn
     }
 }

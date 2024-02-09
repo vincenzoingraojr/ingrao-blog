@@ -27,5 +27,6 @@ query findPost($id: Int) {
         createdAt
         isEdited
         updatedAt
+        publishedOn
     }
 }

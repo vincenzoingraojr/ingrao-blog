@@ -145,7 +145,7 @@ function Logout() {
                             onClick={async () => {
                                 await logout();
                                 setAccessToken("");
-                                await client!.resetStore();
+                                await client.resetStore();
                                 navigate(0);
                             }}
                         >

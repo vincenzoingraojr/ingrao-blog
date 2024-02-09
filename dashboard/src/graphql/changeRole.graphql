@@ -33,6 +33,7 @@ mutation changeRole(
                 createdAt
                 isEdited
                 updatedAt
+                publishedOn
             }
             issues {
                 id

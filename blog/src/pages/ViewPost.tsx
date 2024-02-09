@@ -181,7 +181,7 @@ function ViewPost() {
             const publishDate = new Date(
                 parseInt(
                     data.findPostBySlug
-                        .createdAt
+                        .publishedOn as string
                 )
             ).toLocaleString("en-us", {
                 month: "long",

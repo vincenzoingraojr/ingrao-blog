@@ -78,7 +78,7 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
 
     useEffect(() => {
         if (post) {
-            const publishDate = new Date(parseInt(post.createdAt)).toLocaleString("en-us", {
+            const publishDate = new Date(parseInt(post.publishedOn)).toLocaleString("en-us", {
                 month: "long",
                 day: "numeric",
                 year: "numeric",

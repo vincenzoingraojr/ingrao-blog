@@ -45,6 +45,7 @@ mutation signup(
                 createdAt
                 isEdited
                 updatedAt
+                publishedOn
             }
             comments {
                 id

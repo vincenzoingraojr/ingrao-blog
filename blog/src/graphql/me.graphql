@@ -26,6 +26,7 @@ query Me($origin: String!) {
             createdAt
             isEdited
             updatedAt
+            publishedOn
         }
         comments {
             id

@@ -82,7 +82,7 @@ function DeleteAccount() {
                                                                     
                                                                     if (response.data?.deleteAccount.ok) {
                                                                         setAccessToken("");
-                                                                        await client!.resetStore();
+                                                                        await client.resetStore();
                                                                         navigate(0);
                                                                     }
                                                                 }}

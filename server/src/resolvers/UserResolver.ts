@@ -10,9 +10,9 @@ import {
     Resolver,
     UseMiddleware,
 } from "type-graphql";
-import { MoreThan, getConnection, getRepository} from "typeorm";
+import { MoreThan, Not, Repository } from "typeorm";
 import argon2 from "argon2";
-import { MyContext } from "../types";
+import { AuthContext } from "../types";
 import { sendRefreshToken } from "../auth/sendRefreshToken";
 import { createAccessToken, createRefreshToken } from "../auth/auth";
 import { verify } from "jsonwebtoken";
@@ -24,26 +24,28 @@ import { FieldError } from "./common";
 import { isAuth } from "../middleware/isAuth";
 import aws from "aws-sdk";
 import axios from "axios";
+import appDataSource from "../dataSource";
+import { createDateArray } from "../helpers/createDateArray";
 
 @ObjectType()
 export class UserResponse {
-    @Field(() => [FieldError], { nullable: true })
+    @Field(() => [FieldError], { nullable: true, defaultValue: [] })
     errors?: FieldError[];
 
     @Field(() => User, { nullable: true })
-    user?: User;
+    user?: User | null;
 
-    @Field(() => String, { nullable: true })
+    @Field(() => String, { nullable: true, defaultValue: "" })
     accessToken?: string;
 
-    @Field(() => String, { nullable: true })
+    @Field(() => String, { nullable: true, defaultValue: "" })
     status?: string;
 }
 
 @ObjectType()
 class ExtendedUserResponse extends UserResponse {
-    @Field(() => Boolean, { nullable: true })
-    ok?: boolean;
+    @Field(() => Boolean, { nullable: true, defaultValue: false })
+    ok: boolean;
 }
 
 @ObjectType()
@@ -84,8 +86,16 @@ export class UserFrequenciesResponse {
 
 @Resolver(User)
 export class UserResolver {
+    private readonly userRepository: Repository<User>;
+    private readonly viewLogRepository: Repository<ViewLog>;
+
+    constructor() {
+        this.userRepository = appDataSource.getRepository(User);
+        this.viewLogRepository = appDataSource.getRepository(ViewLog);
+    }
+
     @Query(() => User, { nullable: true })
-    me(@Arg("origin") origin: string, @Ctx() context: MyContext) {
+    me(@Arg("origin") origin: string, @Ctx() context: AuthContext) {
         const authorization = context.req.headers["authorization"];
 
         let user;
@@ -102,12 +112,12 @@ export class UserResolver {
             );
 
             if (origin === "dash") {
-                user = User.findOne({
+                user = this.userRepository.findOne({
                     where: { id: payload.id },
                     relations: ["posts", "issues", "comments"],
                 });
             } else {
-                user = User.findOne({
+                user = this.userRepository.findOne({
                     where: { id: payload.id },
                     relations: ["comments"],
                 });
@@ -122,15 +132,16 @@ export class UserResolver {
 
     @Query(() => User, { nullable: true })
     findUser(@Arg("id", () => Int, { nullable: true }) id: number) {
-        return User.findOne({ where: { id }, relations: ["posts", "issues", "comments"] });
+        return appDataSource.manager.findOne(User, { where: { id }, relations: ["posts", "issues", "comments"] });
     }
 
     @Query(() => [User])
     dashUsers() {
-        return getRepository(User)
-            .createQueryBuilder()
-            .where("role != :role", { role: "user" })
-            .getMany();
+        return this.userRepository.find({
+            where: {
+                role: Not("user"),
+            },
+        });
     }
 
     @Mutation(() => UserResponse, { nullable: true })
@@ -138,7 +149,7 @@ export class UserResolver {
         @Arg("email") email: string,
         @Arg("password") password: string,
         @Arg("origin") origin: string,
-        @Ctx() { res }: MyContext
+        @Ctx() { res }: AuthContext
     ): Promise<UserResponse> {
         const ses = new aws.SES({
             credentials: {
@@ -149,18 +160,18 @@ export class UserResolver {
         });
 
         let errors = [];
-        let user;
-        let accessToken;
-        let status;
+        let user = null;
+        let accessToken = "";
+        let status = "";
 
         if (origin === "dash") {
-            user = await User.findOne({
-                where: { email: email },
+            user = await this.userRepository.findOne({
+                where: { email },
                 relations: ["posts", "issues", "comments"],
             });
         } else {
-            user = await User.findOne({
-                where: { email: email },
+            user = await this.userRepository.findOne({
+                where: { email },
                 relations: ["comments"],
             });
         }
@@ -306,13 +317,13 @@ export class UserResolver {
             });
         }
 
-        let user;
-        let status;
+        let user = null;
+        let status = "";
         const hashedPassword = await argon2.hash(password);
 
         if (errors.length === 0) {
             try {
-                const result = await getConnection()
+                const result = await this.userRepository
                     .createQueryBuilder()
                     .insert()
                     .into(User)
@@ -355,7 +366,7 @@ export class UserResolver {
     }
 
     @Mutation(() => Boolean)
-    async logout(@Ctx() { res }: MyContext) {
+    async logout(@Ctx() { res }: AuthContext) {
         sendRefreshToken(res, "");
 
         return true;
@@ -363,8 +374,7 @@ export class UserResolver {
 
     @Mutation(() => Boolean)
     async revokeRefreshTokensForUser(@Arg("id", () => Number) id: number) {
-        await getConnection()
-            .getRepository(User)
+        await this.userRepository
             .increment({ id: id }, "tokenVersion", 1);
 
         return true;
@@ -381,7 +391,7 @@ export class UserResolver {
                 token,
                 process.env.ACCESS_TOKEN_SECRET!
             );
-            await User.update(
+            await this.userRepository.update(
                 {
                     id: payload.id,
                 },
@@ -418,7 +428,7 @@ export class UserResolver {
         });
 
         let errors = [];
-        let user;
+        let user = null;
         let status = "";
 
         if (!email.includes("@") || email === "" || email === null) {
@@ -531,7 +541,7 @@ export class UserResolver {
                     token,
                     process.env.ACCESS_TOKEN_SECRET!
                 );
-                await User.update(
+                await this.userRepository.update(
                     {
                         id: payload.id,
                     },
@@ -563,7 +573,7 @@ export class UserResolver {
         @Arg("gender") gender: string,
         @Arg("role") role: string,
         @Arg("birthDate") birthDate: Date,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         const ses = new aws.SES({
             credentials: {
@@ -574,8 +584,8 @@ export class UserResolver {
         });
 
         let errors = [];
-        let user;
-        let status;
+        let user = null;
+        let status = "";
 
         if (payload && payload.role === "admin") {
             if (!email.includes("@") || email === "" || email === null) {
@@ -623,7 +633,7 @@ export class UserResolver {
 
             if (errors.length === 0) {
                 try {
-                    const result = await getConnection()
+                    const result = await this.userRepository
                         .createQueryBuilder()
                         .insert()
                         .into(User)
@@ -748,7 +758,7 @@ export class UserResolver {
                     token,
                     process.env.ACCESS_TOKEN_SECRET!
                 );
-                await User.update(
+                await this.userRepository.update(
                     {
                         id: payload.id,
                         role: payload.role,
@@ -781,10 +791,10 @@ export class UserResolver {
         @Arg("title") title: string,
         @Arg("gender") gender: string,
         @Arg("origin") origin: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let errors = [];
-        let user;
+        let user = null;
         let status = "";
 
         if (firstName === "" || firstName === null) {
@@ -816,7 +826,7 @@ export class UserResolver {
             status = "You are not authenticated.";
         } else if (errors.length === 0) {
             try {
-                await User.update(
+                await this.userRepository.update(
                     {
                         id: payload.id,
                     },
@@ -830,12 +840,12 @@ export class UserResolver {
                 );
 
                 if (origin === "dash") {
-                    user = await User.findOne({
+                    user = await this.userRepository.findOne({
                         where: { id: payload.id },
                         relations: ["posts", "issues", "comments"],
                     });
                 } else {
-                    user = await User.findOne({
+                    user = await this.userRepository.findOne({
                         where: { id: payload.id },
                         relations: ["comments"],
                     });
@@ -861,7 +871,7 @@ export class UserResolver {
         @Arg("email") email: string,
         @Arg("confirmEmail") confirmEmail: string,
         @Arg("origin") origin: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let transporter = nodemailer.createTransport({
             host: "authsmtp.securemail.pro",
@@ -904,14 +914,14 @@ export class UserResolver {
         }
 
         let status = "";
-        let user;
+        let user = null;
         if (origin === "dash") {
-            user = await User.findOne({
+            user = await this.userRepository.findOne({
                 where: { id: payload?.id },
                 relations: ["posts", "issues", "comments"],
             });
         } else {
-            user = await User.findOne({
+            user = await this.userRepository.findOne({
                 where: { id: payload?.id },
                 relations: ["comments"],
             });
@@ -933,7 +943,7 @@ export class UserResolver {
             }/settings/account/verify-email/${token}`;
 
             try {
-                await User.update(
+                await this.userRepository.update(
                     {
                         id: payload.id,
                     },
@@ -985,7 +995,7 @@ export class UserResolver {
     @UseMiddleware(isAuth)
     async authSendVerificationEmail(
         @Arg("origin") origin: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let transporter = nodemailer.createTransport({
             host: "authsmtp.securemail.pro",
@@ -1002,14 +1012,14 @@ export class UserResolver {
 
         let status = "";
         
-        let user: User | undefined;
+        let user: User | null = null;
         if (origin === "dash") {
-            user = await User.findOne({
+            user = await this.userRepository.findOne({
                 where: { id: payload?.id },
                 relations: ["posts", "issues", "comments"],
             });
         } else {
-            user = await User.findOne({
+            user = await this.userRepository.findOne({
                 where: { id: payload?.id },
                 relations: ["comments"],
             });
@@ -1035,15 +1045,17 @@ export class UserResolver {
                     function (error, data) {
                         if (error) {
                             console.log(error);
-                        } else {
+                        } else if (user) {
                             transporter.sendMail({
                                 from: "Support Team | ingrao.blog <support@ingrao.blog>",
-                                to: user?.email,
+                                to: user.email,
                                 subject: "Verify your email address",
                                 html: data,
                             });
                             status =
                                 "Check your inbox, we just sent you an email with the instructions to verify your email address.";
+                        } else {
+                            console.log("User not found.");
                         }
                     }
                 );
@@ -1065,7 +1077,7 @@ export class UserResolver {
         @Arg("password") password: string,
         @Arg("confirmPassword") confirmPassword: string,
         @Arg("origin") origin: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let errors = [];
 
@@ -1105,14 +1117,14 @@ export class UserResolver {
         }
 
         let status = "";
-        let user;
+        let user = null;
         if (origin === "dash") {
-            user = await User.findOne({
+            user = await this.userRepository.findOne({
                 where: { id: payload?.id },
                 relations: ["posts", "issues", "comments"],
             });
         } else {
-            user = await User.findOne({
+            user = await this.userRepository.findOne({
                 where: { id: payload?.id },
                 relations: ["comments"],
             });
@@ -1134,7 +1146,7 @@ export class UserResolver {
         } else if (errors.length === 0) {
             try {
                 
-                await User.update(
+                await this.userRepository.update(
                     {
                         id: payload.id,
                     },
@@ -1161,10 +1173,10 @@ export class UserResolver {
     async changeRole(
         @Arg("id", () => Int) id: number,
         @Arg("role") role: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let errors = [];
-        let user;
+        let user = null;
         let status = "";
 
         if (role === "Role" || role === "") {
@@ -1178,7 +1190,7 @@ export class UserResolver {
             status = "You are not authenticated.";
         } else if (errors.length === 0 && payload.role === "admin") {
             try {
-                await User.update(
+                await this.userRepository.update(
                     {
                         id: id,
                     },
@@ -1189,7 +1201,7 @@ export class UserResolver {
 
                 status = "The user role has been changed.";
                 
-                user = await User.findOne({
+                user = await this.userRepository.findOne({
                     where: { id: id },
                     relations: ["posts", "issues", "comments"],
                 });
@@ -1213,11 +1225,11 @@ export class UserResolver {
     @UseMiddleware(isAuth)
     async deleteUserFromDashboard(
         @Arg("id", () => Int) id: number,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<UserResponse> {
         let status = "";
 
-        const user = await User.findOne({
+        const user = await this.userRepository.findOne({
             where: { id: id },
             relations: ["posts", "issues", "comments"],
         });
@@ -1227,7 +1239,7 @@ export class UserResolver {
         } else if (!user) {
             status = "This user doesn't exist.";
         } else if (payload.role === "admin") {
-            await User.remove(user).then(() => {
+            await this.userRepository.remove(user).then(() => {
                 status = "This user has been deleted.";
             }).catch(() => {
                 status = "An error has occurred while deleting this user. Please try again later.";
@@ -1243,32 +1255,32 @@ export class UserResolver {
     @UseMiddleware(isAuth)
     async deleteAccount(
         @Arg("origin") origin: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<ExtendedUserResponse> {
         let status = "";
-        let ok;
+        let ok = false;
 
         if (!payload) {
             status = "You are not authenticated.";
         } else {
             let user;
             if (origin === "dash") {
-                user = await User.findOne({
+                user = await this.userRepository.findOne({
                     where: { id: payload.id },
                     relations: ["posts", "issues", "comments"],
                 });
             } else {
-                user = await User.findOne({
+                user = await this.userRepository.findOne({
                     where: { id: payload.id },
                     relations: ["comments"],
                 });
             }
 
-            if (user?.profilePicture !== "" && user?.profilePicture !== null) {
-                await axios.delete(user?.profilePicture!);
+            if (user && user.profilePicture !== "" && user.profilePicture !== null) {
+                await axios.delete(user.profilePicture);
             }
 
-            let adminUsers = await User.find({
+            let adminUsers = await this.userRepository.find({
                 where: { role: "admin" }, 
             });
 
@@ -1276,7 +1288,7 @@ export class UserResolver {
                 status = "You can't delete your account because you are the only admin of ingrao.blog.";
                 ok = false;
             } else {
-                await User.remove(user!).then(() => {
+                await this.userRepository.remove(user!).then(() => {
                     status = "Your data has been deleted.";
                     ok = true;
                 }).catch(() => {
@@ -1308,7 +1320,7 @@ export class UserResolver {
         });
 
         let errors = [];
-        let status;
+        let status = "";
 
         if (!email.includes("@") || email === "" || email === null) {
             errors.push({
@@ -1390,7 +1402,7 @@ export class UserResolver {
     @UseMiddleware(isAuth)
     async viewPage(
         @Arg("pathname", { nullable: false }) pathname: string,
-        @Ctx() { payload, req }: MyContext
+        @Ctx() { payload, req }: AuthContext
     ) {
         const uniqueIdentifier = req.cookies["uid"];
 
@@ -1399,7 +1411,7 @@ export class UserResolver {
         }
 
         if (!payload) {
-            await ViewLog.create({
+            await this.viewLogRepository.create({
                 pathname,
                 uniqueIdentifier,
                 isAuth: false,
@@ -1407,7 +1419,7 @@ export class UserResolver {
 
             return true;
         } else {
-            await ViewLog.create({
+            await this.viewLogRepository.create({
                 pathname,
                 userId: payload.id,
                 uniqueIdentifier,
@@ -1424,47 +1436,38 @@ export class UserResolver {
         let viewsVariation = 0;
         let uniqueVisitors = 0;
         let uniqueVisitorsVariation = 0;
-        let viewsByDay: { views: number; date: Date }[] = [];
+        let viewsByDay: { date: string; views: number; }[] = [];
+
+        const pinDate = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000);
+
+        const viewLogsDateArray = createDateArray(pinDate, new Date());
 
         const viewLogs = await ViewLog.find({
             where: {
-                createdAt: MoreThan(new Date(Date.now() - 28 * 24 * 60 * 60 * 1000))
+                createdAt: MoreThan(pinDate)
             },
         });
 
-        const viewLogRepository = getRepository(ViewLog);
-
         const startDate = new Date(Date.now() - 56 * 24 * 60 * 60 * 1000);
-        const endDate = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000);
 
-        const pastViewLogs = await viewLogRepository
+        const pastViewLogs = await this.viewLogRepository
             .createQueryBuilder("viewLog")
             .where("viewLog.createdAt >= :startDate", { startDate })
-            .andWhere("viewLog.createdAt < :endDate", { endDate })
+            .andWhere("viewLog.createdAt < :endDate", { pinDate })
             .getMany();
 
         if (viewLogs && viewLogs.length > 0) {
             views = viewLogs.length;
             uniqueVisitors = new Set(viewLogs.map((viewLog) => viewLog.uniqueIdentifier)).size;
-            viewsByDay = viewLogs.reduce((acc, viewLog) => {
-                const date = new Date(viewLog.createdAt);
-                const dateIndex = acc.findIndex((item) => {
-                    return (
-                        item.date.getDate() === date.getDate() &&
-                        item.date.getMonth() === date.getMonth() &&
-                        item.date.getFullYear() === date.getFullYear()
-                    );
-                });
-                if (dateIndex === -1) {
-                    acc.push({
-                        views: 1,
-                        date,
-                    });
-                } else {
-                    acc[dateIndex].views += 1;
-                }
-                return acc;
-            }, [] as { views: number; date: Date }[]);
+            viewsByDay = viewLogsDateArray.map((date) => {
+                const formattedDate = date.toISOString().split('T')[0];
+                const views = viewLogs.filter((log) => log.createdAt.toISOString().split('T')[0] === formattedDate).length;
+            
+                return {
+                    date: formattedDate,
+                    views: views,
+                };
+            });
             
             if (pastViewLogs && pastViewLogs.length > 0) {
                 const pastViews = pastViewLogs.length;
@@ -1490,7 +1493,7 @@ export class UserResolver {
 
     @Query(() => UserFrequenciesResponse)
     async userFrequencies() {
-        const viewLogs = await ViewLog.find({
+        const viewLogs = await this.viewLogRepository.find({
             where: {
                 createdAt: MoreThan(new Date(Date.now() - 28 * 24 * 60 * 60 * 1000))
             },

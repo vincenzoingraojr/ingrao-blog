@@ -12,9 +12,11 @@ import {
 } from "type-graphql";
 import { FieldError } from "./common";
 import { isAuth } from "../middleware/isAuth";
-import { MyContext } from "../types";
+import { AuthContext } from "../types";
 import { User } from "../entities/User";
 import { v4 as uuidv4 } from "uuid";
+import { Repository } from "typeorm";
+import appDataSource from "../dataSource";
 
 @ObjectType()
 export class CommentResponse {
@@ -22,7 +24,7 @@ export class CommentResponse {
     errors?: FieldError[];
 
     @Field(() => Comment, { nullable: true })
-    comment?: Comment;
+    comment?: Comment | null;
 
     @Field(() => String, { nullable: true })
     status?: string;
@@ -30,11 +32,19 @@ export class CommentResponse {
 
 @Resolver(Comment)
 export class CommentResolver {
+    private readonly commentRepository: Repository<Comment>;
+    private readonly userRepository: Repository<User>;
+
+    constructor() {
+        this.commentRepository = appDataSource.getRepository(Comment);
+        this.userRepository = appDataSource.getRepository(User);
+    }
+    
     @Query(() => [Comment])
     postComments(
         @Arg("postId", () => Int, { nullable: true }) postId: number
     ) {
-        return Comment.find({
+        return this.commentRepository.find({
             order: {
                 createdAt: "DESC",
             },
@@ -50,7 +60,7 @@ export class CommentResolver {
     commentReplies(
         @Arg("commentId", () => String) commentId: string
     ) {
-        return Comment.find({
+        return this.commentRepository.find({
             order: {
                 createdAt: "ASC",
             },
@@ -64,9 +74,9 @@ export class CommentResolver {
     @Query(() => [Comment])
     @UseMiddleware(isAuth)
     personalComments(
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ) {
-        return Comment.find({
+        return this.commentRepository.find({
             order: {
                 createdAt: "DESC",
             },
@@ -83,7 +93,7 @@ export class CommentResolver {
         @Arg("content") content: string,
         @Arg("postId", () => Int) postId: number,
         @Arg("isReplyTo", () => String) isReplyTo: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<CommentResponse> {
         let errors = [];
         let comment;
@@ -102,13 +112,13 @@ export class CommentResolver {
             });
         } else if (errors.length === 0 && payload) {
             try {
-                comment = await Comment.create({
-                    content: content,
+                comment = await this.commentRepository.create({
+                    content,
                     commentId: uuidv4(),
-                    postId: postId,
+                    postId,
                     authorId: payload.id,
-                    isReplyTo: isReplyTo,
-                    author: await User.findOne({ where: { id: payload.id, role: payload.role } }),
+                    isReplyTo,
+                    author: await this.userRepository.findOne({ where: { id: payload.id, role: payload.role } }) as User,
                     isDeleted: false,
                     isEdited: false,
                 }).save();
@@ -133,7 +143,7 @@ export class CommentResolver {
     async updateComment(
         @Arg("commentId") commentId: string,
         @Arg("content") content: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ): Promise<CommentResponse> {
         let errors = [];
         let comment;
@@ -152,18 +162,18 @@ export class CommentResolver {
             });
         } else if (errors.length === 0) {
             try {
-                await Comment.update(
+                await this.commentRepository.update(
                     {
                         commentId,
                         authorId: payload.id,
                     },
                     {
-                        content: content,
+                        content,
                         isEdited: true,
                     },
                 );
                 
-                comment = await Comment.findOne({ where: { commentId, authorId: payload.id }, relations: ["author"] });
+                comment = await this.commentRepository.findOne({ where: { commentId, authorId: payload.id }, relations: ["author"] });
             } catch (error) {
                 console.log(error);
                 errors.push({
@@ -185,14 +195,14 @@ export class CommentResolver {
     async deleteComment(
         @Arg("commentId") commentId: string,
         @Arg("hasReplies") hasReplies: boolean,
-        @Ctx() { payload }: MyContext
+        @Ctx() { payload }: AuthContext
     ) {
         if (!payload) {
             return false;
         }
 
         if (hasReplies) {
-            await Comment.update(
+            await this.commentRepository.update(
                 {
                     commentId,
                     authorId: payload.id,
@@ -205,7 +215,7 @@ export class CommentResolver {
                 return false;
             });
         } else {
-            await Comment.delete({ commentId, authorId: payload.id }).catch((error) => {
+            await this.commentRepository.delete({ commentId, authorId: payload.id }).catch((error) => {
                 console.error(error);
                 return false;
             });

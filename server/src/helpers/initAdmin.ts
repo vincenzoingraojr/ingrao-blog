@@ -1,11 +1,14 @@
 import { User } from "../entities/User";
-import { getConnection } from "typeorm";
 import { createAccessToken } from "../auth/auth";
 import aws from "aws-sdk";
 import ejs from "ejs";
 import path from "path";
+import appDataSource from "../dataSource";
+import { Not } from "typeorm";
 
 export async function initAdmin() {
+    const userRepository = appDataSource.getRepository(User);
+
     const ses = new aws.SES({
         credentials: {
             accessKeyId: process.env.SES_KEY_ID!,
@@ -14,16 +17,16 @@ export async function initAdmin() {
         region: "eu-south-1",
     });
 
-    let users = await User.find({
-        where: { role: "admin" || "writer" },
+    let users = await userRepository.find({
+        where: { role: Not("user") },
     });
 
-    let adminUser = await User.findOne({
+    let adminUser = await userRepository.findOne({
         where: { email: process.env.PERSONAL_EMAIL },
     });
 
     if (!adminUser && users.length === 0) {
-        const result = await getConnection()
+        const result = await userRepository
             .createQueryBuilder()
             .insert()
             .into(User)

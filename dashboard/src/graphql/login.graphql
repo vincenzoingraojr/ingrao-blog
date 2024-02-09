@@ -27,6 +27,7 @@ mutation Login($email: String!, $password: String!, $origin: String!) {
                 createdAt
                 isEdited
                 updatedAt
+                publishedOn
             }
             issues {
                 id

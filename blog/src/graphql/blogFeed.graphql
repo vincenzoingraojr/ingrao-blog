@@ -27,5 +27,6 @@ query blogFeed {
         createdAt
         isEdited
         updatedAt
+        publishedOn
     }
 }
