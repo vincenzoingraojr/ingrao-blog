@@ -202,7 +202,7 @@ function ViewPost() {
         <>
             <Head
                 title={`${data?.findPostBySlug?.title} | ingrao.blog`}
-                description={`In this page you can read "${data?.findPostBySlug?.title}", a post by ${data?.findPostBySlug?.author.firstName} ${data?.findPostBySlug?.author.lastName}.`}
+                description={`${data?.findPostBySlug?.description}. Written by ${data?.findPostBySlug?.author.firstName} ${data?.findPostBySlug?.author.lastName}`}
                 blogPost={true}
                 image={data?.findPostBySlug?.postCover!}
             />
