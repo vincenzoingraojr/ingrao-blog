@@ -372,20 +372,20 @@ function Nav() {
                         >
                             <ProfileInfoContainer>
                                 <ProfileName>
-                                    {data?.me?.firstName} {data?.me?.lastName}
+                                    {data.me.firstName} {data.me.lastName}
                                 </ProfileName>
-                                <ProfileEmail>{data?.me?.email}</ProfileEmail>
+                                <ProfileEmail>{data.me.email}</ProfileEmail>
                             </ProfileInfoContainer>
                             <ProfileImageContainer>
                                 <img
                                     src={
-                                        data?.me?.profilePicture !== "" &&
-                                        data?.me?.profilePicture !== null
-                                            ? data?.me?.profilePicture!
+                                        data.me.profilePicture !== "" &&
+                                        data.me.profilePicture !== null
+                                            ? data.me.profilePicture!
                                             : profilePicture
                                     }
-                                    title={`${data?.me?.firstName}'s profile picture`}
-                                    alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
+                                    title={`${data.me.firstName}'s profile picture`}
+                                    alt={`${data.me.firstName} ${data?.me?.lastName}`}
                                 />
                             </ProfileImageContainer>
                         </ProfileContainer>
@@ -493,7 +493,7 @@ function Nav() {
                                                     </MenuDirectionEntryText>
                                                 </NavLink>
                                             </MenuDirectionEntry>
-                                            {data?.me?.role === "admin" && (
+                                            {data && data.me && data.me.role === "admin" && (
                                                 <MenuDirectionEntry>
                                                     <a
                                                         href="https://dashboard.ingrao.blog"

@@ -8,13 +8,14 @@ html {
 }
 
 body {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
     gap: 48px;
     overflow: auto;
     margin-top: 0px;
     margin-bottom: 0px;
-    padding-top: 48px;
-    padding-bottom: 48px;
 }
 
 * {
@@ -45,6 +46,7 @@ header.page-header {
     align-items: center;
     justify-content: flex-start;
     gap: 24px;
+    padding-top: 48px;
 }
 
 header.page-header a {
@@ -86,7 +88,7 @@ header.page-header div.site-title span.blue-text {
     color: blue;
 }
 
-div.page-content {
+main.page-content {
     display: grid;
     gap: 48px;
 }
@@ -110,6 +112,7 @@ footer.page-footer {
     font-size: 16px;
     column-gap: 12px;
     row-gap: 4px;
+    height: 80px;
 }
 
 div.footer-item {
@@ -120,8 +123,10 @@ div.footer-item {
     body {
         margin-left: 16px;
         margin-right: 16px;
+    }
+
+    header.page-header {
         padding-top: 24px;
-        padding-bottom: 24px;
     }
 
     header.page-header a {

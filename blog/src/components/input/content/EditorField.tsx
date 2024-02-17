@@ -35,9 +35,9 @@ const EditorField: FunctionComponent<EditorFieldProps> = ({
 }) => {
     return (
         <EditorFieldWrapper>
-            {errors[field] ? (
+            {errors[field] && (
                 <EditorFieldError>{errors[field]}</EditorFieldError>
-            ) : null}
+            )}
             <EditorFieldContainer>
                 <Field name={field} component={TextEditorComponent} itemId={itemId} />
             </EditorFieldContainer>

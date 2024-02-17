@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import Arrow from "../icons/Arrow";
-import { Link, useNavigate, useNavigationType } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../icons/Logo";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
@@ -107,7 +107,6 @@ const AuthPageContent = styled.div`
 
 const AuthLayout: FunctionComponent<AuthLayoutProps> = ({ content }) => {
     const navigate = useNavigate();
-    const navigationType = useNavigationType();
 
     return (
         <AuthPage>
@@ -117,10 +116,10 @@ const AuthLayout: FunctionComponent<AuthLayoutProps> = ({ content }) => {
                     role="button"
                     aria-label="Go back"
                     onClick={() => {
-                        if (navigationType === "POP") {
-                            navigate("/");
-                        } else {
+                        if (window.history.length > 2) {
                             navigate(-1);
+                        } else {
+                            navigate("/");
                         }
                     }}
                 >

@@ -15,8 +15,8 @@ function VerifyEmail() {
 
     useEffect(() => {
         try {
-            const header = jwtDecode<JwtHeader>(params.token!);
-            const payload = jwtDecode<JwtPayload>(params.token!);
+            const header = jwtDecode<JwtHeader>(params.token as string);
+            const payload = jwtDecode<JwtPayload>(params.token as string);
             if (header && payload) {
                 console.log("Valid JWT token");
             }
@@ -54,21 +54,23 @@ function VerifyEmail() {
                                     params.token!
                                 );
 
-                                if (Date.now() >= exp! * 1000) {
+                                if (exp && Date.now() >= exp * 1000) {
                                     setStatus(
                                         "Your token is expired. Please repeat the email address verification."
                                     );
                                 } else {
-                                    setStatus(
-                                        response?.data?.verifyEmailAddress
-                                            .status
-                                    );
+                                    if (response.data) {
+                                        setStatus(
+                                            response.data.verifyEmailAddress
+                                                .status
+                                        );
+                                    }
                                 }
                             }}
                         >
                             {({ status }) => (
                                 <Form>
-                                    {status ? <Status>{status}</Status> : null}
+                                    {status && <Status>{status}</Status>}
                                     <AuthFormContent>
                                         <PageBlock>
                                             <AuthButton

@@ -2,6 +2,7 @@ import Head from "../components/Head";
 import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
 import StandardPageLayout from "../components/layouts/sublayouts/StandardPageLayout";
+import ErrorComponent from "../components/utils/ErrorComponent";
 import LoadingComponent from "../components/utils/LoadingComponent";
 import SearchBoxComponent from "../components/utils/SearchBox";
 import { useBlogFeedQuery } from "../generated/graphql";
@@ -22,15 +23,21 @@ function SearchPage() {
                         description="In this page you can search for a blog post."
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
-                                    <SearchBoxComponent
-                                        data={data?.blogFeed}
-                                        type="post"
-                                    />
+                                    <>
+                                        {(data && !error) ? (
+                                            <SearchBoxComponent
+                                                data={data.blogFeed}
+                                                type="post"
+                                            />
+                                        ) : (
+                                            <ErrorComponent />
+                                        )}
+                                    </>
                                 )}
                             </>
                         }       

@@ -76,12 +76,22 @@ const InputContainerField = styled.div`
     }
 `;
 
-const InputField: FunctionComponent<InputFieldProps> = ({
+interface TextFieldProps extends InputFieldProps {
+    inputRef: any;
+    isFocused: boolean;
+    setIsFocused: (value: React.SetStateAction<boolean>) => void;
+    form: any;
+}
+
+const TextField: FunctionComponent<TextFieldProps> = ({ 
     field,
     type,
     placeholder,
     value,
-    errors,
+    inputRef,
+    isFocused,
+    setIsFocused,
+    form,
 }) => {
     let isPassword = false;
     const [switchedType, setSwitchedType] = useState(false);
@@ -97,27 +107,88 @@ const InputField: FunctionComponent<InputFieldProps> = ({
         showType = "text";
     }
 
+    return (
+        <InputContainerField>
+            <Field
+                id={field}
+                as={type === "textarea" ? "textarea" : "input"}
+                aria-required
+                aria-label={placeholder}
+                autoCapitalize="none"
+                spellCheck="false"
+                autoComplete="off"
+                autoCorrect="off"
+                name={field}
+                type={isPassword ? showType : type}
+                onFocus={() => {
+                    setIsFocused(true);
+                }}
+                onBlur={(e: any) => {
+                    if (e.target.value.length === 0) {
+                        setIsFocused(false);
+                    }
+                }}
+                onChange={(e: any) => {
+                    form.setFieldValue(field, e.target.value);
+
+                    if (e.target.value.length > 0 || isFocused) {
+                        setIsFocused(true);
+                    } else {
+                        setIsFocused(false);
+                    }
+                }}
+                value={value}
+                innerRef={inputRef}
+            />
+            {isPassword ? (
+                <ControlContainer
+                    role="button"
+                    size={26}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFocused(true);
+                        setSwitchedType(!switchedType);
+
+                        if (inputRef && inputRef.current) {
+                            inputRef.current.focus();
+                        }
+                    }}
+                >
+                    <Eye mode={switchedType} />
+                </ControlContainer>
+            ) : null}
+        </InputContainerField>
+    )
+}
+
+const InputField: FunctionComponent<InputFieldProps> = ({
+    field,
+    type,
+    placeholder,
+    value,
+    errors,
+}) => {
     const [isFocused, setIsFocused] = useState(false);
 
     const inputField = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (inputField !== null && inputField.current?.value !== "") {
+        if (inputField && inputField.current && inputField.current.value.length > 0) {
             setIsFocused(true);
         }
-    }, [isFocused]);
+    }, []);
 
     return (
         <InputFieldWrapper>
-            {errors[field] ? (
+            {(errors && errors[field]) && (
                 <InputFieldError>{errors[field]}</InputFieldError>
-            ) : null}
+            )}
             <InputFieldContainer
                 onClick={() => {
                     setIsFocused(true);
 
-                    if (inputField !== null) {
-                        inputField.current?.focus();
+                    if (inputField && inputField.current) {
+                        inputField.current.focus();
                     }
                 }}
             >
@@ -127,39 +198,16 @@ const InputField: FunctionComponent<InputFieldProps> = ({
                     </LabelInputInfo>
                 </InputInfoContainer>
                 <InputContainer>
-                    <InputContainerField>
-                        <Field
-                            id={field}
-                            as={type === "textarea" ? "textarea" : "input"}
-                            aria-required
-                            aria-label={placeholder}
-                            autoCapitalize="none"
-                            spellCheck="false"
-                            autoComplete="off"
-                            autoCorrect="off"
-                            name={field}
-                            type={isPassword ? showType : type}
-                            onFocus={() => {
-                                setIsFocused(true);
-                            }}
-                            onBlur={() => {
-                                setIsFocused(false);
-                            }}
-                            value={value}
-                            innerRef={inputField}
-                        />
-                        {isPassword ? (
-                            <ControlContainer
-                                role="button"
-                                size={26}
-                                onClick={() => {
-                                    setSwitchedType(!switchedType);
-                                }}
-                            >
-                                <Eye mode={switchedType} />
-                            </ControlContainer>
-                        ) : null}
-                    </InputContainerField>
+                    <Field 
+                        field={field}
+                        component={TextField}
+                        placeholder={placeholder}
+                        inputRef={inputField}
+                        type={type}
+                        value={value}
+                        isFocused={isFocused}
+                        setIsFocused={setIsFocused}
+                    />
                 </InputContainer>
             </InputFieldContainer>
         </InputFieldWrapper>

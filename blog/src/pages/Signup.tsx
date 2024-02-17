@@ -4,7 +4,7 @@ import Head from "../components/Head";
 import DatePickerField from "../components/input/datepicker/DatePickerField";
 import InputField from "../components/input/InputField";
 import SelectField from "../components/input/select/SelectField";
-import { MeDocument, MeQuery, User, useSignupMutation } from "../generated/graphql";
+import { FieldError, MeDocument, MeQuery, User, useSignupMutation } from "../generated/graphql";
 import { AuthButton, AuthFormContent, AuthHalfInput, ModalContentContainer, PageBlock, PageText, PageTextMB24, Status } from "../styles/global";
 import { toErrorMap } from "../utils/toErrorMap";
 import styled from "styled-components";
@@ -63,33 +63,34 @@ function Signup() {
                         const response = await signup({
                             variables: values,
                             update: (store, { data }) => {
-                                if (data) {
+                                if (data && data.signup && data.signup.user) {
                                     store.writeQuery<MeQuery>({
                                         query: MeDocument,
                                         data: {
-                                            me: data.signup
-                                                ?.user as User,
+                                            me: data.signup.user as User,
                                         },
                                     });
                                 }
                             },
                         });
 
-                        if (response.data?.signup?.user) {
-                            setStatus(response.data.signup.status);
-                        } else {
-                            setStatus(null);
-                            setErrors(
-                                toErrorMap(
-                                    response.data?.signup?.errors!
-                                )
-                            );
+                        if (response.data && response.data.signup) {
+                            if (response.data.signup.user) {
+                                setStatus(response.data.signup.status);
+                            } else {
+                                setStatus(null);
+                                setErrors(
+                                    toErrorMap(
+                                        response.data.signup.errors as FieldError[]
+                                    )
+                                );
+                            }
                         }
                     }}
                 >
                     {({ errors, status }) => (
                         <Form>
-                            {status ? <Status>{status}</Status> : null}
+                            {status && <Status>{status}</Status>}
                             <AuthFormContent>
                                 <DatePickerField
                                     field="birthDate"

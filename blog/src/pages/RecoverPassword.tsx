@@ -41,27 +41,28 @@ function RecoverPassword() {
                                     variables: values,
                                 });
 
-                                if (
-                                    response.data?.sendRecoveryEmail.errors
-                                        ?.length !== 0
-                                ) {
-                                    setStatus(null);
-                                    setErrors(
-                                        toErrorMap(
-                                            response.data?.sendRecoveryEmail
-                                                .errors!
-                                        )
-                                    );
-                                } else {
-                                    setStatus(
-                                        response.data.sendRecoveryEmail.status
-                                    );
+                                if (response.data) {
+                                    if (
+                                        response.data.sendRecoveryEmail.errors && response.data.sendRecoveryEmail.errors.length > 0
+                                    ) {
+                                        setStatus(null);
+                                        setErrors(
+                                            toErrorMap(
+                                                response.data.sendRecoveryEmail
+                                                    .errors
+                                            )
+                                        );
+                                    } else {
+                                        setStatus(
+                                            response.data.sendRecoveryEmail.status
+                                        );
+                                    }
                                 }
                             }}
                         >
                             {({ errors, status }) => (
                                 <Form>
-                                    {status ? <Status>{status}</Status> : null}
+                                    {status && <Status>{status}</Status>}
                                     <AuthFormContent>
                                         <InputField
                                             field="email"

@@ -7,7 +7,7 @@ import StandardPageLayout from "../components/layouts/sublayouts/StandardPageLay
 import { Button, FlexContainer24, PageBlock, PageTextMB24, Status, WritingContainer } from "../styles/global";
 import { toErrorMap } from "../utils/toErrorMap";
 import styled from "styled-components";
-import { useSendMessageMutation } from "../generated/graphql";
+import { FieldError, useSendMessageMutation } from "../generated/graphql";
 
 const ContactButton = styled(Button)`
     background-color: blue;
@@ -50,21 +50,23 @@ function ContactPage() {
                                             variables: values,
                                         });
                                         
-                                        if (response.data?.sendMessage?.status) {
-                                            setStatus(response.data.sendMessage.status);
-                                        } else {
-                                            setStatus(null);
-                                            setErrors(
-                                                toErrorMap(
-                                                    response.data?.sendMessage?.errors!
-                                                )
-                                            );
+                                        if (response.data && response.data.sendMessage) {
+                                            if (response.data.sendMessage.status && response.data.sendMessage.status.length > 0) {
+                                                setStatus(response.data.sendMessage.status);
+                                            } else {
+                                                setStatus(null);
+                                                setErrors(
+                                                    toErrorMap(
+                                                        response.data.sendMessage.errors as FieldError[]
+                                                    )
+                                                );
+                                            }
                                         }
                                     }}
                                 >
                                     {({ errors, status }) => (
                                         <Form id="contact_form">
-                                            {status ? <Status>{status}</Status> : null}
+                                            {status && <Status>{status}</Status>}
                                             <FlexContainer24>
                                                 <InputField
                                                     field="name"

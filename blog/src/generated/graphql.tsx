@@ -468,7 +468,7 @@ export type UserResponse = {
 
 export type ViewByDay = {
   __typename?: 'ViewByDay';
-  date: Scalars['DateTime'];
+  date: Scalars['String'];
   views: Scalars['Int'];
 };
 

@@ -76,15 +76,19 @@ export class CommentResolver {
     personalComments(
         @Ctx() { payload }: AuthContext
     ) {
-        return this.commentRepository.find({
-            order: {
-                createdAt: "DESC",
-            },
-            where: {
-                authorId: payload?.id,
-            },
-            relations: ["author"],
-        });
+        if (payload) {
+            return this.commentRepository.find({
+                order: {
+                    createdAt: "DESC",
+                },
+                where: {
+                    authorId: payload.id,
+                },
+                relations: ["author"],
+            });
+        } else {
+            return [];
+        }
     }
 
     @Mutation(() => CommentResponse)
@@ -148,7 +152,7 @@ export class CommentResolver {
         let errors = [];
         let comment;
 
-        if (content == "" || content == null) {
+        if (content === "" || content === null) {
             errors.push({
                 field: "content",
                 message: "You can't update a comment by removing the content",

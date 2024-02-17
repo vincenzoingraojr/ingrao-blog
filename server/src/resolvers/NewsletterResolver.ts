@@ -61,16 +61,20 @@ export class NewsletterResolver {
     @Query(() => [Newsletter])
     @UseMiddleware(isAuth)
     newsletterPersonalFeed(@Ctx() { payload }: AuthContext) {
-        return this.newsletterRepository.find({
-            order: {
-                createdAt: "DESC",
-            },
-            where: {
-                authorId: payload?.id,
-                draft: false,
-            },
-            relations: ["author"],
-        });
+        if (payload) {
+            return this.newsletterRepository.find({
+                order: {
+                    createdAt: "DESC",
+                },
+                where: {
+                    authorId: payload.id,
+                    draft: false,
+                },
+                relations: ["author"],
+            });   
+        } else {
+            return [];
+        }
     }
 
     @Query(() => [Newsletter])
@@ -86,16 +90,20 @@ export class NewsletterResolver {
     @Query(() => [Newsletter])
     @UseMiddleware(isAuth)
     draftNewsletterFeed(@Ctx() { payload }: AuthContext) {
-        return this.newsletterRepository.find({
-            order: {
-                updatedAt: "DESC",
-            },
-            where: {
-                authorId: payload?.id,
-                draft: true,
-            },
-            relations: ["author"],
-        });
+        if (payload) {
+            return this.newsletterRepository.find({
+                order: {
+                    updatedAt: "DESC",
+                },
+                where: {
+                    authorId: payload.id,
+                    draft: true,
+                },
+                relations: ["author"],
+            });
+        } else {
+            return [];
+        }
     }
 
     @Query(() => Newsletter, { nullable: true })

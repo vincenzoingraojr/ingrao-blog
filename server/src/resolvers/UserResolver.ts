@@ -108,7 +108,7 @@ export class UserResolver {
             const token = authorization.split(" ")[1];
             const payload: any = verify(
                 token,
-                process.env.ACCESS_TOKEN_SECRET!
+                process.env.ACCESS_TOKEN_SECRET as string
             );
 
             if (origin === "dash") {
@@ -153,8 +153,8 @@ export class UserResolver {
     ): Promise<UserResponse> {
         const ses = new aws.SES({
             credentials: {
-                accessKeyId: process.env.SES_KEY_ID!,
-                secretAccessKey: process.env.SES_SECRET_KEY!,
+                accessKeyId: process.env.SES_KEY_ID as string,
+                secretAccessKey: process.env.SES_SECRET_KEY as string,
             },
             region: "eu-south-1",
         });
@@ -328,14 +328,14 @@ export class UserResolver {
                     .insert()
                     .into(User)
                     .values({
-                        email: email,
+                        email,
                         password: hashedPassword,
-                        firstName: firstName,
-                        lastName: lastName,
-                        title: title,
-                        gender: gender,
-                        birthDate: birthDate,
-                        newsletterSubscribed: newsletterSubscribed,
+                        firstName,
+                        lastName,
+                        title,
+                        gender,
+                        birthDate,
+                        newsletterSubscribed,
                         role: "user",
                         verified: false,
                     })
@@ -375,7 +375,7 @@ export class UserResolver {
     @Mutation(() => Boolean)
     async revokeRefreshTokensForUser(@Arg("id", () => Number) id: number) {
         await this.userRepository
-            .increment({ id: id }, "tokenVersion", 1);
+            .increment({ id }, "tokenVersion", 1);
 
         return true;
     }
@@ -389,7 +389,7 @@ export class UserResolver {
         try {
             const payload: any = verify(
                 token,
-                process.env.ACCESS_TOKEN_SECRET!
+                process.env.ACCESS_TOKEN_SECRET as string
             );
             await this.userRepository.update(
                 {
@@ -539,7 +539,7 @@ export class UserResolver {
             try {
                 const payload: any = verify(
                     token,
-                    process.env.ACCESS_TOKEN_SECRET!
+                    process.env.ACCESS_TOKEN_SECRET as string
                 );
                 await this.userRepository.update(
                     {
@@ -577,8 +577,8 @@ export class UserResolver {
     ): Promise<UserResponse> {
         const ses = new aws.SES({
             credentials: {
-                accessKeyId: process.env.SES_KEY_ID!,
-                secretAccessKey: process.env.SES_SECRET_KEY!,
+                accessKeyId: process.env.SES_KEY_ID as string,
+                secretAccessKey: process.env.SES_SECRET_KEY as string,
             },
             region: "eu-south-1",
         });
@@ -638,13 +638,13 @@ export class UserResolver {
                         .insert()
                         .into(User)
                         .values({
-                            email: email,
-                            firstName: firstName,
-                            lastName: lastName,
-                            title: title,
-                            gender: gender,
-                            birthDate: birthDate,
-                            role: role,
+                            email,
+                            firstName,
+                            lastName,
+                            title,
+                            gender,
+                            birthDate,
+                            role,
                             newsletterSubscribed: true,
                             verified: true,
                         })
@@ -756,7 +756,7 @@ export class UserResolver {
             try {
                 const payload: any = verify(
                     token,
-                    process.env.ACCESS_TOKEN_SECRET!
+                    process.env.ACCESS_TOKEN_SECRET as string
                 );
                 await this.userRepository.update(
                     {
@@ -831,11 +831,11 @@ export class UserResolver {
                         id: payload.id,
                     },
                     {
-                        firstName: firstName,
-                        lastName: lastName,
-                        profilePicture: profilePicture,
-                        title: title,
-                        gender: gender,
+                        firstName,
+                        lastName,
+                        profilePicture,
+                        title,
+                        gender,
                     },
                 );
 
@@ -915,74 +915,79 @@ export class UserResolver {
 
         let status = "";
         let user = null;
-        if (origin === "dash") {
-            user = await this.userRepository.findOne({
-                where: { id: payload?.id },
-                relations: ["posts", "issues", "comments"],
-            });
-        } else {
-            user = await this.userRepository.findOne({
-                where: { id: payload?.id },
-                relations: ["comments"],
-            });
-        }
 
-        if (!payload) {
-            status = "You are not authenticated.";
-        } else if (user && user.email === email) {
-            errors.push({
-                field: "email",
-                message: "The email address you entered is the one you are already using",
-            });
-        } else if (errors.length === 0) {
-            const token = createAccessToken(user!);
-            const link = `${
-                origin === "dash"
-                    ? process.env.DASHBOARD_ORIGIN
-                    : process.env.CLIENT_ORIGIN
-            }/settings/account/verify-email/${token}`;
+        if (payload) {
+            if (origin === "dash") {
+                user = await this.userRepository.findOne({
+                    where: { id: payload.id },
+                    relations: ["posts", "issues", "comments"],
+                });
+            } else {
+                user = await this.userRepository.findOne({
+                    where: { id: payload.id },
+                    relations: ["comments"],
+                });
+            }
 
-            try {
-                await this.userRepository.update(
-                    {
-                        id: payload.id,
-                    },
-                    {
-                        email: email,
-                        verified: false,
-                    },
-                );
+            if (user && user.email === email) {
+                errors.push({
+                    field: "email",
+                    message: "The email address you entered is the one you are already using",
+                });
+            }
 
-                ejs.renderFile(
-                    path.join(
-                        __dirname,
-                        "../helpers/templates/VerifyNewEmail.ejs"
-                    ),
-                    { link: link },
-                    function (error, data) {
-                        if (error) {
-                            console.log(error);
-                            status = "Could not send the email, check your internet connection.";
-                        } else {
-                            transporter.sendMail({
-                                from: "Support Team | ingrao.blog <support@ingrao.blog>",
-                                to: email,
-                                subject: "Verify your new email address",
-                                html: data,
-                            });
-                            status =
-                                "Check your inbox, we just sent you an email with the instructions to verify your new email address.";
+            if (user && errors.length === 0) {
+                const token = createAccessToken(user);
+                const link = `${
+                    origin === "dash"
+                        ? process.env.DASHBOARD_ORIGIN
+                        : process.env.CLIENT_ORIGIN
+                }/settings/account/verify-email/${token}`;
+
+                try {
+                    await this.userRepository.update(
+                        {
+                            id: payload.id,
+                        },
+                        {
+                            email,
+                            verified: false,
+                        },
+                    );
+
+                    ejs.renderFile(
+                        path.join(
+                            __dirname,
+                            "../helpers/templates/VerifyNewEmail.ejs"
+                        ),
+                        { link: link },
+                        function (error, data) {
+                            if (error) {
+                                console.log(error);
+                                status = "Could not send the email, check your internet connection.";
+                            } else {
+                                transporter.sendMail({
+                                    from: "Support Team | ingrao.blog <support@ingrao.blog>",
+                                    to: email,
+                                    subject: "Verify your new email address",
+                                    html: data,
+                                });
+                                status =
+                                    "Check your inbox, we just sent you an email with the instructions to verify your new email address.";
+                            }
                         }
+                    );
+                } catch (error) {
+                    console.error(error);
+                    if (error.code === "23505") {
+                        status = "A user using this email address already exists.";
+                    } else {
+                        status = "An error has occurred. Please try again later to edit your email address.";
                     }
-                );
-            } catch (error) {
-                console.error(error);
-                if (error.code === "23505") {
-                    status = "A user using this email address already exists.";
-                } else {
-                    status = "An error has occurred. Please try again later to edit your email address.";
                 }
             }
+        } else {
+            status = "You are not authenticated.";
         }
 
         return {
@@ -1013,55 +1018,58 @@ export class UserResolver {
         let status = "";
         
         let user: User | null = null;
-        if (origin === "dash") {
-            user = await this.userRepository.findOne({
-                where: { id: payload?.id },
-                relations: ["posts", "issues", "comments"],
-            });
-        } else {
-            user = await this.userRepository.findOne({
-                where: { id: payload?.id },
-                relations: ["comments"],
-            });
-        }
 
         if (!payload) {
             status = "You are not authenticated.";
-        } else if (user) {
-            const token = createAccessToken(user);
-            const link = `${
-                origin === "dash"
-                    ? process.env.DASHBOARD_ORIGIN
-                    : process.env.CLIENT_ORIGIN
-            }/settings/account/verify-email/${token}`;
+        } else {
+            if (origin === "dash") {
+                user = await this.userRepository.findOne({
+                    where: { id: payload.id },
+                    relations: ["posts", "issues", "comments"],
+                });
+            } else {
+                user = await this.userRepository.findOne({
+                    where: { id: payload.id },
+                    relations: ["comments"],
+                });
+            }
 
-            try {
-                ejs.renderFile(
-                    path.join(
-                        __dirname,
-                        "../helpers/templates/VerifyEmail.ejs"
-                    ),
-                    { link: link },
-                    function (error, data) {
-                        if (error) {
-                            console.log(error);
-                        } else if (user) {
-                            transporter.sendMail({
-                                from: "Support Team | ingrao.blog <support@ingrao.blog>",
-                                to: user.email,
-                                subject: "Verify your email address",
-                                html: data,
-                            });
-                            status =
-                                "Check your inbox, we just sent you an email with the instructions to verify your email address.";
-                        } else {
-                            console.log("User not found.");
+            if (user) {
+                const token = createAccessToken(user);
+                const link = `${
+                    origin === "dash"
+                        ? process.env.DASHBOARD_ORIGIN
+                        : process.env.CLIENT_ORIGIN
+                }/settings/account/verify-email/${token}`;
+
+                try {
+                    ejs.renderFile(
+                        path.join(
+                            __dirname,
+                            "../helpers/templates/VerifyEmail.ejs"
+                        ),
+                        { link: link },
+                        function (error, data) {
+                            if (error) {
+                                console.log(error);
+                            } else if (user) {
+                                transporter.sendMail({
+                                    from: "Support Team | ingrao.blog <support@ingrao.blog>",
+                                    to: user.email,
+                                    subject: "Verify your email address",
+                                    html: data,
+                                });
+                                status =
+                                    "Check your inbox, we just sent you an email with the instructions to verify your email address.";
+                            } else {
+                                console.log("User not found.");
+                            }
                         }
-                    }
-                );
-            } catch (error) {
-                console.error(error);
-                status = "Could not send the email, check your internet connection.";
+                    );
+                } catch (error) {
+                    console.error(error);
+                    status = "Could not send the email, check your internet connection.";
+                }
             }
         }
 
@@ -1118,16 +1126,19 @@ export class UserResolver {
 
         let status = "";
         let user = null;
-        if (origin === "dash") {
-            user = await this.userRepository.findOne({
-                where: { id: payload?.id },
-                relations: ["posts", "issues", "comments"],
-            });
-        } else {
-            user = await this.userRepository.findOne({
-                where: { id: payload?.id },
-                relations: ["comments"],
-            });
+
+        if (payload) {
+            if (origin === "dash") {
+                user = await this.userRepository.findOne({
+                    where: { id: payload.id },
+                    relations: ["posts", "issues", "comments"],
+                });
+            } else {
+                user = await this.userRepository.findOne({
+                    where: { id: payload.id },
+                    relations: ["comments"],
+                });
+            }
         }
 
         let valid = false;
@@ -1192,17 +1203,17 @@ export class UserResolver {
             try {
                 await this.userRepository.update(
                     {
-                        id: id,
+                        id,
                     },
                     {
-                        role: role
+                        role,
                     },
                 );
 
                 status = "The user role has been changed.";
                 
                 user = await this.userRepository.findOne({
-                    where: { id: id },
+                    where: { id },
                     relations: ["posts", "issues", "comments"],
                 });
             } catch (error) {
@@ -1230,7 +1241,7 @@ export class UserResolver {
         let status = "";
 
         const user = await this.userRepository.findOne({
-            where: { id: id },
+            where: { id },
             relations: ["posts", "issues", "comments"],
         });
 
@@ -1313,8 +1324,8 @@ export class UserResolver {
     ): Promise<UserResponse> {
         const ses = new aws.SES({
             credentials: {
-                accessKeyId: process.env.SES_KEY_ID!,
-                secretAccessKey: process.env.SES_SECRET_KEY!,
+                accessKeyId: process.env.SES_KEY_ID as string,
+                secretAccessKey: process.env.SES_SECRET_KEY as string,
             },
             region: "eu-south-1",
         });
@@ -1354,10 +1365,10 @@ export class UserResolver {
                     "../helpers/templates/MessageTemplate.ejs"
                 ),
                 {
-                    name: name,
-                    email: email,
-                    subject: subject,
-                    message: message,
+                    name,
+                    email,
+                    subject,
+                    message,
                 },
                 function (error, data) {
                     if (error) {

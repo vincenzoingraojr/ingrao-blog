@@ -37,8 +37,8 @@ const SidebarContainer = styled.nav`
 
     @media ${devices.tablet} {
         position: sticky;
-        top: 188px;
-        height: calc(100vh - 340px);
+        top: 140px;
+        height: calc(100vh - 292px);
     }
 `;
 

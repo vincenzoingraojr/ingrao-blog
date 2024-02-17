@@ -27,8 +27,8 @@ async function main() {
     app.use(cookieParser());
 
     const allowList = [
-        process.env.CLIENT_ORIGIN!,
-        process.env.DASHBOARD_ORIGIN!,
+        process.env.CLIENT_ORIGIN as string,
+        process.env.DASHBOARD_ORIGIN as string,
     ];
 
     app.use(
@@ -79,7 +79,7 @@ async function main() {
         let payload: any = null;
 
         try {
-            payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
+            payload = verify(token, process.env.REFRESH_TOKEN_SECRET as string);
         } catch (error) {
             console.error(error);
             return res.send({ ok: false, accessToken: "", role: "" });

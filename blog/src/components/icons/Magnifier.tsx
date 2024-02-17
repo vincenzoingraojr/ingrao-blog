@@ -4,7 +4,7 @@ import { SvgIcon } from "../../styles/global";
 import { IconProps } from "./common";
 
 interface MagnifierProps extends IconProps {
-    type: string;
+    type: "normal" | "small";
 }
 
 const MagnifierIcon = styled(SvgIcon).attrs(

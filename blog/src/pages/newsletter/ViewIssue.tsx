@@ -10,6 +10,7 @@ import LoadingComponent from "../../components/utils/LoadingComponent";
 import { devices } from "../../styles/devices";
 import { Editor } from "@ingrao-blog/editor";
 import { processDate } from "../../utils/processDate";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const IssueCoverImage = styled.div`
     display: block;
@@ -91,7 +92,7 @@ function ViewIssue() {
 
     const { data, loading, error } = useFindNewsletterByIdQuery({
         fetchPolicy: "network-only",
-        variables: { newsletterId: params.newsletterId! },
+        variables: { newsletterId: params.newsletterId as string },
     });
 
     useEffect(() => {
@@ -101,8 +102,10 @@ function ViewIssue() {
             } else {
                 navigate("/");
             }
-        } else {
+        } else if (loading) {
             console.log("Loading...");
+        } else {
+            console.log("Error: " + error?.message);
         }
     }, [navigate, data, loading, error]);
 
@@ -112,16 +115,18 @@ function ViewIssue() {
     const [contentReady, setContentReady] = useState(false);
 
     useEffect(() => {
-        const content = data?.findNewsletterById?.content;
+        if (data && data.findNewsletterById) {
+            const content = data.findNewsletterById.content;
 
-        if (content) {
-            setContentReady(true);
-            setIssueContent(JSON.parse(content));
-        } else {
-            setContentReady(false);
-            setIssueContent(undefined);
+            if (content) {
+                setContentReady(true);
+                setIssueContent(JSON.parse(content));
+            } else {
+                setContentReady(false);
+                setIssueContent(undefined);
+            }
         }
-    }, [data?.findNewsletterById?.content]);
+    }, [data]);
 
     const [date, setDate] = useState("");
 
@@ -145,69 +150,75 @@ function ViewIssue() {
     return (
         <>
             <Head
-                title={`${data?.findNewsletterById?.title} | ingrao.blog`}
-                description={`In this page you can read "${data?.findNewsletterById?.title}", a newsletter issue by ${data?.findNewsletterById?.author.firstName} ${data?.findNewsletterById?.author.lastName}.`}
+                title={loading ? ("Loading... | ingrao.blog") : ((data && data.findNewsletterById) ? `${data.findNewsletterById.title} | ingrao.blog` : "No data")}
+                description={loading ? ("Loading...") : ((data && data.findNewsletterById) ? `${data.findNewsletterById.subject}. Written by ${data.findNewsletterById.author.firstName} ${data.findNewsletterById.author.lastName}` : "No data")}
                 blogPost={true}
-                image={data?.findNewsletterById?.newsletterCover!}
+                image={data?.findNewsletterById?.newsletterCover as string}
             />
             <PageLayout
                 content={
                     <PageContentLayout
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
-                                    <IssueContainer>
-                                        <PageBlock>
-                                            <IssueSubject>
-                                                {data?.findNewsletterById?.subject}
-                                            </IssueSubject>
-                                        </PageBlock>
-                                        <IssueTitle>
-                                            {data?.findNewsletterById?.title}
-                                        </IssueTitle>
-                                        <IssueInfo>
-                                            <PageBlock>
-                                                By{" "}
-                                                <strong>
-                                                    {
-                                                        data?.findNewsletterById?.author
-                                                            .firstName
-                                                    }{" "}
-                                                    {
-                                                        data?.findNewsletterById?.author
-                                                            .lastName
-                                                    }
-                                                </strong>
-                                            </PageBlock>
-                                            <PageText>|</PageText>
-                                            <IssueDate>
-                                                {date}
-                                            </IssueDate>
-                                        </IssueInfo>
-                                        <IssueCoverImage>
-                                            <img
-                                                src={
-                                                    data?.findNewsletterById
-                                                        ?.newsletterCover!
-                                                }
-                                                title={`Cover of newsletter issue ${data?.findNewsletterById?.id}: ${data?.findNewsletterById?.title}`}
-                                                alt={`Cover of newsletter issue ${data?.findNewsletterById?.id}: ${data?.findNewsletterById?.title}`}
-                                            />
-                                        </IssueCoverImage>
-                                        {contentReady && (
-                                            <IssueContent>
-                                                <Editor
-                                                    readOnly={true}
-                                                    toolbarHidden={true}
-                                                    initialContentState={issueContent}
-                                                />
-                                            </IssueContent>
+                                    <>
+                                        {data && data.findNewsletterById && !error ? (
+                                            <IssueContainer>
+                                                <PageBlock>
+                                                    <IssueSubject>
+                                                        {data.findNewsletterById.subject}
+                                                    </IssueSubject>
+                                                </PageBlock>
+                                                <IssueTitle>
+                                                    {data.findNewsletterById.title}
+                                                </IssueTitle>
+                                                <IssueInfo>
+                                                    <PageBlock>
+                                                        By{" "}
+                                                        <strong>
+                                                            {
+                                                                data.findNewsletterById.author
+                                                                    .firstName
+                                                            }{" "}
+                                                            {
+                                                                data.findNewsletterById.author
+                                                                    .lastName
+                                                            }
+                                                        </strong>
+                                                    </PageBlock>
+                                                    <PageText>|</PageText>
+                                                    <IssueDate>
+                                                        {date}
+                                                    </IssueDate>
+                                                </IssueInfo>
+                                                <IssueCoverImage>
+                                                    <img
+                                                        src={
+                                                            data.findNewsletterById
+                                                                .newsletterCover as string
+                                                        }
+                                                        title={`Cover of newsletter issue ${data.findNewsletterById.id}: ${data.findNewsletterById.title}`}
+                                                        alt={`Cover of newsletter issue ${data.findNewsletterById.id}: ${data.findNewsletterById.title}`}
+                                                    />
+                                                </IssueCoverImage>
+                                                {contentReady && (
+                                                    <IssueContent>
+                                                        <Editor
+                                                            readOnly={true}
+                                                            toolbarHidden={true}
+                                                            initialContentState={issueContent}
+                                                        />
+                                                    </IssueContent>
+                                                )}
+                                            </IssueContainer>
+                                        ) : (
+                                            <ErrorComponent />
                                         )}
-                                    </IssueContainer>
+                                    </>
                                 )}
                             </>
                         }

@@ -4,6 +4,7 @@ import PageContentLayout from "../../components/layouts/sublayouts/PageContentLa
 import { SidebarLayoutTitle } from "../../components/layouts/sublayouts/SidebarLayout";
 import LoadingComponent from "../../components/utils/LoadingComponent";
 import {
+    FieldError,
     MeDocument,
     MeQuery,
     useEditProfileMutation,
@@ -31,6 +32,7 @@ import Upload from "../../components/icons/Upload";
 import Close from "../../components/icons/Close";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const ProfilePageContent = styled.div`
     display: block;
@@ -163,532 +165,552 @@ function ProfilePage() {
                             <ProfilePageComponent
                                 content={
                                     <>
-                                        {(loading && !data) || error ? (
+                                        {loading ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
                                         ) : (
                                             <>
-                                                <SidebarLayoutTitle>
-                                                    Welcome,{" "}
-                                                    {data?.me?.firstName}
-                                                </SidebarLayoutTitle>
-                                                <ProfilePageContent>
-                                                    <EditProfileFormContainer>
-                                                        <Formik
-                                                            initialValues={{
-                                                                firstName:
-                                                                    data?.me
-                                                                        ?.firstName ||
-                                                                    "",
-                                                                lastName:
-                                                                    data?.me
-                                                                        ?.lastName ||
-                                                                    "",
-                                                                profilePicture:
-                                                                    data?.me
-                                                                        ?.profilePicture ||
-                                                                    "",
-                                                                title:
-                                                                    data?.me
-                                                                        ?.title ||
-                                                                    "Title",
-                                                                gender:
-                                                                    data?.me
-                                                                        ?.gender ||
-                                                                    "Gender",
-                                                                origin: "blog",
-                                                            }}
-                                                            onSubmit={async (
-                                                                values,
-                                                                {
-                                                                    setStatus,
-                                                                    setErrors,
-                                                                }
-                                                            ) => {
-                                                                let profilePictureName =
-                                                                    "";
-                                                                let existingProfilePictureName =
-                                                                    "";
-                                                                let directory =
-                                                                    "";
-
-                                                                if (
-                                                                    data?.me
-                                                                        ?.profilePicture !==
-                                                                        "" &&
-                                                                    data?.me
-                                                                        ?.profilePicture !==
-                                                                        null
-                                                                ) {
-                                                                    existingProfilePictureName =
-                                                                        data?.me?.profilePicture?.replace(
-                                                                            `https://storage.ingrao.blog/${
-                                                                                process
-                                                                                    .env
-                                                                                    .REACT_APP_ENV ===
-                                                                                "development"
-                                                                                    ? "local-users"
-                                                                                    : "users"
-                                                                            }/${
-                                                                                data
-                                                                                    ?.me
-                                                                                    ?.id
-                                                                            }/`,
-                                                                            ""
-                                                                        )!;
-                                                                }
-
-                                                                if (
-                                                                    selectedProfilePicture !==
-                                                                    null
-                                                                ) {
-                                                                    if (
-                                                                        existingProfilePictureName !==
-                                                                        ""
-                                                                    ) {
-                                                                        await axios.delete(
-                                                                            `${process.env.REACT_APP_STORAGE_LINK}/${
-                                                                                process
-                                                                                    .env
-                                                                                    .REACT_APP_ENV ===
-                                                                                "development"
-                                                                                    ? "local-users"
-                                                                                    : "users"
-                                                                            }/${
-                                                                                data
-                                                                                    ?.me
-                                                                                    ?.id
-                                                                            }/${existingProfilePictureName}`
-                                                                        );
-                                                                    }
-
-                                                                    profilePictureName = `profile-picture-${new Date().getTime()}.jpeg`;
-                                                                    directory =
-                                                                        process
-                                                                            .env
-                                                                            .REACT_APP_ENV ===
-                                                                        "development"
-                                                                            ? `local-users/${data?.me?.id}`
-                                                                            : `users/${data?.me?.id}`;
-
-                                                                    let key = `${directory}/${profilePictureName}`;
-
-                                                                    const {
-                                                                        url,
-                                                                    } = await fetch(
-                                                                        `${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`,
+                                                {data && data.me && !error ? (
+                                                    <>
+                                                        <SidebarLayoutTitle>
+                                                            Welcome,{" "}
+                                                            {data.me.firstName}
+                                                        </SidebarLayoutTitle>
+                                                        <ProfilePageContent>
+                                                            <EditProfileFormContainer>
+                                                                <Formik
+                                                                    initialValues={{
+                                                                        firstName:
+                                                                            data.me
+                                                                                .firstName ||
+                                                                            "",
+                                                                        lastName:
+                                                                            data.me
+                                                                                .lastName ||
+                                                                            "",
+                                                                        profilePicture:
+                                                                            data.me
+                                                                                .profilePicture ||
+                                                                            "",
+                                                                        title:
+                                                                            data.me
+                                                                                .title ||
+                                                                            "Title",
+                                                                        gender:
+                                                                            data.me
+                                                                                .gender ||
+                                                                            "Gender",
+                                                                        origin: "blog",
+                                                                    }}
+                                                                    onSubmit={async (
+                                                                        values,
                                                                         {
-                                                                            method: "POST",
-                                                                            headers:
-                                                                                {
-                                                                                    Accept: "application/json",
-                                                                                    "Content-Type":
-                                                                                        "application/json",
-                                                                                },
-                                                                            body: JSON.stringify(
-                                                                                {
-                                                                                    key: key,
-                                                                                }
-                                                                            ),
+                                                                            setStatus,
+                                                                            setErrors,
                                                                         }
-                                                                    ).then(
-                                                                        (res) =>
-                                                                            res.json()
-                                                                    );
+                                                                    ) => {
+                                                                        let profilePictureName =
+                                                                            "";
+                                                                        let existingProfilePictureName =
+                                                                            "";
+                                                                        let directory =
+                                                                            "";
 
-                                                                    setStatus("Uploading the profile picture...");
+                                                                        if (
+                                                                            data &&
+                                                                            data.me && 
+                                                                            data.me.profilePicture &&
+                                                                            data.me
+                                                                                .profilePicture !==
+                                                                                "" &&
+                                                                            data.me
+                                                                                .profilePicture !==
+                                                                                null
+                                                                        ) {
+                                                                            existingProfilePictureName =
+                                                                                data.me.profilePicture.replace(
+                                                                                    `https://storage.ingrao.blog/${
+                                                                                        process
+                                                                                            .env
+                                                                                            .REACT_APP_ENV ===
+                                                                                        "development"
+                                                                                            ? "local-users"
+                                                                                            : "users"
+                                                                                    }/${
+                                                                                        data
+                                                                                            .me
+                                                                                            .id
+                                                                                    }/`,
+                                                                                    ""
+                                                                                )!;
+                                                                        }
 
-                                                                    const profilePictureConfig = {
-                                                                        onUploadProgress: function(progressEvent: any) {
-                                                                            var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                                                                            setStatus(`Uploading the profile picture: ${percentCompleted}%.`);
-                                                                        },
-                                                                        headers: {
-                                                                            "Content-Type": "image/jpeg",
-                                                                        },
-                                                                    };
-                                                    
-                                                                    await axios.put(url, selectedProfilePicture, profilePictureConfig)
-                                                                        .then(() => {
-                                                                            setStatus("Your profile picture was uploaded successfully.");
-                                                                        }).catch((error) => {
-                                                                            setStatus(`An error occurred while uploading your profile picture. Error code: ${error.code}.`);
-                                                                        });
-                                                                } else if (
-                                                                    data?.me
-                                                                        ?.profilePicture !==
-                                                                        "" &&
-                                                                    data?.me
-                                                                        ?.profilePicture !==
-                                                                        null &&
-                                                                    deleteProfilePicture
-                                                                ) {
-                                                                    await axios.delete(
-                                                                        `${process.env.REACT_APP_STORAGE_LINK}/${
-                                                                            process
-                                                                                .env
-                                                                                .REACT_APP_ENV ===
-                                                                            "development"
-                                                                                ? "local-users"
-                                                                                : "users"
-                                                                        }/${
-                                                                            data
-                                                                                ?.me
-                                                                                ?.id
-                                                                        }/${existingProfilePictureName}`
-                                                                    );
-                                                                } else {
-                                                                    profilePictureName =
-                                                                        existingProfilePictureName;
-                                                                }
-                                                                setSelectedProfilePicture(
-                                                                    null
-                                                                );
-                                                                const response =
-                                                                    await editProfile(
-                                                                        {
-                                                                            variables:
+                                                                        if (
+                                                                            selectedProfilePicture !==
+                                                                            null
+                                                                        ) {
+                                                                            if (
+                                                                                existingProfilePictureName !==
+                                                                                "" && data && data.me
+                                                                            ) {
+                                                                                await axios.delete(
+                                                                                    `${process.env.REACT_APP_STORAGE_LINK}/${
+                                                                                        process
+                                                                                            .env
+                                                                                            .REACT_APP_ENV ===
+                                                                                        "development"
+                                                                                            ? "local-users"
+                                                                                            : "users"
+                                                                                    }/${
+                                                                                        data
+                                                                                            .me
+                                                                                            .id
+                                                                                    }/${existingProfilePictureName}`
+                                                                                );
+                                                                            }
+
+                                                                            profilePictureName = `profile-picture-${new Date().getTime()}.jpeg`;
+                                                                            if (data && data.me) {
+                                                                                directory =
+                                                                                    process
+                                                                                        .env
+                                                                                        .REACT_APP_ENV ===
+                                                                                    "development"
+                                                                                        ? `local-users/${data.me.id}`
+                                                                                        : `users/${data.me.id}`;
+                                                                            }
+
+                                                                            let key = `${directory}/${profilePictureName}`;
+
+                                                                            const {
+                                                                                url,
+                                                                            } = await fetch(
+                                                                                `${process.env.REACT_APP_SERVER_ORIGIN}/presigned-url`,
                                                                                 {
-                                                                                    firstName:
-                                                                                        values.firstName,
-                                                                                    lastName:
-                                                                                        values.lastName,
-                                                                                    title: values.title,
-                                                                                    gender: values.gender,
-                                                                                    profilePicture:
-                                                                                        (!isProfilePictureUploaded &&
-                                                                                            !deleteProfilePicture &&
-                                                                                            data
-                                                                                                ?.me
-                                                                                                ?.profilePicture !==
-                                                                                                "") ||
-                                                                                        isProfilePictureUploaded
-                                                                                            ? `https://storage.ingrao.blog/${
-                                                                                                  process
-                                                                                                      .env
-                                                                                                      .REACT_APP_ENV ===
-                                                                                                  "development"
-                                                                                                      ? "local-users"
-                                                                                                      : "users"
-                                                                                              }/${
-                                                                                                  data
-                                                                                                      ?.me
-                                                                                                      ?.id
-                                                                                              }/${profilePictureName}`
-                                                                                            : "",
-                                                                                    origin: "blog",
-                                                                                },
-                                                                            update: (
-                                                                                store,
-                                                                                {
-                                                                                    data,
-                                                                                }
-                                                                            ) => {
-                                                                                if (
-                                                                                    data
-                                                                                ) {
-                                                                                    store.writeQuery<MeQuery>(
+                                                                                    method: "POST",
+                                                                                    headers:
                                                                                         {
-                                                                                            query: MeDocument,
-                                                                                            data: {
-                                                                                                me: data
-                                                                                                    .editProfile
-                                                                                                    ?.user as User,
-                                                                                            },
+                                                                                            Accept: "application/json",
+                                                                                            "Content-Type":
+                                                                                                "application/json",
+                                                                                        },
+                                                                                    body: JSON.stringify(
+                                                                                        {
+                                                                                            key: key,
                                                                                         }
-                                                                                    );
+                                                                                    ),
                                                                                 }
-                                                                            },
-                                                                        }
-                                                                    );
+                                                                            ).then(
+                                                                                (res) =>
+                                                                                    res.json()
+                                                                            );
 
-                                                                if (
-                                                                    response
-                                                                        .data
-                                                                        ?.editProfile
-                                                                        .user &&
-                                                                    response
-                                                                        .data
-                                                                        ?.editProfile
-                                                                        .errors
-                                                                        ?.length ===
-                                                                        0
-                                                                ) {
-                                                                    setStatus(
-                                                                        response
-                                                                            .data
-                                                                            .editProfile
-                                                                            .status
-                                                                    );
-                                                                } else {
-                                                                    if (
-                                                                        response
-                                                                            .data
-                                                                            ?.editProfile
-                                                                            ?.status
-                                                                    ) {
-                                                                        setStatus(
-                                                                            response
-                                                                                .data
-                                                                                .editProfile
-                                                                                .status
-                                                                        );
-                                                                    } else {
-                                                                        setStatus(
+                                                                            setStatus("Uploading the profile picture...");
+
+                                                                            const profilePictureConfig = {
+                                                                                onUploadProgress: function(progressEvent: any) {
+                                                                                    var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                                                                    setStatus(`Uploading the profile picture: ${percentCompleted}%.`);
+                                                                                },
+                                                                                headers: {
+                                                                                    "Content-Type": "image/jpeg",
+                                                                                },
+                                                                            };
+                                                            
+                                                                            await axios.put(url, selectedProfilePicture, profilePictureConfig)
+                                                                                .then(() => {
+                                                                                    setStatus("Your profile picture was uploaded successfully.");
+                                                                                }).catch((error) => {
+                                                                                    setStatus(`An error occurred while uploading your profile picture. Error code: ${error.code}.`);
+                                                                                });
+                                                                        } else if (
+                                                                            data?.me
+                                                                                ?.profilePicture !==
+                                                                                "" &&
+                                                                            data?.me
+                                                                                ?.profilePicture !==
+                                                                                null &&
+                                                                            deleteProfilePicture
+                                                                        ) {
+                                                                            await axios.delete(
+                                                                                `${process.env.REACT_APP_STORAGE_LINK}/${
+                                                                                    process
+                                                                                        .env
+                                                                                        .REACT_APP_ENV ===
+                                                                                    "development"
+                                                                                        ? "local-users"
+                                                                                        : "users"
+                                                                                }/${
+                                                                                    data
+                                                                                        ?.me
+                                                                                        ?.id
+                                                                                }/${existingProfilePictureName}`
+                                                                            );
+                                                                        } else {
+                                                                            profilePictureName =
+                                                                                existingProfilePictureName;
+                                                                        }
+                                                                        setSelectedProfilePicture(
                                                                             null
                                                                         );
-                                                                        setErrors(
-                                                                            toErrorMap(
+                                                                        const response =
+                                                                            await editProfile(
+                                                                                {
+                                                                                    variables:
+                                                                                        {
+                                                                                            firstName:
+                                                                                                values.firstName,
+                                                                                            lastName:
+                                                                                                values.lastName,
+                                                                                            title: values.title,
+                                                                                            gender: values.gender,
+                                                                                            profilePicture:
+                                                                                                (!isProfilePictureUploaded &&
+                                                                                                    !deleteProfilePicture &&
+                                                                                                    data
+                                                                                                        ?.me
+                                                                                                        ?.profilePicture !==
+                                                                                                        "") ||
+                                                                                                isProfilePictureUploaded
+                                                                                                    ? `https://storage.ingrao.blog/${
+                                                                                                        process
+                                                                                                            .env
+                                                                                                            .REACT_APP_ENV ===
+                                                                                                        "development"
+                                                                                                            ? "local-users"
+                                                                                                            : "users"
+                                                                                                    }/${
+                                                                                                        data
+                                                                                                            ?.me
+                                                                                                            ?.id
+                                                                                                    }/${profilePictureName}`
+                                                                                                    : "",
+                                                                                            origin: "blog",
+                                                                                        },
+                                                                                    update: (
+                                                                                        store,
+                                                                                        {
+                                                                                            data,
+                                                                                        }
+                                                                                    ) => {
+                                                                                        if (
+                                                                                            data && data.editProfile && data.editProfile.user
+                                                                                        ) {
+                                                                                            store.writeQuery<MeQuery>(
+                                                                                                {
+                                                                                                    query: MeDocument,
+                                                                                                    data: {
+                                                                                                        me: data
+                                                                                                            .editProfile
+                                                                                                            .user as User,
+                                                                                                    },
+                                                                                                }
+                                                                                            );
+                                                                                        }
+                                                                                    },
+                                                                                }
+                                                                            );
+
+                                                                        if (response.data) {
+                                                                            if (
                                                                                 response
                                                                                     .data
-                                                                                    ?.editProfile
-                                                                                    ?.errors!
-                                                                            )
-                                                                        );
-                                                                    }
-                                                                }
-                                                            }}
-                                                        >
-                                                            {({
-                                                                errors,
-                                                                status,
-                                                                values,
-                                                            }) => (
-                                                                <Form>
-                                                                    <ProfileLargeContainer>
-                                                                        <CoverImageContainer>
-                                                                            <CoverImageButtonsContainer>
-                                                                                <UploadCoverImageButton
-                                                                                    role="button"
-                                                                                    title="Upload your profile picture"
-                                                                                    aria-label="Upload your profile picture"
-                                                                                    onClick={() => {
-                                                                                        if (
-                                                                                            uploadProfilePictureRef.current
-                                                                                        ) {
-                                                                                            uploadProfilePictureRef.current.click();
-                                                                                        }
-                                                                                    }}
-                                                                                >
-                                                                                    <input
-                                                                                        type="file"
-                                                                                        name="post-cover"
-                                                                                        ref={
-                                                                                            uploadProfilePictureRef
-                                                                                        }
-                                                                                        onChange={(
-                                                                                            event
-                                                                                        ) => {
-                                                                                            let localProfilePicture =
-                                                                                                null;
-                                                                                            localProfilePicture =
-                                                                                                event
-                                                                                                    .target
-                                                                                                    .files![0];
-                                                                                            setSelectedProfilePicture(
-                                                                                                localProfilePicture
-                                                                                            );
-                                                                                            setDeleteProfilePicture(
-                                                                                                false
-                                                                                            );
-                                                                                            setIsProfilePictureUploaded(
-                                                                                                true
-                                                                                            );
-                                                                                            if (
-                                                                                                profilePictureRef &&
-                                                                                                profilePictureRef.current
-                                                                                            ) {
-                                                                                                if (
-                                                                                                    localProfilePicture !==
-                                                                                                    undefined
-                                                                                                ) {
-                                                                                                    profilePictureRef.current.src =
-                                                                                                        URL.createObjectURL(
-                                                                                                            localProfilePicture
-                                                                                                        );
-                                                                                                } else {
-                                                                                                    profilePictureRef.current.src =
-                                                                                                        profilePicture;
-                                                                                                }
-                                                                                            }
-                                                                                        }}
-                                                                                        accept="image/png , image/jpeg, image/webp"
-                                                                                    />
-                                                                                    <ImageButtonContainer>
-                                                                                        <Upload color="#ffffff" />
-                                                                                    </ImageButtonContainer>
-                                                                                </UploadCoverImageButton>
-                                                                                {selectedProfilePicture ||
-                                                                                (data
-                                                                                    ?.me
-                                                                                    ?.profilePicture !==
-                                                                                    "" &&
-                                                                                    data
-                                                                                        ?.me
-                                                                                        ?.profilePicture !==
-                                                                                        null) ? (
-                                                                                    <PageBlock>
-                                                                                        <ImageButtonContainer
-                                                                                            role="button"
-                                                                                            title="Remove image"
-                                                                                            aria-label="Remove image"
-                                                                                            onClick={() => {
-                                                                                                if (
-                                                                                                    uploadProfilePictureRef &&
-                                                                                                    uploadProfilePictureRef.current
-                                                                                                ) {
-                                                                                                    uploadProfilePictureRef.current.value =
-                                                                                                        "";
-                                                                                                }
-                                                                                                if (
-                                                                                                    profilePictureRef &&
-                                                                                                    profilePictureRef.current
-                                                                                                ) {
-                                                                                                    profilePictureRef.current.src =
-                                                                                                        profilePicture;
-                                                                                                }
-                                                                                                setSelectedProfilePicture(
-                                                                                                    null
-                                                                                                );
-                                                                                                setDeleteProfilePicture(
-                                                                                                    true
-                                                                                                );
-                                                                                                setIsProfilePictureUploaded(
-                                                                                                    false
-                                                                                                );
-                                                                                            }}
-                                                                                        >
-                                                                                            <Close
-                                                                                                type="normal"
-                                                                                                color="#ffffff"
-                                                                                            />
-                                                                                        </ImageButtonContainer>
-                                                                                    </PageBlock>
-                                                                                ) : null}
-                                                                            </CoverImageButtonsContainer>
-                                                                            <img
-                                                                                src={
-                                                                                    data
-                                                                                        ?.me
-                                                                                        ?.profilePicture !==
-                                                                                        "" &&
-                                                                                    data
-                                                                                        ?.me
-                                                                                        ?.profilePicture !==
+                                                                                    .editProfile
+                                                                                    .user
+                                                                            ) {
+                                                                                setStatus(
+                                                                                    response
+                                                                                        .data
+                                                                                        .editProfile
+                                                                                        .status
+                                                                                );
+                                                                            } else {
+                                                                                if (
+                                                                                    response
+                                                                                        .data
+                                                                                        .editProfile
+                                                                                        .status && 
+                                                                                    response.data.editProfile.status.length > 0
+                                                                                ) {
+                                                                                    setStatus(
+                                                                                        response
+                                                                                            .data
+                                                                                            .editProfile
+                                                                                            .status
+                                                                                    );
+                                                                                } else {
+                                                                                    setStatus(
                                                                                         null
-                                                                                        ? data
-                                                                                              ?.me
-                                                                                              ?.profilePicture
-                                                                                        : profilePicture
+                                                                                    );
+                                                                                    setErrors(
+                                                                                        toErrorMap(
+                                                                                            response
+                                                                                                .data
+                                                                                                .editProfile
+                                                                                                .errors as FieldError[]
+                                                                                        )
+                                                                                    );
                                                                                 }
-                                                                                ref={
-                                                                                    profilePictureRef
-                                                                                }
-                                                                                title={`${data?.me?.firstName}'s profile picture`}
-                                                                                alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
-                                                                            />
-                                                                        </CoverImageContainer>
-                                                                        <ProfileLargeInfoContainer>
-                                                                            <ProfileName>
-                                                                                {
-                                                                                    data
-                                                                                        ?.me
-                                                                                        ?.firstName
-                                                                                }{" "}
-                                                                                {
-                                                                                    data
-                                                                                        ?.me
-                                                                                        ?.lastName
-                                                                                }
-                                                                            </ProfileName>
-                                                                            <PageText>
-                                                                                Role:{" "}{data?.me?.role}. Joined on{" "}{new Date(
-                                                                                    parseInt(
-                                                                                        data?.me
-                                                                                            ?.createdAt!
-                                                                                    )
-                                                                                ).toLocaleString("en-us", {
-                                                                                    month: "long",
-                                                                                    year: "numeric",
-                                                                                })}.
-                                                                            </PageText>
-                                                                        </ProfileLargeInfoContainer>
-                                                                    </ProfileLargeContainer>
-                                                                    {status ? (
-                                                                        <Status>
-                                                                            {
-                                                                                status
                                                                             }
-                                                                        </Status>
-                                                                    ) : null}
-                                                                    <EditProfileFormContent>
-                                                                        <FlexRow24>
-                                                                            <SelectField
-                                                                                field="title"
-                                                                                placeholder="Title"
-                                                                                errors={
-                                                                                    errors
-                                                                                }
-                                                                                options={
-                                                                                    titleOptions
-                                                                                }
-                                                                            />
-                                                                            <SelectField
-                                                                                field="gender"
-                                                                                placeholder="Gender"
-                                                                                errors={
-                                                                                    errors
-                                                                                }
-                                                                                options={
-                                                                                    genderOptions
-                                                                                }
-                                                                            />
-                                                                        </FlexRow24>
-                                                                        <InputField
-                                                                            field="firstName"
-                                                                            type="text"
-                                                                            placeholder="First name"
-                                                                            value={
-                                                                                values.firstName ||
-                                                                                ""
-                                                                            }
-                                                                            errors={
-                                                                                errors
-                                                                            }
-                                                                        />
-                                                                        <InputField
-                                                                            field="lastName"
-                                                                            type="text"
-                                                                            placeholder="Last name"
-                                                                            value={
-                                                                                values.lastName ||
-                                                                                ""
-                                                                            }
-                                                                            errors={
-                                                                                errors
-                                                                            }
-                                                                        />
-                                                                        <PageBlock>
-                                                                            <EditProfileButton
-                                                                                type="submit"
-                                                                                title="Save changes"
-                                                                                role="button"
-                                                                                aria-label="Save changes"
-                                                                            >
-                                                                                Save
-                                                                                changes
-                                                                            </EditProfileButton>
-                                                                        </PageBlock>
-                                                                        <PageText>
-                                                                            Do you want to change the email address or password of your account? Go to the <Link to="/settings/account" title="Account settings" aria-label="Account settings">settings page</Link>.
-                                                                        </PageText>
-                                                                    </EditProfileFormContent>
-                                                                </Form>
-                                                            )}
-                                                        </Formik>
-                                                    </EditProfileFormContainer>
-                                                </ProfilePageContent>
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {({
+                                                                        errors,
+                                                                        status,
+                                                                        values,
+                                                                    }) => (
+                                                                        <>
+                                                                            {loading ? (
+                                                                                <LoadingComponent />
+                                                                            ) : (
+                                                                                <>
+                                                                                    {data && data.me && !error ? (
+                                                                                        <Form>
+                                                                                            <ProfileLargeContainer>
+                                                                                                <CoverImageContainer>
+                                                                                                    <CoverImageButtonsContainer>
+                                                                                                        <UploadCoverImageButton
+                                                                                                            role="button"
+                                                                                                            title="Upload your profile picture"
+                                                                                                            aria-label="Upload your profile picture"
+                                                                                                            onClick={() => {
+                                                                                                                if (
+                                                                                                                    uploadProfilePictureRef.current
+                                                                                                                ) {
+                                                                                                                    uploadProfilePictureRef.current.click();
+                                                                                                                }
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            <input
+                                                                                                                type="file"
+                                                                                                                name="post-cover"
+                                                                                                                ref={
+                                                                                                                    uploadProfilePictureRef
+                                                                                                                }
+                                                                                                                onChange={(
+                                                                                                                    event
+                                                                                                                ) => {
+                                                                                                                    let localProfilePicture =
+                                                                                                                        null;
+                                                                                                                    localProfilePicture =
+                                                                                                                        event
+                                                                                                                            .target
+                                                                                                                            .files![0];
+                                                                                                                    setSelectedProfilePicture(
+                                                                                                                        localProfilePicture
+                                                                                                                    );
+                                                                                                                    setDeleteProfilePicture(
+                                                                                                                        false
+                                                                                                                    );
+                                                                                                                    setIsProfilePictureUploaded(
+                                                                                                                        true
+                                                                                                                    );
+                                                                                                                    if (
+                                                                                                                        profilePictureRef &&
+                                                                                                                        profilePictureRef.current
+                                                                                                                    ) {
+                                                                                                                        if (
+                                                                                                                            localProfilePicture !==
+                                                                                                                            undefined
+                                                                                                                        ) {
+                                                                                                                            profilePictureRef.current.src =
+                                                                                                                                URL.createObjectURL(
+                                                                                                                                    localProfilePicture
+                                                                                                                                );
+                                                                                                                        } else {
+                                                                                                                            profilePictureRef.current.src =
+                                                                                                                                profilePicture;
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }}
+                                                                                                                accept="image/png , image/jpeg, image/webp"
+                                                                                                            />
+                                                                                                            <ImageButtonContainer>
+                                                                                                                <Upload color="#ffffff" />
+                                                                                                            </ImageButtonContainer>
+                                                                                                        </UploadCoverImageButton>
+                                                                                                        {selectedProfilePicture ||
+                                                                                                        (data
+                                                                                                            .me
+                                                                                                            .profilePicture !==
+                                                                                                            "" &&
+                                                                                                            data
+                                                                                                                .me
+                                                                                                                .profilePicture !==
+                                                                                                                null) ? (
+                                                                                                            <PageBlock>
+                                                                                                                <ImageButtonContainer
+                                                                                                                    role="button"
+                                                                                                                    title="Remove image"
+                                                                                                                    aria-label="Remove image"
+                                                                                                                    onClick={() => {
+                                                                                                                        if (
+                                                                                                                            uploadProfilePictureRef &&
+                                                                                                                            uploadProfilePictureRef.current
+                                                                                                                        ) {
+                                                                                                                            uploadProfilePictureRef.current.value =
+                                                                                                                                "";
+                                                                                                                        }
+                                                                                                                        if (
+                                                                                                                            profilePictureRef &&
+                                                                                                                            profilePictureRef.current
+                                                                                                                        ) {
+                                                                                                                            profilePictureRef.current.src =
+                                                                                                                                profilePicture;
+                                                                                                                        }
+                                                                                                                        setSelectedProfilePicture(
+                                                                                                                            null
+                                                                                                                        );
+                                                                                                                        setDeleteProfilePicture(
+                                                                                                                            true
+                                                                                                                        );
+                                                                                                                        setIsProfilePictureUploaded(
+                                                                                                                            false
+                                                                                                                        );
+                                                                                                                    }}
+                                                                                                                >
+                                                                                                                    <Close
+                                                                                                                        type="normal"
+                                                                                                                        color="#ffffff"
+                                                                                                                    />
+                                                                                                                </ImageButtonContainer>
+                                                                                                            </PageBlock>
+                                                                                                        ) : null}
+                                                                                                    </CoverImageButtonsContainer>
+                                                                                                    <img
+                                                                                                        src={
+                                                                                                            data
+                                                                                                                .me
+                                                                                                                .profilePicture !==
+                                                                                                                "" &&
+                                                                                                            data
+                                                                                                                .me
+                                                                                                                .profilePicture !==
+                                                                                                                null
+                                                                                                                ? data
+                                                                                                                    .me
+                                                                                                                    .profilePicture
+                                                                                                                : profilePicture
+                                                                                                        }
+                                                                                                        ref={
+                                                                                                            profilePictureRef
+                                                                                                        }
+                                                                                                        title={`${data.me.firstName}'s profile picture`}
+                                                                                                        alt={`${data.me.firstName} ${data.me.lastName}`}
+                                                                                                    />
+                                                                                                </CoverImageContainer>
+                                                                                                <ProfileLargeInfoContainer>
+                                                                                                    <ProfileName>
+                                                                                                        {
+                                                                                                            data
+                                                                                                                .me
+                                                                                                                .firstName
+                                                                                                        }{" "}
+                                                                                                        {
+                                                                                                            data
+                                                                                                                ?.me
+                                                                                                                ?.lastName
+                                                                                                        }
+                                                                                                    </ProfileName>
+                                                                                                    <PageText>
+                                                                                                        Role:{" "}{data.me.role}. Joined on{" "}{new Date(
+                                                                                                            parseInt(
+                                                                                                                data.me
+                                                                                                                    .createdAt
+                                                                                                            )
+                                                                                                        ).toLocaleString("en-us", {
+                                                                                                            month: "long",
+                                                                                                            year: "numeric",
+                                                                                                        })}.
+                                                                                                    </PageText>
+                                                                                                </ProfileLargeInfoContainer>
+                                                                                            </ProfileLargeContainer>
+                                                                                            {status ? (
+                                                                                                <Status>
+                                                                                                    {
+                                                                                                        status
+                                                                                                    }
+                                                                                                </Status>
+                                                                                            ) : null}
+                                                                                            <EditProfileFormContent>
+                                                                                                <FlexRow24>
+                                                                                                    <SelectField
+                                                                                                        field="title"
+                                                                                                        placeholder="Title"
+                                                                                                        errors={
+                                                                                                            errors
+                                                                                                        }
+                                                                                                        options={
+                                                                                                            titleOptions
+                                                                                                        }
+                                                                                                    />
+                                                                                                    <SelectField
+                                                                                                        field="gender"
+                                                                                                        placeholder="Gender"
+                                                                                                        errors={
+                                                                                                            errors
+                                                                                                        }
+                                                                                                        options={
+                                                                                                            genderOptions
+                                                                                                        }
+                                                                                                    />
+                                                                                                </FlexRow24>
+                                                                                                <InputField
+                                                                                                    field="firstName"
+                                                                                                    type="text"
+                                                                                                    placeholder="First name"
+                                                                                                    value={
+                                                                                                        values.firstName ||
+                                                                                                        ""
+                                                                                                    }
+                                                                                                    errors={
+                                                                                                        errors
+                                                                                                    }
+                                                                                                />
+                                                                                                <InputField
+                                                                                                    field="lastName"
+                                                                                                    type="text"
+                                                                                                    placeholder="Last name"
+                                                                                                    value={
+                                                                                                        values.lastName ||
+                                                                                                        ""
+                                                                                                    }
+                                                                                                    errors={
+                                                                                                        errors
+                                                                                                    }
+                                                                                                />
+                                                                                                <PageBlock>
+                                                                                                    <EditProfileButton
+                                                                                                        type="submit"
+                                                                                                        title="Save changes"
+                                                                                                        role="button"
+                                                                                                        aria-label="Save changes"
+                                                                                                    >
+                                                                                                        Save
+                                                                                                        changes
+                                                                                                    </EditProfileButton>
+                                                                                                </PageBlock>
+                                                                                                <PageText>
+                                                                                                    Do you want to change the email address or password of your account? Go to the <Link to="/settings/account" title="Account settings" aria-label="Account settings">settings page</Link>.
+                                                                                                </PageText>
+                                                                                            </EditProfileFormContent>
+                                                                                        </Form>
+                                                                                    ) : (
+                                                                                        <ErrorComponent />
+                                                                                    )}
+                                                                                </>
+                                                                            )}
+                                                                        </>
+                                                                    )}
+                                                                </Formik>
+                                                            </EditProfileFormContainer>
+                                                        </ProfilePageContent>
+                                                    </>
+                                                ) : (
+                                                    <ErrorComponent />  
+                                                )}
                                             </>
                                         )}
                                     </>

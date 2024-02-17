@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import Head from "../components/Head";
 import InputField from "../components/input/InputField";
-import { MeDocument, MeQuery, useLoginMutation, User } from "../generated/graphql";
+import { FieldError, MeDocument, MeQuery, useLoginMutation, User } from "../generated/graphql";
 import { AuthButton, AuthFormContent, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../styles/global";
 import { toErrorMap } from "../utils/toErrorMap";
 import { setAccessToken } from "../utils/token";
@@ -46,33 +46,35 @@ function Login() {
                             },
                         });
 
-                        if (
-                            response.data?.login?.user &&
-                            response.data.login.errors?.length === 0 &&
-                            response.data.login.accessToken
-                        ) {
-                            setAccessToken(
-                                response.data.login.accessToken!
-                            );
-                            setStatus(response.data.login.status);
-                            navigate(0);
-                        } else {
-                            if (response.data?.login?.status) {
-                                setStatus(response.data.login.status);
-                            } else {
-                                setStatus(null);
-                                setErrors(
-                                    toErrorMap(
-                                        response.data?.login?.errors!
-                                    )
+                        if (response.data && response.data.login) {
+                            if (
+                                response.data.login.user &&
+                                response.data.login.accessToken && 
+                                response.data.login.accessToken.length > 0
+                            ) {
+                                setAccessToken(
+                                    response.data.login.accessToken
                                 );
+                                setStatus(response.data.login.status);
+                                navigate(0);
+                            } else {
+                                if (response.data.login.status && response.data.login.status.length > 0) {
+                                    setStatus(response.data.login.status);
+                                } else {
+                                    setStatus(null);
+                                    setErrors(
+                                        toErrorMap(
+                                            response.data.login.errors as FieldError[]
+                                        )
+                                    );
+                                }
                             }
                         }
                     }}
                 >
                     {({ errors, status }) => (
                         <Form>
-                            {status ? <Status>{status}</Status> : null}
+                            {status && <Status>{status}</Status>}
                             <AuthFormContent>
                                 <InputField
                                     field="email"

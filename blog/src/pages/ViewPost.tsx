@@ -12,6 +12,7 @@ import { Editor } from "@ingrao-blog/editor";
 import CommentComponent from "../components/layouts/items/CommentComponent";
 import CommentInputComponent from "../components/utils/CommentInputComponent";
 import { processDate } from "../utils/processDate";
+import ErrorComponent from "../components/utils/ErrorComponent";
 
 const PostCoverImage = styled.div`
     display: block;
@@ -159,16 +160,18 @@ function ViewPost() {
     const [contentReady, setContentReady] = useState(false);
 
     useEffect(() => {
-        const content = data?.findPostBySlug?.content;
+        if (data && data.findPostBySlug) {
+            const content = data.findPostBySlug.content;
 
-        if (content) {
-            setContentReady(true);
-            setPostContent(JSON.parse(content));
-        } else {
-            setContentReady(false);
-            setPostContent(undefined);
+            if (content) {
+                setContentReady(true);
+                setPostContent(JSON.parse(content));
+            } else {
+                setContentReady(false);
+                setPostContent(undefined);
+            }
         }
-    }, [data?.findPostBySlug?.content]);
+    }, [data]);
 
     const location = useLocation();
 
@@ -201,120 +204,135 @@ function ViewPost() {
     return (
         <>
             <Head
-                title={`${data?.findPostBySlug?.title} | ingrao.blog`}
-                description={`${data?.findPostBySlug?.description}. Written by ${data?.findPostBySlug?.author.firstName} ${data?.findPostBySlug?.author.lastName}`}
+                title={loading ? ("Loading... | ingrao.blog") : ((data && data.findPostBySlug) ? `${data.findPostBySlug.title} | ingrao.blog` : "No data")}
+                description={loading ? ("Loading...") : ((data && data.findPostBySlug) ? `${data.findPostBySlug.description}${" "}Written by ${data.findPostBySlug.author.firstName} ${data.findPostBySlug.author.lastName}` : "No data")}
                 blogPost={true}
-                image={data?.findPostBySlug?.postCover!}
+                image={data?.findPostBySlug?.postCover as string}
             />
             <PageLayout
                 content={
                     <PageContentLayout
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
-                                    <PostContainer>
-                                        <PageBlock>
-                                            <PostSlogan>
-                                                {data?.findPostBySlug?.slogan}
-                                            </PostSlogan>
-                                        </PageBlock>
-                                        <PostTitle>
-                                            {data?.findPostBySlug?.title}
-                                        </PostTitle>
-                                        <PageText>
-                                            {data?.findPostBySlug?.description}
-                                        </PageText>
-                                        <PostInfo>
-                                            <PageBlock>
-                                                By{" "}
-                                                <strong>
-                                                    {
-                                                        data?.findPostBySlug?.author
-                                                            .firstName
-                                                    }{" "}
-                                                    {
-                                                        data?.findPostBySlug?.author
-                                                            .lastName
-                                                    }
-                                                </strong>
-                                            </PageBlock>
-                                            <PageText>|</PageText>
-                                            <PostDate>
-                                                {date}
-                                            </PostDate>
-                                        </PostInfo>
-                                        <PostCoverImage>
-                                            <img
-                                                src={
-                                                    data?.findPostBySlug
-                                                        ?.postCover!
-                                                }
-                                                title={`Post cover: ${data?.findPostBySlug?.title}`}
-                                                alt={`Post cover: ${data?.findPostBySlug?.title}`}
-                                            />
-                                        </PostCoverImage>
-                                        {contentReady && (
-                                            <PostContent>
-                                                <Editor
-                                                    readOnly={true}
-                                                    toolbarHidden={true}
-                                                    initialContentState={postContent}
-                                                />
-                                            </PostContent>
-                                        )}
-                                        <PostComments>
-                                            <CommentSectionTitle>
-                                                Comments
-                                            </CommentSectionTitle>
-                                            {meData && meData.me ? (
-                                                <>
-                                                    <PageText>
-                                                        Here you can see all the comments related to the post. You can also create a new comment. I ask you to be polite and help create a positive (and also elegant) environment in this blog.
-                                                    </PageText>
-                                                    <CommentInputComponent postId={data?.findPostBySlug?.id!} commentsData={postCommentsData?.postComments} isReplyTo={""} />
-                                                    <CommentSectionContainer>
-                                                        {(postCommentsLoading && !postCommentsData) || postCommentsError ? (
-                                                            <LoadingContainer>
-                                                                <LoadingComponent />
-                                                            </LoadingContainer>
-                                                        ) : (
-                                                            <>
-                                                                {postCommentsData?.postComments?.length ===
-                                                                0 ? (
-                                                                    <PageText>
-                                                                        There are no comments.
-                                                                    </PageText>
-                                                                ) : (
-                                                                    <CommentFeed>
-                                                                        {postCommentsData?.postComments?.map(
-                                                                            (comment) => (
-                                                                                <CommentComponent
-                                                                                    key={
-                                                                                        comment.id
-                                                                                    }
-                                                                                    postId={data?.findPostBySlug?.id!}
-                                                                                    comment={comment}
-                                                                                />
-                                                                            )
-                                                                        )}
-                                                                    </CommentFeed>
-                                                                )}
-                                                            </>
-                                                        )}
-                                                    </CommentSectionContainer>
-                                                </>
-                                            ) : (
+                                    <>
+                                        {(data && data.findPostBySlug && !error) ? (
+                                            <PostContainer>
+                                                <PageBlock>
+                                                    <PostSlogan>
+                                                        {data.findPostBySlug.slogan}
+                                                    </PostSlogan>
+                                                </PageBlock>
+                                                <PostTitle>
+                                                    {data.findPostBySlug.title}
+                                                </PostTitle>
                                                 <PageText>
-                                                    In order to view the comments and create a new one, you have to <Link to="/login" state={{ backgroundLocation: location }} title="Log in to the blog" aria-label="Log in to the blog">log in</Link> to the blog.
-                                                    <Outlet />
+                                                    {data.findPostBySlug.description}
                                                 </PageText>
-                                            )}
-                                        </PostComments>
-                                    </PostContainer>
+                                                <PostInfo>
+                                                    <PageBlock>
+                                                        By{" "}
+                                                        <strong>
+                                                            {
+                                                                data.findPostBySlug.author
+                                                                    .firstName
+                                                            }{" "}
+                                                            {
+                                                                data.findPostBySlug.author
+                                                                    .lastName
+                                                            }
+                                                        </strong>
+                                                    </PageBlock>
+                                                    <PageText>|</PageText>
+                                                    <PostDate>
+                                                        {date}
+                                                    </PostDate>
+                                                </PostInfo>
+                                                <PostCoverImage>
+                                                    <img
+                                                        src={
+                                                            data.findPostBySlug
+                                                                .postCover as string
+                                                        }
+                                                        title={`Post cover: "${data.findPostBySlug.title}"`}
+                                                        alt={`Post cover: "${data.findPostBySlug.title}"`}
+                                                    />
+                                                </PostCoverImage>
+                                                {contentReady && (
+                                                    <PostContent>
+                                                        <Editor
+                                                            readOnly={true}
+                                                            toolbarHidden={true}
+                                                            initialContentState={postContent}
+                                                        />
+                                                    </PostContent>
+                                                )}
+                                                <PostComments>
+                                                    <CommentSectionTitle>
+                                                        Comments
+                                                    </CommentSectionTitle>
+                                                    {meData && meData.me ? (
+                                                        <>
+                                                            <PageText>
+                                                                Here you can see all the comments related to the post. You can also create a new comment. I ask you to be polite and help create a positive (and also elegant) environment in this blog.
+                                                            </PageText>
+                                                            <CommentSectionContainer>
+                                                                {postCommentsLoading ? (
+                                                                    <LoadingContainer>
+                                                                        <LoadingComponent />
+                                                                    </LoadingContainer>
+                                                                ) : (
+                                                                    <>
+                                                                        {(postCommentsData && postCommentsData.postComments && !postCommentsError) ? (
+                                                                            <>
+                                                                                <CommentInputComponent postId={data.findPostBySlug.id} commentsData={postCommentsData.postComments} isReplyTo={""} />
+                                                                                {postCommentsData.postComments.length === 0 ? (
+                                                                                    <PageText>
+                                                                                        There are no comments.
+                                                                                    </PageText>
+                                                                                ) : (
+                                                                                    <CommentFeed>
+                                                                                        {postCommentsData.postComments.map(
+                                                                                            (comment) => (
+                                                                                                <>
+                                                                                                    {data && data.findPostBySlug && (
+                                                                                                        <CommentComponent
+                                                                                                            key={
+                                                                                                                comment.id
+                                                                                                            }
+                                                                                                            postId={data.findPostBySlug.id}
+                                                                                                            comment={comment}
+                                                                                                        />
+                                                                                                    )}
+                                                                                                </>
+                                                                                            )
+                                                                                        )}
+                                                                                    </CommentFeed>
+                                                                                )}
+                                                                            </>
+                                                                        ) : (
+                                                                            <ErrorComponent />
+                                                                        )}
+                                                                    </>
+                                                                )}
+                                                            </CommentSectionContainer>
+                                                        </>
+                                                    ) : (
+                                                        <PageText>
+                                                            In order to view the comments and create a new one, you have to <Link to="/login" state={{ backgroundLocation: location }} title="Log in to the blog" aria-label="Log in to the blog">log in</Link> to the blog.
+                                                            <Outlet />
+                                                        </PageText>
+                                                    )}
+                                                </PostComments>
+                                            </PostContainer>
+                                        ) : (
+                                            <ErrorComponent />
+                                        )}
+                                    </>
                                 )}
                             </>
                         }

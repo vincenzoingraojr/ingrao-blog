@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { PageText } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
+import { Newsletter } from "../../../generated/graphql";
 
 interface SmallIssueComponentProps {
-    issue: any;
+    issue: Newsletter;
 }
 
 const SmallIssueContainer = styled.div`
@@ -101,22 +102,22 @@ const SmallIssueComponent: FunctionComponent<SmallIssueComponentProps> = ({
                 );
             }}
             role="link"
-            title={issue.title}
+            title={issue.title as string}
             aria-label={
-                issue.title
+                issue.title as string
             }
         >
             <SmallIssueInnerContainer>
                 <SmallIssueImage>
                     <img
                         src={
-                            issue.newsletterCover
+                            issue.newsletterCover as string
                         }
                         title={
-                            issue.title
+                            issue.title as string
                         }
                         alt={
-                            issue.title
+                            issue.title as string
                         }
                     />
                 </SmallIssueImage>

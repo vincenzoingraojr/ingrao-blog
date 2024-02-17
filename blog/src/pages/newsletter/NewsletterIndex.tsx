@@ -9,6 +9,7 @@ import { MeDocument, MeQuery, useMeQuery, useNewsletterBlogFeedQuery, User, useS
 import { Button, LoadingContainer, PageTextMB24, PageTextMB48, Status } from "../../styles/global";
 import styled from "styled-components";
 import { useState } from "react";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const NewsletterButton = styled(Button)`
     background-color: blue;
@@ -34,59 +35,67 @@ function NewsletterIndex() {
                         description="In this page you can read the newsletter issues."
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
                                     <>
-                                        {status && (
-                                            <Status>{status}</Status>
-                                        )}
-                                        {meData && meData.me ? (
+                                        {data && data.newsletterBlogFeed && !error ? (
                                             <>
-                                                {!meData.me.newsletterSubscribed && (
-                                                    <PageTextMB48>
-                                                        <PageTextMB24>
-                                                            Sign up to the newsletter
-                                                        </PageTextMB24>
-                                                        <NewsletterButton
-                                                            type="button"
-                                                            title="Sign up to the newsletter"
-                                                            role="button"
-                                                            aria-label="Sign up to the newsletter"
-                                                            onClick={async () => {
-                                                                setStatus(null);
-                                                                const response = await subscribe({
-                                                                    update: (store, { data }) => {
-                                                                        if (data && data.subscribeToNewsletter && data.subscribeToNewsletter.user) {
-                                                                            store.writeQuery<MeQuery>({
-                                                                                query: MeDocument,
-                                                                                data: {
-                                                                                    me: data.subscribeToNewsletter.user as User,
-                                                                                },
-                                                                            });
+                                                {status && (
+                                                    <Status>{status}</Status>
+                                                )}
+                                                {meData && meData.me ? (
+                                                    <>
+                                                        {!meData.me.newsletterSubscribed && (
+                                                            <PageTextMB48>
+                                                                <PageTextMB24>
+                                                                    Sign up to the newsletter
+                                                                </PageTextMB24>
+                                                                <NewsletterButton
+                                                                    type="button"
+                                                                    title="Sign up to the newsletter"
+                                                                    role="button"
+                                                                    aria-label="Sign up to the newsletter"
+                                                                    onClick={async () => {
+                                                                        setStatus(null);
+                                                                        const response = await subscribe({
+                                                                            update: (store, { data }) => {
+                                                                                if (data && data.subscribeToNewsletter && data.subscribeToNewsletter.user) {
+                                                                                    store.writeQuery<MeQuery>({
+                                                                                        query: MeDocument,
+                                                                                        data: {
+                                                                                            me: data.subscribeToNewsletter.user as User,
+                                                                                        },
+                                                                                    });
+                                                                                }
+                                                                            },
+                                                                        });
+                                                                        
+                                                                        if (response.data && response.data.subscribeToNewsletter && response.data.subscribeToNewsletter.status) {
+                                                                            setStatus(response.data.subscribeToNewsletter.status);
                                                                         }
-                                                                    },
-                                                                });
-                                                                
-                                                                setStatus(response.data?.subscribeToNewsletter.status!);
-                                                            }}
-                                                        >
-                                                            Sign up
-                                                        </NewsletterButton>
+                                                                    }}
+                                                                >
+                                                                    Sign up
+                                                                </NewsletterButton>
+                                                            </PageTextMB48>
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    <PageTextMB48>
+                                                        In order to sign up to the newsletter, you have to log in to the blog. <Link to="/login" title="Log in to ingrao.blog" aria-label="Log in to ingrao.blog">Log in here</Link>
                                                     </PageTextMB48>
                                                 )}
+                                                <SearchBoxComponent
+                                                    data={data.newsletterBlogFeed}
+                                                    type="newsletter"
+                                                />
                                             </>
                                         ) : (
-                                            <PageTextMB48>
-                                                In order to sign up to the newsletter, you have to log in to the blog. <Link to="/login" title="Log in to ingrao.blog" aria-label="Log in to ingrao.blog">Log in here</Link>
-                                            </PageTextMB48>
+                                            <ErrorComponent />
                                         )}
-                                        <SearchBoxComponent
-                                            data={data?.newsletterBlogFeed}
-                                            type="newsletter"
-                                        />
                                     </>
                                 )}
                             </>

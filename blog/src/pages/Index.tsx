@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import PostComponent from "../components/layouts/items/PostComponent";
 import { useNavigate } from "react-router-dom";
 import { processDate } from "../utils/processDate";
+import ErrorComponent from "../components/utils/ErrorComponent";
 
 const IndexPageWrapper = styled.div`
     display: flex;
@@ -166,71 +167,79 @@ function Index() {
             <Head title="Index | ingrao.blog" description="This is the index page of ingrao.blog." />
             <PageLayout content={
                 <IndexPageWrapper>
-                    {loading || !data || error ? (
+                    {loading ? (
                         <LoadingContainer>
                             <LoadingComponent />
                         </LoadingContainer>
                     ) : (
-                        <IndexContainer>
-                            <LatestPostContainer>
-                                <LatestPostComponent
-                                    onClick={() => {
-                                        navigate(`/post/${latestPost?.slug}`);
-                                    }}
-                                    role="link"
-                                    title={latestPost?.title as string}
-                                    aria-label={latestPost?.title as string}
-                                >
-                                    <LatestPostInnerContainer>
-                                        <LatestPostImage>
-                                            <img
-                                                src={
-                                                    latestPost?.postCover as string
-                                                }
-                                                title={
-                                                    latestPost?.title as string
-                                                }
-                                                alt={
-                                                    latestPost?.title as string
-                                                }
-                                            />
-                                        </LatestPostImage>
-                                        <LatestPostBody>
-                                            <LatestPostHeader>
-                                                <HeadText>
-                                                    {latestPost?.slogan}
-                                                </HeadText>
-                                            </LatestPostHeader>
-                                            <LatestPostTitle>
-                                                {latestPost?.title}
-                                            </LatestPostTitle>
-                                            <PageText>{latestPost?.description}</PageText>
-                                            <LatestPostSmallText>
-                                                Written by{" "}
-                                                <b>
-                                                    {latestPost?.author.firstName} {latestPost?.author.lastName}
-                                                </b>
-                                            </LatestPostSmallText>
-                                            <LatestPostSmallText>
-                                                Published on {date}
-                                            </LatestPostSmallText>
-                                        </LatestPostBody>
-                                    </LatestPostInnerContainer>
-                                </LatestPostComponent>
-                            </LatestPostContainer>
-                            {otherPosts.length > 0 && (
-                                <PostFeedContainer>
-                                    <OptionTitle>
-                                        Other posts
-                                    </OptionTitle>
-                                    <PostGrid>
-                                        {otherPosts.map((post) => (
-                                            <PostComponent post={post} key={post.id} />
-                                        ))}
-                                    </PostGrid>
-                                </PostFeedContainer>
+                        <>
+                            {data && data.blogFeed && !error ? (
+                                <IndexContainer>
+                                    {latestPost && (
+                                        <LatestPostContainer>
+                                            <LatestPostComponent
+                                                onClick={() => {
+                                                    navigate(`/post/${latestPost.slug}`);
+                                                }}
+                                                role="link"
+                                                title={latestPost.title as string}
+                                                aria-label={latestPost.title as string}
+                                            >
+                                                <LatestPostInnerContainer>
+                                                    <LatestPostImage>
+                                                        <img
+                                                            src={
+                                                                latestPost.postCover as string
+                                                            }
+                                                            title={
+                                                                latestPost.title as string
+                                                            }
+                                                            alt={
+                                                                latestPost.title as string
+                                                            }
+                                                        />
+                                                    </LatestPostImage>
+                                                    <LatestPostBody>
+                                                        <LatestPostHeader>
+                                                            <HeadText>
+                                                                {latestPost.slogan}
+                                                            </HeadText>
+                                                        </LatestPostHeader>
+                                                        <LatestPostTitle>
+                                                            {latestPost.title}
+                                                        </LatestPostTitle>
+                                                        <PageText>{latestPost.description}</PageText>
+                                                        <LatestPostSmallText>
+                                                            Written by{" "}
+                                                            <b>
+                                                                {latestPost.author.firstName} {latestPost.author.lastName}
+                                                            </b>
+                                                        </LatestPostSmallText>
+                                                        <LatestPostSmallText>
+                                                            Published on {date}
+                                                        </LatestPostSmallText>
+                                                    </LatestPostBody>
+                                                </LatestPostInnerContainer>
+                                            </LatestPostComponent>
+                                        </LatestPostContainer>
+                                    )}
+                                    {otherPosts.length > 0 && (
+                                        <PostFeedContainer>
+                                            <OptionTitle>
+                                                Other posts
+                                            </OptionTitle>
+                                            <PostGrid>
+                                                {otherPosts.map((post) => (
+                                                    <PostComponent post={post} key={post.id} />
+                                                ))}
+                                            </PostGrid>
+                                        </PostFeedContainer>
+                                    )}
+                                </IndexContainer>
+                            ) : (
+                                <ErrorComponent />
                             )}
-                        </IndexContainer>
+                        </>
                     )}
                 </IndexPageWrapper>
             } />

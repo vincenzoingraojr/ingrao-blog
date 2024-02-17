@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { CommentRepliesDocument, CommentRepliesQuery, PostCommentsDocument, PostCommentsQuery, useCommentRepliesQuery, useDeleteCommentMutation, useMeQuery, usePostCommentsQuery, useUpdateCommentMutation } from "../../../generated/graphql";
+import { Comment, CommentRepliesDocument, CommentRepliesQuery, PostCommentsDocument, PostCommentsQuery, useCommentRepliesQuery, useDeleteCommentMutation, useMeQuery, usePostCommentsQuery, useUpdateCommentMutation } from "../../../generated/graphql";
 import profilePicture from "../../../images/profile-picture.svg";
 import { Button, FlexContainer24, PageBlock, PageText, Status, TextButton } from "../../../styles/global";
 import { toErrorMap } from "../../../utils/toErrorMap";
@@ -12,7 +12,7 @@ import CommentInputComponent from "../../utils/CommentInputComponent";
 import { processDate } from "../../../utils/processDate";
 
 interface CommentComponentProps {
-    comment: any;
+    comment: Comment;
     postId: number;
 }
 
@@ -137,7 +137,7 @@ const CommentReplies = styled.div`
 `;
 
 const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, postId }) => {
-    const [commentContent, setCommentContent] = useState<any | undefined>(
+    const [commentContent, setCommentContent] = useState<Comment | undefined>(
         undefined
     );
     const [contentReady, setContentReady] = useState(false);
@@ -257,7 +257,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                     >
                         Reply
                     </ReplyCommentButton>
-                    {meData?.me?.id === comment.authorId && (
+                    {meData && meData.me && (meData.me.id === comment.authorId) && (
                         <>
                             <EditCommentButton
                                 type="button"
@@ -279,7 +279,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                 onClick={async () => {
                                     let hasReplies = false;
 
-                                    if (commentRepliesData?.commentReplies.length !== 0) {
+                                    if (commentRepliesData && commentRepliesData.commentReplies.length > 0) {
                                         hasReplies = true;
                                     }
 
@@ -295,36 +295,40 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                                 !hasReplies
                                             ) {
                                                 if (comment.isReplyTo === "") {
-                                                    const commentsData = postCommentsData?.postComments || [];
-                                                    const selectedComment = commentsData.find((item) => item.id === comment.id);
-                                                    const index = commentsData.indexOf(selectedComment!);
-                                                    commentsData.splice(index!, 1);
-                                                    
-                                                    store.writeQuery<PostCommentsQuery>({
-                                                        query: PostCommentsDocument,
-                                                        data: {
-                                                            postComments: commentsData,
-                                                        },
-                                                        variables: {
-                                                            postId: postId,
-                                                        },
-                                                    });
+                                                    if (postCommentsData) {
+                                                        const commentsData = postCommentsData.postComments || [];
+                                                        const selectedComment = commentsData.find((item) => item.id === comment.id);
+                                                        const index = commentsData.indexOf(selectedComment as Comment);
+                                                        commentsData.splice(index, 1);
+                                                        
+                                                        store.writeQuery<PostCommentsQuery>({
+                                                            query: PostCommentsDocument,
+                                                            data: {
+                                                                postComments: commentsData,
+                                                            },
+                                                            variables: {
+                                                                postId: postId,
+                                                            },
+                                                        });
+                                                    }
                                                 } else {
-                                                    const commentsData = commentRepliesData?.commentReplies || [];
-                                                    const selectedComment = commentsData.find((item) => item.id === comment.id);
-                                                    const index = commentsData.indexOf(selectedComment!);
-                                                    commentsData.splice(index!, 1);
-                                                    
-                                                    store.writeQuery<CommentRepliesQuery>({
-                                                        query: CommentRepliesDocument,
-                                                        data: {
-                                                            commentReplies: commentsData,
-                                                        },
-                                                        variables: {
-                                                            postId: postId,
-                                                            commentId: comment.isReplyTo,
-                                                        },
-                                                    });
+                                                    if (commentRepliesData) {
+                                                        const commentsData = commentRepliesData.commentReplies || [];
+                                                        const selectedComment = commentsData.find((item) => item.id === comment.id);
+                                                        const index = commentsData.indexOf(selectedComment as Comment);
+                                                        commentsData.splice(index, 1);
+                                                        
+                                                        store.writeQuery<CommentRepliesQuery>({
+                                                            query: CommentRepliesDocument,
+                                                            data: {
+                                                                commentReplies: commentsData,
+                                                            },
+                                                            variables: {
+                                                                postId: postId,
+                                                                commentId: comment.isReplyTo,
+                                                            },
+                                                        });
+                                                    }
                                                 }
                                             }
                                         },
@@ -345,7 +349,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                 <EditCommentEditorContainer key={comment.commentId}>
                     <Formik
                         initialValues={{
-                            content: comment.content,
+                            content: comment.content as string,
                             commentId: comment.commentId,
                         }}
                         onSubmit={async (values, { setErrors, setStatus }) => {
@@ -357,33 +361,40 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                                         data.updateComment &&
                                         data.updateComment.comment
                                     ) {
-                                        const commentsData = postCommentsData?.postComments || [];
-                                        const selectedComment = commentsData.find((item) => item.id === comment.id);
-                                        const index = commentsData.indexOf(selectedComment!);
-                                        commentsData.splice(index!, 1);
-                                        commentsData.push(data.updateComment.comment);
+                                        if (postCommentsData && postCommentsData.postComments) {
+                                            const commentsData = postCommentsData.postComments || [];
+                                            const selectedComment = commentsData.find((item) => item.id === comment.id);
+                                            const index = commentsData.indexOf(selectedComment as Comment);
+                                            commentsData.splice(index, 1);
+                                            commentsData.push(data.updateComment.comment);
 
-                                        store.writeQuery<PostCommentsQuery>({
-                                            query: PostCommentsDocument,
-                                            data: {
-                                                postComments: commentsData,
-                                            },
-                                            variables: {
-                                                postId: postId,
-                                            },
-                                        });
+                                            store.writeQuery<PostCommentsQuery>({
+                                                query: PostCommentsDocument,
+                                                data: {
+                                                    postComments: commentsData,
+                                                },
+                                                variables: {
+                                                    postId: postId,
+                                                },
+                                            });
+                                        }
                                     }
                                 },
                             });
 
-                            if (
-                                response.data?.updateComment.errors &&
-                                response.data.updateComment.errors.length !== 0
-                            ) {
-                                setStatus(null);
-                                setErrors(toErrorMap(response.data.updateComment.errors));
+
+                            if (response.data) {
+                                if (
+                                    response.data.updateComment.errors &&
+                                    response.data.updateComment.errors.length > 0
+                                ) {
+                                    setStatus(null);
+                                    setErrors(toErrorMap(response.data.updateComment.errors));
+                                } else {
+                                    setStatus("Your comment has been updated.");
+                                }
                             } else {
-                                setStatus("Your comment has been updated.");
+                                setStatus("An unknown error has occurred. Please try again later.");
                             }
                         }}
                     >
@@ -392,7 +403,7 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                             status,
                         }) => (
                             <Form>
-                                {status ? <Status>{status}</Status> : null}
+                                {status && (<Status>{status}</Status>)}
                                 <FlexContainer24>
                                     <EditorField
                                         field="content"
@@ -417,14 +428,14 @@ const CommentComponent: FunctionComponent<CommentComponentProps> = ({ comment, p
                     </Formik>
                 </EditCommentEditorContainer>
             )}
-            {replyCommentEditor && (
+            {(replyCommentEditor && postCommentsData) && (
                 <ReplyCommentEditorContainer>
-                    <CommentInputComponent postId={postId} commentsData={postCommentsData?.postComments} isReplyTo={comment.commentId} />
+                    <CommentInputComponent postId={postId} commentsData={postCommentsData.postComments} isReplyTo={comment.commentId} />
                 </ReplyCommentEditorContainer>
             )}
-            {commentRepliesData?.commentReplies.length !== 0 && (
+            {(commentRepliesData && commentRepliesData.commentReplies.length > 0) && (
                 <CommentReplies>
-                    {commentRepliesData?.commentReplies?.map(
+                    {commentRepliesData.commentReplies.map(
                         (comment) => (
                             <CommentComponent
                                 key={

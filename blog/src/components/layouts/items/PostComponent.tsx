@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { PageText } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
+import { Post } from "../../../generated/graphql";
 
 interface PostComponentProps {
-    post: any;
+    post: Post;
 }
 
 const PostContainer = styled.div`
@@ -77,7 +78,7 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
     const [date, setDate] = useState("");
 
     useEffect(() => {
-        if (post) {
+        if (post && post.publishedOn) {
             const publishDate = new Date(parseInt(post.publishedOn)).toLocaleString("en-us", {
                 month: "long",
                 day: "numeric",
@@ -99,8 +100,8 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                 navigate(`/post/${post.slug}`);
             }}
             role="link"
-            title={post.title}
-            aria-label={post.title}
+            title={post.title as string}
+            aria-label={post.title as string}
         >
             <PostInnerContainer>
                 <PostHeader>
@@ -111,13 +112,13 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                 <PostImage>
                     <img
                         src={
-                            post.postCover
+                            post.postCover as string
                         }
                         title={
-                            post.title
+                            post.title as string
                         }
                         alt={
-                            post.title
+                            post.title as string
                         }
                     />
                 </PostImage>

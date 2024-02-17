@@ -55,16 +55,20 @@ export class PostResolver {
     @Query(() => [Post])
     @UseMiddleware(isAuth)
     postFeed(@Ctx() { payload }: AuthContext) {
-        return this.postRepository.find({
-            order: {
-                publishedOn: "DESC",
-            },
-            where: {
-                authorId: payload?.id,
-                draft: false,
-            },
-            relations: ["author"],
-        });
+        if (payload) {
+            return this.postRepository.find({
+                order: {
+                    publishedOn: "DESC",
+                },
+                where: {
+                    authorId: payload.id,
+                    draft: false,
+                },
+                relations: ["author"],
+            });   
+        } else {
+            return [];
+        }
     }
 
     @Query(() => [Post])
@@ -80,16 +84,20 @@ export class PostResolver {
     @Query(() => [Post])
     @UseMiddleware(isAuth)
     draftPostFeed(@Ctx() { payload }: AuthContext) {
-        return this.postRepository.find({
-            order: {
-                updatedAt: "DESC",
-            },
-            where: {
-                authorId: payload?.id,
-                draft: true,
-            },
-            relations: ["author"],
-        });
+        if (payload) {
+            return this.postRepository.find({
+                order: {
+                    updatedAt: "DESC",
+                },
+                where: {
+                    authorId: payload.id,
+                    draft: true,
+                },
+                relations: ["author"],
+            });   
+        } else {
+            return [];
+        }
     }
 
     @Query(() => Post, { nullable: true })

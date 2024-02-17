@@ -11,8 +11,8 @@ export async function initAdmin() {
 
     const ses = new aws.SES({
         credentials: {
-            accessKeyId: process.env.SES_KEY_ID!,
-            secretAccessKey: process.env.SES_SECRET_KEY!,
+            accessKeyId: process.env.SES_KEY_ID as string,
+            secretAccessKey: process.env.SES_SECRET_KEY as string,
         },
         region: "eu-south-1",
     });
