@@ -19,13 +19,11 @@ const SelectComponent: FunctionComponent<SelectProps> = ({
             classNamePrefix="select"
             options={options}
             name={field.name}
-            defaultValue={options[0]}
+            defaultValue={options.find((option: any) => option.value === field.value) || options[0]}
             value={
-                options
-                    ? options.find(
-                          (option: any) => option.value === field.value
-                      )
-                    : ""
+                options.find(
+                    (option: any) => option.value === field.value
+                ) || options[0]
             }
             onChange={(option: any) =>
                 form.setFieldValue(field.name, option.value)

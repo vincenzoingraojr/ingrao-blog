@@ -1,13 +1,13 @@
 import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useDeleteIssueMutation } from "../../../generated/graphql";
+import { Newsletter, useDeleteIssueMutation } from "../../../generated/graphql";
 import newsletterCover from "../../../images/cover.svg";
 import { PageText, TextButton } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
 
 interface IssueComponentProps {
-    issue: any;
+    issue: Newsletter;
 }
 
 const IssueContainer = styled.div`
@@ -123,9 +123,9 @@ const NewsletterIssueComponent: FunctionComponent<IssueComponentProps> = ({
                 );
             }}
             role="link"
-            title={issue.title}
+            title={issue.title as string}
             aria-label={
-                issue.title
+                issue.title as string
             }
         >
             <IssueInnerContainer>
@@ -145,8 +145,8 @@ const NewsletterIssueComponent: FunctionComponent<IssueComponentProps> = ({
                                 ? issue.newsletterCover
                                 : newsletterCover
                         }
-                        title={issue.title}
-                        alt={issue.title}
+                        title={issue.title as string}
+                        alt={issue.title as string}
                     />
                 </IssueImage>
                 <IssueBody>

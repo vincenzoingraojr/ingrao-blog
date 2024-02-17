@@ -34,7 +34,7 @@ function App() {
     const location = useLocation();
 
     useEffect(() => {
-        fetch(process.env.REACT_APP_SERVER_ORIGIN!, {
+        fetch(process.env.REACT_APP_SERVER_ORIGIN as string, {
             method: "POST",
             credentials: "include",
         }).then(async (x) => {
@@ -60,11 +60,11 @@ function App() {
         return <Preloader />;
     }
 
-    let state = location.state as { backgroundLocation?: Location };
+    let state = location.state as { backgroundLocation: Location };
 
     return (
         <>
-            <Routes location={state?.backgroundLocation || location}>
+            <Routes location={state.backgroundLocation || location}>
                 <Route
                     path="/"
                     element={
@@ -253,7 +253,7 @@ function App() {
                     }
                 />
             </Routes>
-            {state?.backgroundLocation && (
+            {state.backgroundLocation && (
                 <Routes>
                     <Route
                         path="/login"

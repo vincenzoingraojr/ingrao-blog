@@ -34,6 +34,7 @@ import postCover from "../../images/cover.svg";
 import Close from "../../components/icons/Close";
 import Upload from "../../components/icons/Upload";
 import axios from "axios";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const UpdatePostButton = styled(Button)`
     background-color: blue;
@@ -86,35 +87,38 @@ function UpdatePost() {
             let directory = "";
 
             if (
-                data?.findPost?.postCover !== "" &&
-                data?.findPost?.postCover !== null
+                data && data.findPost && data.findPost.postCover &&
+                data.findPost.postCover !== "" &&
+                data.findPost.postCover !== null
             ) {
-                existingPostCoverName = data?.findPost?.postCover?.replace(
+                existingPostCoverName = data.findPost.postCover.replace(
                     `https://storage.ingrao.blog/${
                         process.env.REACT_APP_ENV === "development"
                             ? "local-posts"
                             : "posts"
-                    }/${data?.findPost?.id}/`,
+                    }/${data.findPost.id}/`,
                     ""
                 )!;
             }
 
             if (selectedPostCover !== null) {
-                if (existingPostCoverName !== "") {
+                if (existingPostCoverName !== "" && data && data.findPost) {
                     await axios.delete(
                         `${process.env.REACT_APP_STORAGE_LINK}/${
                             process.env.REACT_APP_ENV === "development"
                                 ? "local-posts"
                                 : "posts"
-                        }/${data?.findPost?.id}/${existingPostCoverName}`
+                        }/${data.findPost.id}/${existingPostCoverName}`
                     );
                 }
 
                 postCoverName = `post-cover-${new Date().getTime()}.jpeg`;
-                directory =
-                    process.env.REACT_APP_ENV === "development"
-                        ? `local-posts/${data?.findPost?.id}`
-                        : `posts/${data?.findPost?.id}`;
+                if (data && data.findPost) {
+                    directory =
+                        process.env.REACT_APP_ENV === "development"
+                            ? `local-posts/${data.findPost.id}`
+                            : `posts/${data.findPost.id}`;
+                }
 
                 let key = `${directory}/${postCoverName}`;
 
@@ -189,21 +193,23 @@ function UpdatePost() {
                 },
             });
 
-            if (response.data?.editUnpublishedPost.status) {
-                setStatus(response.data.editUnpublishedPost.status);
-            } else if (
-                response.data?.editUnpublishedPost.errors?.length !== 0
-            ) {
-                setStatus(null);
-                setErrors(
-                    toErrorMap(response.data?.editUnpublishedPost?.errors!)
-                );
+            if (response.data) {
+                if (response.data.editUnpublishedPost.status && response.data.editUnpublishedPost.status.length > 0) {
+                    setStatus(response.data.editUnpublishedPost.status);
+                } else if (
+                    response.data.editUnpublishedPost.errors && response.data.editUnpublishedPost.errors.length > 0
+                ) {
+                    setStatus(null);
+                    setErrors(
+                        toErrorMap(response.data.editUnpublishedPost.errors)
+                    );
+                }
             }
         },
         [
             updatePost,
             selectedPostCover,
-            data?.findPost?.postCover,
+            data,
             isPostCoverUploaded,
             deletePostCover,
         ]
@@ -226,276 +232,294 @@ function UpdatePost() {
                         id={params.id!}
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
                                     <>
-                                        <TabLayoutTitle>
-                                            Update post {params.id}
-                                        </TabLayoutTitle>
-                                        <PostFormContainer>
-                                            <Formik
-                                                initialValues={{
-                                                    postId: parseInt(
-                                                        params.id!
-                                                    ),
-                                                    slug: data?.findPost?.slug!,
-                                                    title: data?.findPost
-                                                        ?.title,
-                                                    description:
-                                                        data?.findPost
-                                                            ?.description,
-                                                    slogan: data?.findPost
-                                                        ?.slogan,
-                                                    postCover:
-                                                        data?.findPost
-                                                            ?.postCover,
-                                                    content:
-                                                        data?.findPost?.content,
-                                                }}
-                                                onSubmit={onSubmitDebounced}
-                                            >
-                                                {({
-                                                    errors,
-                                                    status,
-                                                    values,
-                                                    submitForm,
-                                                }) => (
-                                                    <Form>
-                                                        <CoverImageContainer>
-                                                            <CoverImageButtonsContainer>
-                                                                <UploadCoverImageButton
-                                                                    role="button"
-                                                                    title="Upload your post cover image"
-                                                                    aria-label="Upload your post cover image"
-                                                                    onClick={() => {
-                                                                        if (
-                                                                            uploadPostCoverRef.current
-                                                                        ) {
-                                                                            uploadPostCoverRef.current.click();
-                                                                        }
-                                                                    }}
-                                                                >
-                                                                    <input
-                                                                        type="file"
-                                                                        name="post-cover"
-                                                                        ref={
-                                                                            uploadPostCoverRef
-                                                                        }
-                                                                        onChange={(
-                                                                            event
-                                                                        ) => {
-                                                                            let localPostCover =
-                                                                                null;
-                                                                            localPostCover =
-                                                                                event
-                                                                                    .target
-                                                                                    .files![0];
-                                                                            setSelectedPostCover(
-                                                                                localPostCover
-                                                                            );
-                                                                            setDeletePostCover(
-                                                                                false
-                                                                            );
-                                                                            setIsPostCoverUploaded(
-                                                                                true
-                                                                            );
-                                                                            if (
-                                                                                postCoverRef &&
-                                                                                postCoverRef.current
-                                                                            ) {
-                                                                                if (
-                                                                                    localPostCover !==
-                                                                                    undefined
-                                                                                ) {
-                                                                                    postCoverRef.current.src =
-                                                                                        URL.createObjectURL(
-                                                                                            localPostCover
-                                                                                        );
-                                                                                } else {
-                                                                                    postCoverRef.current.src =
-                                                                                        postCover;
-                                                                                }
-                                                                            }
-                                                                        }}
-                                                                        accept="image/png , image/jpeg, image/webp"
-                                                                    />
-                                                                    <ImageButtonContainer>
-                                                                        <Upload color="#ffffff" />
-                                                                    </ImageButtonContainer>
-                                                                </UploadCoverImageButton>
-                                                                {selectedPostCover ||
-                                                                (data?.findPost
-                                                                    ?.postCover !==
-                                                                    "" &&
-                                                                    data
-                                                                        ?.findPost
-                                                                        ?.postCover !==
-                                                                        null) ? (
-                                                                    <PageBlock>
-                                                                        <ImageButtonContainer
-                                                                            role="button"
-                                                                            title="Remove image"
-                                                                            aria-label="Remove image"
-                                                                            onClick={() => {
-                                                                                if (
-                                                                                    uploadPostCoverRef &&
-                                                                                    uploadPostCoverRef.current
-                                                                                ) {
-                                                                                    uploadPostCoverRef.current.value =
-                                                                                        "";
-                                                                                }
-                                                                                if (
-                                                                                    postCoverRef &&
-                                                                                    postCoverRef.current
-                                                                                ) {
-                                                                                    postCoverRef.current.src =
-                                                                                        postCover;
-                                                                                }
-                                                                                setSelectedPostCover(
-                                                                                    null
-                                                                                );
-                                                                                setDeletePostCover(
-                                                                                    true
-                                                                                );
-                                                                                setIsPostCoverUploaded(
-                                                                                    false
-                                                                                );
-                                                                            }}
-                                                                        >
-                                                                            <Close
-                                                                                type="normal"
-                                                                                color="#ffffff"
-                                                                            />
-                                                                        </ImageButtonContainer>
-                                                                    </PageBlock>
-                                                                ) : null}
-                                                            </CoverImageButtonsContainer>
-                                                            <img
-                                                                src={
-                                                                    data
-                                                                        ?.findPost
-                                                                        ?.postCover !==
-                                                                        "" &&
-                                                                    data
-                                                                        ?.findPost
-                                                                        ?.postCover !==
-                                                                        null
-                                                                        ? data
-                                                                              ?.findPost
-                                                                              ?.postCover
-                                                                        : postCover
-                                                                }
-                                                                ref={
-                                                                    postCoverRef
-                                                                }
-                                                                title={`Cover of post ${data?.findPost?.id}`}
-                                                                alt={`Cover of post ${data?.findPost?.id}`}
-                                                            />
-                                                        </CoverImageContainer>
-                                                        <PageBlock>
-                                                            {status ? (
-                                                                <Status>
-                                                                    {status}
-                                                                </Status>
-                                                            ) : null}
-                                                            <FlexContainer24>
-                                                                <InputField
-                                                                    field="slug"
-                                                                    type="text"
-                                                                    placeholder="Slug"
-                                                                    value={
-                                                                        values.slug
-                                                                    }
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                />
-                                                                <InputField
-                                                                    field="title"
-                                                                    type="text"
-                                                                    placeholder="Title"
-                                                                    value={
-                                                                        values.title ||
-                                                                        ""
-                                                                    }
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                />
-                                                                <InputField
-                                                                    field="description"
-                                                                    type="text"
-                                                                    placeholder="Description"
-                                                                    value={
-                                                                        values.description ||
-                                                                        ""
-                                                                    }
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                />
-                                                                <InputField
-                                                                    field="slogan"
-                                                                    type="text"
-                                                                    placeholder="Slogan"
-                                                                    value={
-                                                                        values.slogan ||
-                                                                        ""
-                                                                    }
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                />
-                                                                <EditorField
-                                                                    field="content"
-                                                                    itemId={data?.findPost?.id}
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                />
-                                                                <AutoSave
-                                                                    onSubmit={
-                                                                        submitForm
-                                                                    }
-                                                                />
-                                                                <PageBlock>
-                                                                    <FlexRow24>
-                                                                        <PageBlock>
-                                                                            <UpdatePostButton
-                                                                                type="submit"
-                                                                                title="Save changes"
-                                                                                role="button"
-                                                                                aria-label="Save changes"
-                                                                            >
-                                                                                Save
-                                                                                changes
-                                                                            </UpdatePostButton>
-                                                                        </PageBlock>
-                                                                        <PageBlock>
-                                                                            <PublishPostButton
-                                                                                to={`/publish-post/${params.id}`}
-                                                                                title="Publish post"
-                                                                                state={{
-                                                                                    backgroundLocation:
-                                                                                        location,
-                                                                                }}
-                                                                            >
-                                                                                Publish
-                                                                                post
-                                                                            </PublishPostButton>
-                                                                        </PageBlock>
-                                                                    </FlexRow24>
-                                                                    <Outlet />
-                                                                </PageBlock>
-                                                            </FlexContainer24>
-                                                        </PageBlock>
-                                                    </Form>
-                                                )}
-                                            </Formik>
-                                        </PostFormContainer>
+                                        {data && data.findPost && !error ? (
+                                            <>
+                                                <TabLayoutTitle>
+                                                    Update post {params.id}
+                                                </TabLayoutTitle>
+                                                <PostFormContainer>
+                                                    <Formik
+                                                        initialValues={{
+                                                            postId: parseInt(
+                                                                params.id!
+                                                            ),
+                                                            slug: data.findPost.slug!,
+                                                            title: data.findPost
+                                                                .title,
+                                                            description:
+                                                                data.findPost
+                                                                    .description,
+                                                            slogan: data.findPost
+                                                                .slogan,
+                                                            postCover:
+                                                                data.findPost
+                                                                    .postCover,
+                                                            content:
+                                                                data.findPost.content,
+                                                        }}
+                                                        onSubmit={onSubmitDebounced}
+                                                    >
+                                                        {({
+                                                            errors,
+                                                            status,
+                                                            values,
+                                                            submitForm,
+                                                        }) => (
+                                                            <>
+                                                                {loading ? (
+                                                                    <LoadingComponent />
+                                                                ) : (
+                                                                    <>
+                                                                        {data && data.findPost && !error ? (
+                                                                            <Form>
+                                                                                <CoverImageContainer>
+                                                                                    <CoverImageButtonsContainer>
+                                                                                        <UploadCoverImageButton
+                                                                                            role="button"
+                                                                                            title="Upload your post cover image"
+                                                                                            aria-label="Upload your post cover image"
+                                                                                            onClick={() => {
+                                                                                                if (
+                                                                                                    uploadPostCoverRef.current
+                                                                                                ) {
+                                                                                                    uploadPostCoverRef.current.click();
+                                                                                                }
+                                                                                            }}
+                                                                                        >
+                                                                                            <input
+                                                                                                type="file"
+                                                                                                name="post-cover"
+                                                                                                ref={
+                                                                                                    uploadPostCoverRef
+                                                                                                }
+                                                                                                onChange={(
+                                                                                                    event
+                                                                                                ) => {
+                                                                                                    let localPostCover =
+                                                                                                        null;
+                                                                                                    localPostCover =
+                                                                                                        event
+                                                                                                            .target
+                                                                                                            .files![0];
+                                                                                                    setSelectedPostCover(
+                                                                                                        localPostCover
+                                                                                                    );
+                                                                                                    setDeletePostCover(
+                                                                                                        false
+                                                                                                    );
+                                                                                                    setIsPostCoverUploaded(
+                                                                                                        true
+                                                                                                    );
+                                                                                                    if (
+                                                                                                        postCoverRef &&
+                                                                                                        postCoverRef.current
+                                                                                                    ) {
+                                                                                                        if (
+                                                                                                            localPostCover !==
+                                                                                                            undefined
+                                                                                                        ) {
+                                                                                                            postCoverRef.current.src =
+                                                                                                                URL.createObjectURL(
+                                                                                                                    localPostCover
+                                                                                                                );
+                                                                                                        } else {
+                                                                                                            postCoverRef.current.src =
+                                                                                                                postCover;
+                                                                                                        }
+                                                                                                    }
+                                                                                                }}
+                                                                                                accept="image/png , image/jpeg, image/webp"
+                                                                                            />
+                                                                                            <ImageButtonContainer>
+                                                                                                <Upload color="#ffffff" />
+                                                                                            </ImageButtonContainer>
+                                                                                        </UploadCoverImageButton>
+                                                                                        {selectedPostCover ||
+                                                                                        (data.findPost
+                                                                                            .postCover !==
+                                                                                            "" &&
+                                                                                            data
+                                                                                                .findPost
+                                                                                                .postCover !==
+                                                                                                null) ? (
+                                                                                            <PageBlock>
+                                                                                                <ImageButtonContainer
+                                                                                                    role="button"
+                                                                                                    title="Remove image"
+                                                                                                    aria-label="Remove image"
+                                                                                                    onClick={() => {
+                                                                                                        if (
+                                                                                                            uploadPostCoverRef &&
+                                                                                                            uploadPostCoverRef.current
+                                                                                                        ) {
+                                                                                                            uploadPostCoverRef.current.value =
+                                                                                                                "";
+                                                                                                        }
+                                                                                                        if (
+                                                                                                            postCoverRef &&
+                                                                                                            postCoverRef.current
+                                                                                                        ) {
+                                                                                                            postCoverRef.current.src =
+                                                                                                                postCover;
+                                                                                                        }
+                                                                                                        setSelectedPostCover(
+                                                                                                            null
+                                                                                                        );
+                                                                                                        setDeletePostCover(
+                                                                                                            true
+                                                                                                        );
+                                                                                                        setIsPostCoverUploaded(
+                                                                                                            false
+                                                                                                        );
+                                                                                                    }}
+                                                                                                >
+                                                                                                    <Close
+                                                                                                        type="normal"
+                                                                                                        color="#ffffff"
+                                                                                                    />
+                                                                                                </ImageButtonContainer>
+                                                                                            </PageBlock>
+                                                                                        ) : null}
+                                                                                    </CoverImageButtonsContainer>
+                                                                                    <img
+                                                                                        src={
+                                                                                            data
+                                                                                                .findPost
+                                                                                                .postCover !==
+                                                                                                "" &&
+                                                                                            data
+                                                                                                .findPost
+                                                                                                .postCover !==
+                                                                                                null
+                                                                                                ? data
+                                                                                                    .findPost
+                                                                                                    .postCover
+                                                                                                : postCover
+                                                                                        }
+                                                                                        ref={
+                                                                                            postCoverRef
+                                                                                        }
+                                                                                        title={`Cover of post ${data.findPost.id}`}
+                                                                                        alt={`Cover of post ${data.findPost.id}`}
+                                                                                    />
+                                                                                </CoverImageContainer>
+                                                                                <PageBlock>
+                                                                                    {status && (
+                                                                                        <Status>
+                                                                                            {status}
+                                                                                        </Status>
+                                                                                    )}
+                                                                                    <FlexContainer24>
+                                                                                        <InputField
+                                                                                            field="slug"
+                                                                                            type="text"
+                                                                                            placeholder="Slug"
+                                                                                            value={
+                                                                                                values.slug
+                                                                                            }
+                                                                                            errors={
+                                                                                                errors
+                                                                                            }
+                                                                                        />
+                                                                                        <InputField
+                                                                                            field="title"
+                                                                                            type="text"
+                                                                                            placeholder="Title"
+                                                                                            value={
+                                                                                                values.title ||
+                                                                                                ""
+                                                                                            }
+                                                                                            errors={
+                                                                                                errors
+                                                                                            }
+                                                                                        />
+                                                                                        <InputField
+                                                                                            field="description"
+                                                                                            type="text"
+                                                                                            placeholder="Description"
+                                                                                            value={
+                                                                                                values.description ||
+                                                                                                ""
+                                                                                            }
+                                                                                            errors={
+                                                                                                errors
+                                                                                            }
+                                                                                        />
+                                                                                        <InputField
+                                                                                            field="slogan"
+                                                                                            type="text"
+                                                                                            placeholder="Slogan"
+                                                                                            value={
+                                                                                                values.slogan ||
+                                                                                                ""
+                                                                                            }
+                                                                                            errors={
+                                                                                                errors
+                                                                                            }
+                                                                                        />
+                                                                                        <EditorField
+                                                                                            field="content"
+                                                                                            itemId={data.findPost.id}
+                                                                                            errors={
+                                                                                                errors
+                                                                                            }
+                                                                                        />
+                                                                                        <AutoSave
+                                                                                            onSubmit={
+                                                                                                submitForm
+                                                                                            }
+                                                                                        />
+                                                                                        <PageBlock>
+                                                                                            <FlexRow24>
+                                                                                                <PageBlock>
+                                                                                                    <UpdatePostButton
+                                                                                                        type="submit"
+                                                                                                        title="Save changes"
+                                                                                                        role="button"
+                                                                                                        aria-label="Save changes"
+                                                                                                    >
+                                                                                                        Save
+                                                                                                        changes
+                                                                                                    </UpdatePostButton>
+                                                                                                </PageBlock>
+                                                                                                <PageBlock>
+                                                                                                    <PublishPostButton
+                                                                                                        to={`/publish-post/${params.id}`}
+                                                                                                        title="Publish post"
+                                                                                                        state={{
+                                                                                                            backgroundLocation:
+                                                                                                                location,
+                                                                                                        }}
+                                                                                                    >
+                                                                                                        Publish
+                                                                                                        post
+                                                                                                    </PublishPostButton>
+                                                                                                </PageBlock>
+                                                                                            </FlexRow24>
+                                                                                            <Outlet />
+                                                                                        </PageBlock>
+                                                                                    </FlexContainer24>
+                                                                                </PageBlock>
+                                                                            </Form>
+                                                                        ) : (
+                                                                            <ErrorComponent />
+                                                                        )}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </Formik>
+                                                </PostFormContainer>
+                                            </>
+                                        ) : (
+                                            <ErrorComponent />
+                                        )}
                                     </>
                                 )}
                             </>

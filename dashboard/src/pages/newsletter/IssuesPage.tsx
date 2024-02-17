@@ -10,6 +10,7 @@ import SettingsComponent from "./NewsletterComponent";
 import styled from "styled-components";
 import SearchBoxComponent from "../../components/utils/SearchBox";
 import SmallIssueComponent from "../../components/layouts/items/SmallIssueComponent";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const IssuesPageContent = styled.div`
     display: flex;
@@ -39,7 +40,7 @@ function IssuesPage() {
         }
     }, [data]);
 
-    const { data: dashNewsletterData } = useDashNewsletterFeedQuery({ fetchPolicy: "cache-and-network" });
+    const { data: dashNewsletterData, loading: dashNewsletterLoading, error: dashNewsletterError } = useDashNewsletterFeedQuery({ fetchPolicy: "cache-and-network" });
 
     const { data: newsletterData, loading: newsletterLoading, error: newsletterError } = useNewsletterPersonalFeedQuery({ fetchPolicy: "cache-and-network" });
     const { data: draftNewsletterData, loading: draftNewsletterLoading, error: draftNewsletterError } = useDraftNewsletterFeedQuery({ fetchPolicy: "cache-and-network" });
@@ -58,102 +59,120 @@ function IssuesPage() {
                                 isAdmin={isAdmin}
                                 content={
                                     <>
-                                        {(loading && !data) || error ? (
+                                        {(loading || dashNewsletterLoading) ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
                                         ) : (
                                             <>
-                                                <SidebarLayoutTitle>
-                                                    {isAdmin ? <>All issues</> : <>Your issues</>}
-                                                </SidebarLayoutTitle>
-                                                {isAdmin ? (
-                                                    <> 
-                                                        <PageTextMB48>
-                                                            In this page you can manage all the posts.
-                                                        </PageTextMB48>
-                                                        <SearchBoxComponent data={dashNewsletterData?.dashNewsletterFeed || []} type="newsletter" />  
+                                                {(data && data.me && data.me.posts && dashNewsletterData && !error && !dashNewsletterError) ? (
+                                                    <>
+                                                        <SidebarLayoutTitle>
+                                                            {isAdmin ? <>All issues</> : <>Your issues</>}
+                                                        </SidebarLayoutTitle>
+                                                        {isAdmin ? (
+                                                            <> 
+                                                                <PageTextMB48>
+                                                                    In this page you can manage all the posts.
+                                                                </PageTextMB48>
+                                                                <SearchBoxComponent data={dashNewsletterData.dashNewsletterFeed} type="newsletter" />  
+                                                            </>
+                                                        ) : (
+                                                            <IssuesPageContent>
+                                                                <PageText>
+                                                                    You've been working on {data.me.posts.length}{" "}{data.me.posts.length === 1 ? "newsletter issue" : "newsletter issues"}. 
+                                                                </PageText>
+                                                                <OptionContainer>
+                                                                    <OptionTitle>
+                                                                        Your published newsletter issues
+                                                                    </OptionTitle>
+                                                                    <PageText>
+                                                                        Here you can view your published posts.
+                                                                    </PageText>
+                                                                    <PageBlock>
+                                                                        {newsletterLoading ? (
+                                                                            <LoadingContainer>
+                                                                                <LoadingComponent />
+                                                                            </LoadingContainer>
+                                                                        ) : (
+                                                                            <>
+                                                                                {newsletterData && newsletterData.newsletterPersonalFeed && !newsletterError ? (
+                                                                                    <>
+                                                                                        {newsletterData?.newsletterPersonalFeed?.length ===
+                                                                                        0 ? (
+                                                                                            <PageText>
+                                                                                                There are no published newsletter issues.
+                                                                                            </PageText>
+                                                                                        ) : (
+                                                                                            <IssueFeed>
+                                                                                                {newsletterData.newsletterPersonalFeed.map(
+                                                                                                    (issue) => (
+                                                                                                        <SmallIssueComponent
+                                                                                                            key={
+                                                                                                                issue.id
+                                                                                                            }
+                                                                                                            issue={issue}
+                                                                                                        />
+                                                                                                    )
+                                                                                                )}
+                                                                                            </IssueFeed>
+                                                                                        )}
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <ErrorComponent />
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </PageBlock>
+                                                                </OptionContainer>
+                                                                <OptionContainer>
+                                                                    <OptionTitle>
+                                                                        Your drafts
+                                                                    </OptionTitle>
+                                                                    <PageText>
+                                                                        Here you can view your unpublished newsletter issues.
+                                                                    </PageText>
+                                                                    <PageBlock>
+                                                                        {draftNewsletterLoading ? (
+                                                                            <LoadingContainer>
+                                                                                <LoadingComponent />
+                                                                            </LoadingContainer>
+                                                                        ) : (
+                                                                            <>
+                                                                                {draftNewsletterData && draftNewsletterData.draftNewsletterFeed && !draftNewsletterError ? (
+                                                                                    <>
+                                                                                        {draftNewsletterData?.draftNewsletterFeed?.length ===
+                                                                                        0 ? (
+                                                                                            <PageText>
+                                                                                                There are no unpublished newsletter issues.
+                                                                                            </PageText>
+                                                                                        ) : (
+                                                                                            <IssueFeed>
+                                                                                                {draftNewsletterData?.draftNewsletterFeed?.map(
+                                                                                                    (draftIssue) => (
+                                                                                                        <SmallIssueComponent
+                                                                                                            key={
+                                                                                                                draftIssue.id
+                                                                                                            }
+                                                                                                            issue={draftIssue}
+                                                                                                        />
+                                                                                                    )
+                                                                                                )}
+                                                                                            </IssueFeed>
+                                                                                        )}
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <ErrorComponent />
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </PageBlock>
+                                                                </OptionContainer>
+                                                            </IssuesPageContent>
+                                                        )}
                                                     </>
                                                 ) : (
-                                                    <IssuesPageContent>
-                                                        <PageText>
-                                                            You've been working on {data?.me?.posts?.length}{" "}{data?.me?.posts?.length === 1 ? "newsletter issue" : "newsletter issues"}. 
-                                                        </PageText>
-                                                        <OptionContainer>
-                                                            <OptionTitle>
-                                                                Your published newsletter issues
-                                                            </OptionTitle>
-                                                            <PageText>
-                                                                Here you can view your published posts.
-                                                            </PageText>
-                                                            <PageBlock>
-                                                                {(newsletterLoading && !newsletterData) || newsletterError ? (
-                                                                    <LoadingContainer>
-                                                                        <LoadingComponent />
-                                                                    </LoadingContainer>
-                                                                ) : (
-                                                                    <>
-                                                                        {newsletterData?.newsletterPersonalFeed?.length ===
-                                                                        0 ? (
-                                                                            <PageText>
-                                                                                There are no published newsletter issues.
-                                                                            </PageText>
-                                                                        ) : (
-                                                                            <IssueFeed>
-                                                                                {newsletterData?.newsletterPersonalFeed?.map(
-                                                                                    (issue) => (
-                                                                                        <SmallIssueComponent
-                                                                                            key={
-                                                                                                issue.id
-                                                                                            }
-                                                                                            issue={issue}
-                                                                                        />
-                                                                                    )
-                                                                                )}
-                                                                            </IssueFeed>
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                            </PageBlock>
-                                                        </OptionContainer>
-                                                        <OptionContainer>
-                                                            <OptionTitle>
-                                                                Your drafts
-                                                            </OptionTitle>
-                                                            <PageText>
-                                                                Here you can view your unpublished newsletter issues.
-                                                            </PageText>
-                                                            <PageBlock>
-                                                                {(draftNewsletterLoading && !draftNewsletterData) || draftNewsletterError ? (
-                                                                    <LoadingContainer>
-                                                                        <LoadingComponent />
-                                                                    </LoadingContainer>
-                                                                ) : (
-                                                                    <>
-                                                                        {draftNewsletterData?.draftNewsletterFeed?.length ===
-                                                                        0 ? (
-                                                                            <PageText>
-                                                                                There are no unpublished newsletter issues.
-                                                                            </PageText>
-                                                                        ) : (
-                                                                            <IssueFeed>
-                                                                                {draftNewsletterData?.draftNewsletterFeed?.map(
-                                                                                    (draftIssue) => (
-                                                                                        <SmallIssueComponent
-                                                                                            key={
-                                                                                                draftIssue.id
-                                                                                            }
-                                                                                            issue={draftIssue}
-                                                                                        />
-                                                                                    )
-                                                                                )}
-                                                                            </IssueFeed>
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                            </PageBlock>
-                                                        </OptionContainer>
-                                                    </IssuesPageContent>
+                                                    <ErrorComponent />
                                                 )}
                                             </>
                                         )}

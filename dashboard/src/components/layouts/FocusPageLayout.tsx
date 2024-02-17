@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { useNavigate, useNavigationType } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { devices } from "../../styles/devices";
 import { ControlContainer } from "../../styles/global";
@@ -79,7 +79,6 @@ const FocusPageLayout: FunctionComponent<FocusPageLayoutProps> = ({
     content,
 }) => {
     const navigate = useNavigate();
-    const navigationType = useNavigationType();
 
     return (
         <FocusPageLayoutWrapper>
@@ -90,10 +89,10 @@ const FocusPageLayout: FunctionComponent<FocusPageLayoutProps> = ({
                         role="button"
                         aria-label="Go back"
                         onClick={() => {
-                            if (navigationType === "POP") {
-                                navigate("/");
-                            } else {
+                            if (window.history.length > 2) {
                                 navigate(-1);
+                            } else {
+                                navigate("/");
                             }
                         }}
                     >

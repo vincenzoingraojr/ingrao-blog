@@ -4,6 +4,7 @@ import Head from "../components/Head";
 import InputField from "../components/input/InputField";
 import AuthLayout from "../components/layouts/AuthLayout";
 import {
+    FieldError,
     MeDocument,
     MeQuery,
     useLoginMutation,
@@ -48,45 +49,47 @@ function Login() {
                                 const response = await login({
                                     variables: values,
                                     update: (store, { data }) => {
-                                        if (data) {
+                                        if (data && data.login && data.login.user) {
                                             store.writeQuery<MeQuery>({
                                                 query: MeDocument,
                                                 data: {
                                                     me: data.login
-                                                        ?.user as User,
+                                                        .user as User,
                                                 },
                                             });
                                         }
                                     },
                                 });
 
-                                if (
-                                    response.data?.login?.user &&
-                                    response.data.login.errors?.length === 0 &&
-                                    response.data.login.accessToken
-                                ) {
-                                    setAccessToken(
-                                        response.data.login.accessToken!
-                                    );
-                                    setStatus(response.data.login.status);
-                                    navigate(0);
-                                } else {
-                                    if (response.data?.login?.status) {
-                                        setStatus(response.data.login.status);
-                                    } else {
-                                        setStatus(null);
-                                        setErrors(
-                                            toErrorMap(
-                                                response.data?.login?.errors!
-                                            )
+                                if (response.data && response.data.login) {
+                                    if (
+                                        response.data.login.user &&
+                                        response.data.login.accessToken && 
+                                        response.data.login.accessToken.length > 0
+                                    ) {
+                                        setAccessToken(
+                                            response.data.login.accessToken
                                         );
+                                        setStatus(response.data.login.status);
+                                        navigate(0);
+                                    } else {
+                                        if (response.data.login.status && response.data.login.status.length > 0) {
+                                            setStatus(response.data.login.status);
+                                        } else {
+                                            setStatus(null);
+                                            setErrors(
+                                                toErrorMap(
+                                                    response.data.login.errors as FieldError[]
+                                                )
+                                            );
+                                        }
                                     }
                                 }
                             }}
                         >
                             {({ errors, status }) => (
                                 <Form>
-                                    {status ? <Status>{status}</Status> : null}
+                                    {status && <Status>{status}</Status>}
                                     <AuthFormContent>
                                         <InputField
                                             field="email"

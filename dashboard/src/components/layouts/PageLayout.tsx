@@ -109,7 +109,7 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ content }) => {
                         </a>
                     </FooterItem>
                     <FooterItem>
-                        v1.0.0
+                        v1.1.0
                     </FooterItem>
                 </FooterContainer>
             </PageLayoutContainer>

@@ -419,34 +419,36 @@ function Nav() {
                         </SiteBrandText>
                     </Link>
                 </SiteBrand>
-                <ProfileContainer
-                    title="Open menu"
-                    role="button"
-                    aria-label="Open menu"
-                    onClick={() => {
-                        setMenu(true);
-                        document.body.classList.add("not-scrolling");
-                    }}
-                >
-                    <ProfileInfoContainer>
-                        <ProfileName>
-                            {data?.me?.firstName} {data?.me?.lastName}
-                        </ProfileName>
-                        <ProfileRole>{data?.me?.role}</ProfileRole>
-                    </ProfileInfoContainer>
-                    <ProfileImageContainer>
-                        <img
-                            src={
-                                data?.me?.profilePicture !== "" &&
-                                data?.me?.profilePicture !== null
-                                    ? data?.me?.profilePicture!
-                                    : profilePicture
-                            }
-                            title={`${data?.me?.firstName}'s profile picture`}
-                            alt={`${data?.me?.firstName} ${data?.me?.lastName}`}
-                        />
-                    </ProfileImageContainer>
-                </ProfileContainer>
+                {data && data.me && (
+                    <ProfileContainer
+                        title="Open menu"
+                        role="button"
+                        aria-label="Open menu"
+                        onClick={() => {
+                            setMenu(true);
+                            document.body.classList.add("not-scrolling");
+                        }}
+                    >
+                        <ProfileInfoContainer>
+                            <ProfileName>
+                                {data.me.firstName} {data.me.lastName}
+                            </ProfileName>
+                            <ProfileRole>{data.me.role}</ProfileRole>
+                        </ProfileInfoContainer>
+                        <ProfileImageContainer>
+                            <img
+                                src={
+                                    data.me.profilePicture !== "" &&
+                                    data.me.profilePicture !== null
+                                        ? data.me.profilePicture!
+                                        : profilePicture
+                                }
+                                title={`${data.me.firstName}'s profile picture`}
+                                alt={`${data.me.firstName} ${data.me.lastName}`}
+                            />
+                        </ProfileImageContainer>
+                    </ProfileContainer>
+                )}
             </NavTopContainer>
             <NavInnerContainer>
                 <NavPrimaryContent>
@@ -574,7 +576,7 @@ function Nav() {
                                             </MenuDirectionEntryText>
                                         </NavLink>
                                     </MenuDirectionEntry>
-                                    {data?.me?.role === "admin" && (
+                                    {data && data.me && data.me.role === "admin" && (
                                         <>
                                             <MenuDirectionEntry>
                                                 <NavLink

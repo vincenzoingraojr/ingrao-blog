@@ -8,6 +8,7 @@ import SmallIssueComponent from "../layouts/items/SmallIssueComponent";
 import SmallPostComponent from "../layouts/items/SmallPostComponent";
 import UserComponent from "../layouts/items/UserComponent";
 import LoadingComponent from "./LoadingComponent";
+import ErrorComponent from "./ErrorComponent";
 
 interface SearchBoxComponentProps {
     data: any;
@@ -147,90 +148,96 @@ const SearchBoxComponent: FunctionComponent<SearchBoxComponentProps> = ({ data, 
 
     return (
         <>
-            {(loading && !meData) || error ? (
+            {loading ? (
                 <LoadingContainer>
                     <LoadingComponent />
                 </LoadingContainer>
             ) : (
-                <SearchBox>
-                    <SearchBoxHeader>
-                        <MagnifierContainer>
-                            <Magnifier type="small" isActive={false} />
-                        </MagnifierContainer>
-                        <SearchInputContainer>
-                            <input
-                                type="text"
-                                autoCapitalize="none"
-                                spellCheck="false"
-                                autoComplete="off"
-                                autoCorrect="off"
-                                autoFocus
-                                aria-required
-                                placeholder={"Search"}
-                                aria-label={"Search"}
-                                value={value}
-                                onChange={(e) => {
-                                    setValue(e.target.value);
-                                    handleInputChange(e);
-                                }}
-                            />
-                        </SearchInputContainer>
-                        {value ? (
-                            <CloseButtonContainer
-                                role="button"
-                                tabIndex={0}
-                                title="Clear search input"
-                                aria-label="Clear search input"
-                                onMouseDown={() => {
-                                    setValue("");
-                                    setState({
-                                        filteredData: [],
-                                        query: emptyQuery,
-                                    });
-                                }}
-                            >
-                                <Close type="small" />
-                            </CloseButtonContainer>
-                        ) : null}
-                    </SearchBoxHeader>
-                    <SearchBoxContent>
-                        {noResults ? (
-                            <PageText>No results for "{query}".</PageText>
-                        ) : (
-                            <>
-                                {type === "user" ? (
-                                    <>
-                                        {dataItems.map((user: any) => {
-                                            return (
-                                                <UserComponent key={user.id} user={user} nocontrol={nocontrol} />
-                                            );
-                                        })}
-                                    </>
+                <>
+                    {meData && meData.me && !error ? (
+                        <SearchBox>
+                            <SearchBoxHeader>
+                                <MagnifierContainer>
+                                    <Magnifier type="small" isActive={false} />
+                                </MagnifierContainer>
+                                <SearchInputContainer>
+                                    <input
+                                        type="text"
+                                        autoCapitalize="none"
+                                        spellCheck="false"
+                                        autoComplete="off"
+                                        autoCorrect="off"
+                                        autoFocus
+                                        aria-required
+                                        placeholder={"Search"}
+                                        aria-label={"Search"}
+                                        value={value}
+                                        onChange={(e) => {
+                                            setValue(e.target.value);
+                                            handleInputChange(e);
+                                        }}
+                                    />
+                                </SearchInputContainer>
+                                {value ? (
+                                    <CloseButtonContainer
+                                        role="button"
+                                        tabIndex={0}
+                                        title="Clear search input"
+                                        aria-label="Clear search input"
+                                        onMouseDown={() => {
+                                            setValue("");
+                                            setState({
+                                                filteredData: [],
+                                                query: emptyQuery,
+                                            });
+                                        }}
+                                    >
+                                        <Close type="small" />
+                                    </CloseButtonContainer>
+                                ) : null}
+                            </SearchBoxHeader>
+                            <SearchBoxContent>
+                                {noResults ? (
+                                    <PageText>No results for "{query}".</PageText>
                                 ) : (
                                     <>
-                                        {type === "post" ? (
+                                        {type === "user" ? (
                                             <>
-                                                {dataItems.map((post: any) => {
+                                                {dataItems.map((user: any) => {
                                                     return (
-                                                        <SmallPostComponent key={post.id} post={post} />
+                                                        <UserComponent key={user.id} user={user} nocontrol={nocontrol} />
                                                     );
                                                 })}
                                             </>
                                         ) : (
                                             <>
-                                                {dataItems.map((issue: any) => {
-                                                    return (
-                                                        <SmallIssueComponent key={issue.id} issue={issue} />
-                                                    );
-                                                })}
+                                                {type === "post" ? (
+                                                    <>
+                                                        {dataItems.map((post: any) => {
+                                                            return (
+                                                                <SmallPostComponent key={post.id} post={post} />
+                                                            );
+                                                        })}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {dataItems.map((issue: any) => {
+                                                            return (
+                                                                <SmallIssueComponent key={issue.id} issue={issue} />
+                                                            );
+                                                        })}
+                                                    </>
+                                                )}
                                             </>
                                         )}
                                     </>
                                 )}
-                            </>
-                        )}
-                    </SearchBoxContent>
-                </SearchBox>
+                            </SearchBoxContent>
+                        </SearchBox>
+                    ) : (
+                        <ErrorComponent />
+                    )}
+                </>
             )}
         </>
     );

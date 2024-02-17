@@ -1,13 +1,13 @@
 import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useDeletePostMutation } from "../../../generated/graphql";
+import { Post, useDeletePostMutation } from "../../../generated/graphql";
 import postCover from "../../../images/cover.svg";
 import { PageText, TextButton } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
 
 interface PostComponentProps {
-    post: any;
+    post: Post;
 }
 
 const PostContainer = styled.div`
@@ -99,7 +99,7 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
     if (post.draft) {
         date = processDate(post.updatedAt);
     } else {
-        const publishDate = new Date(parseInt(post.publishedOn)).toLocaleString("en-us", {
+        const publishDate = new Date(parseInt(post.publishedOn as string)).toLocaleString("en-us", {
             month: "long",
             day: "numeric",
             year: "numeric",
@@ -159,7 +159,7 @@ const PostComponent: FunctionComponent<PostComponentProps> = ({
                 </PostImage>
                 <PostBody>
                     <PostTitle>
-                        {post.title !== null && post.title !== "" ? (
+                        {post.title && post.title.length > 0 ? (
                             <>{post.title}</>
                         ) : (
                             <>{post.slug}</>

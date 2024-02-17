@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FunctionComponent } from "react";
-import { useNavigate, useNavigationType } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { devices } from "../../../styles/devices";
 import Arrow from "../../icons/Arrow";
 import { ControlContainer } from "../../../styles/global";
@@ -127,7 +127,6 @@ const ModalContent = styled.div`
 
 const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
     const navigate = useNavigate();
-    const navigationType = useNavigationType();
 
     document.body.classList.add("not-scrolling");
 
@@ -137,10 +136,10 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                 role="link"
                 aria-label="Exit"
                 onClick={() => {
-                    if (navigationType === "POP") {
-                        navigate("/home");
-                    } else {
+                    if (window.history.length > 2) {
                         navigate(-1);
+                    } else {
+                        navigate("/home");
                     }
                 }}
             ></ModalOverlay>
@@ -151,10 +150,10 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                         title="Close modal"
                         aria-label="Close modal"
                         onClick={() => {
-                            if (navigationType === "POP") {
-                                navigate("/home");
-                            } else {
+                            if (window.history.length > 2) {
                                 navigate(-1);
+                            } else {
+                                navigate("/home");
                             }
                         }}
                     >

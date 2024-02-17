@@ -6,6 +6,7 @@ import {
     DashNewsletterFeedQuery,
     DraftNewsletterFeedDocument,
     DraftNewsletterFeedQuery,
+    FieldError,
     useCreateIssueMutation,
     useDashNewsletterFeedQuery,
     useDraftNewsletterFeedQuery,
@@ -21,6 +22,7 @@ import {
 } from "../../styles/global";
 import styled from "styled-components";
 import { toErrorMap } from "../../utils/toErrorMap";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const NewIssueButton = styled(Button)`
     background-color: blue;
@@ -43,89 +45,100 @@ function NewIssue() {
 
     return (
         <>
-            {(loading && !data) || error ? (
+            {loading ? (
                 <ModalLoading />
             ) : (
-                <ModalContentContainer>
-                    <PageTextMB24>
-                        Create a new issue by entering the title.
-                    </PageTextMB24>
-                    <Formik
-                        initialValues={{
-                            title: "",
-                        }}
-                        onSubmit={async (values, { setErrors, setStatus }) => {
-                            const response = await createIssue({
-                                variables: values,
-                                update: (store, { data }) => {
-                                    if (
-                                        data &&
-                                        data.createIssue &&
-                                        data.createIssue.issue
-                                    ) {
-                                        store.writeQuery<DraftNewsletterFeedQuery>({
-                                            query: DraftNewsletterFeedDocument,
-                                            data: {
-                                                draftNewsletterFeed: [
-                                                    data.createIssue.issue,
-                                                    ...draftNewsletterFeedData?.draftNewsletterFeed!,
-                                                ],
-                                            },
-                                        });
-
-                                        store.writeQuery<DashNewsletterFeedQuery>({
-                                            query: DashNewsletterFeedDocument,
-                                            data: {
-                                                dashNewsletterFeed: [
-                                                    data.createIssue.issue,
-                                                    ...dashNewsletterFeedData?.dashNewsletterFeed!,
-                                                ],
-                                            },
-                                        });
+                <>
+                    {data && data.me && !error ? (
+                        <ModalContentContainer>
+                            <PageTextMB24>
+                                Create a new issue by entering the title.
+                            </PageTextMB24>
+                            <Formik
+                                initialValues={{
+                                    title: "",
+                                }}
+                                onSubmit={async (values, { setErrors, setStatus }) => {
+                                    const response = await createIssue({
+                                        variables: values,
+                                        update: (store, { data }) => {
+                                            if (
+                                                data &&
+                                                data.createIssue &&
+                                                data.createIssue.issue
+                                            ) {
+                                                if (draftNewsletterFeedData && draftNewsletterFeedData.draftNewsletterFeed) {
+                                                    store.writeQuery<DraftNewsletterFeedQuery>({
+                                                        query: DraftNewsletterFeedDocument,
+                                                        data: {
+                                                            draftNewsletterFeed: [
+                                                                data.createIssue.issue,
+                                                                ...draftNewsletterFeedData.draftNewsletterFeed,
+                                                            ],
+                                                        },
+                                                    });
+                                                }
+        
+                                                if (dashNewsletterFeedData && dashNewsletterFeedData.dashNewsletterFeed) {
+                                                    store.writeQuery<DashNewsletterFeedQuery>({
+                                                        query: DashNewsletterFeedDocument,
+                                                        data: {
+                                                            dashNewsletterFeed: [
+                                                                data.createIssue.issue,
+                                                                ...dashNewsletterFeedData.dashNewsletterFeed,
+                                                            ],
+                                                        },
+                                                    });
+                                                }
+                                            }
+                                        },
+                                    });
+        
+                                    if (response.data) {
+                                        if (
+                                            response.data.createIssue.issue
+                                        ) {
+                                            setStatus(response.data.createIssue.status);
+                                        } else {
+                                            setStatus(null);
+                                            setErrors(
+                                                toErrorMap(
+                                                    response.data.createIssue.errors as FieldError[]
+                                                )
+                                            );
+                                        }
                                     }
-                                },
-                            });
-
-                            if (
-                                response.data?.createIssue?.issue &&
-                                response.data?.createIssue?.errors?.length === 0
-                            ) {
-                                setStatus(response.data?.createIssue?.status);
-                            } else {
-                                setStatus(null);
-                                setErrors(
-                                    toErrorMap(
-                                        response.data?.createIssue?.errors!
-                                    )
-                                );
-                            }
-                        }}
-                    >
-                        {({ errors, status }) => (
-                            <Form>
-                                {status ? <Status>{status}</Status> : null}
-                                <FlexContainer24>
-                                    <InputField
-                                        field="title"
-                                        type="text"
-                                        placeholder="Title"
-                                        errors={errors}
-                                    />
-                                    <PageBlock>
-                                        <NewIssueButton
-                                            type="submit"
-                                            title="New issue"
-                                            role="button"
-                                            aria-label="New issue"
-                                        >
-                                            New issue
-                                        </NewIssueButton>
-                                    </PageBlock>
-                                </FlexContainer24>
-                            </Form>
-                        )}
-                    </Formik>
-                </ModalContentContainer>
+                                }}
+                            >
+                                {({ errors, status }) => (
+                                    <Form>
+                                        {status && <Status>{status}</Status>}
+                                        <FlexContainer24>
+                                            <InputField
+                                                field="title"
+                                                type="text"
+                                                placeholder="Title"
+                                                errors={errors}
+                                            />
+                                            <PageBlock>
+                                                <NewIssueButton
+                                                    type="submit"
+                                                    title="New issue"
+                                                    role="button"
+                                                    aria-label="New issue"
+                                                >
+                                                    New issue
+                                                </NewIssueButton>
+                                            </PageBlock>
+                                        </FlexContainer24>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </ModalContentContainer>
+                    ) : (
+                        <ErrorComponent />
+                    )}
+                </>
             )}
         </>
     );

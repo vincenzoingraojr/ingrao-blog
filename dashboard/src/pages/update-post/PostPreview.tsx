@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { devices } from "../../styles/devices";
 import { processDate } from "../../utils/processDate";
 import { Editor } from "@ingrao-blog/editor";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const PostPreviewImage = styled.div`
     display: block;
@@ -113,21 +114,23 @@ function PostPreview() {
     const [contentReady, setContentReady] = useState(false);
 
     useEffect(() => {
-        const content = data?.findPost?.content;
+        if (data && data.findPost) {
+            const content = data.findPost.content;
 
-        if (content) {
-            setContentReady(true);
-            setPostContent(JSON.parse(content));
-        } else {
-            setContentReady(false);
-            setPostContent(undefined);
+            if (content) {
+                setContentReady(true);
+                setPostContent(JSON.parse(content));
+            } else {
+                setContentReady(false);
+                setPostContent(undefined);
+            }
         }
-    }, [data?.findPost?.content]);
+    }, [data]);
 
     return (
         <>
             <Head
-                title={`${data?.findPost?.title} | Preview on dashboard.ingrao.blog`}
+                title={loading ? "Loading | dashboard.ingrao.blog" : ((data && data.findPost) ? `${(data.findPost.title && data.findPost.title.length > 0) ? data.findPost.title : `Post ${data.findPost.id}`} | Preview on dashboard.ingrao.blog` : "No data")}
                 description="In this page you can view the post preview."
             />
             <FocusPageLayout
@@ -137,85 +140,91 @@ function PostPreview() {
                         id={params.id!}
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
-                                    <PostPreviewContainer>
-                                        <PageBlock>
-                                            <PostPreviewSlogan>
-                                                {data?.findPost?.slogan !== ""
-                                                    ? data?.findPost?.slogan
-                                                    : "Slogan"}
-                                            </PostPreviewSlogan>
-                                        </PageBlock>
-                                        <PostPreviewTitle>
-                                            {data?.findPost?.title !== ""
-                                                ? data?.findPost?.title
-                                                : "Title"}
-                                        </PostPreviewTitle>
-                                        <PageText>
-                                            {data?.findPost?.description !== ""
-                                                ? data?.findPost?.description
-                                                : "Post description."}
-                                        </PageText>
-                                        <PostPreviewInfo>
-                                            <PageBlock>
-                                                By{" "}
-                                                <strong>
-                                                    {
-                                                        data?.findPost?.author
-                                                            .firstName
-                                                    }{" "}
-                                                    {
-                                                        data?.findPost?.author
-                                                            .lastName
-                                                    }
-                                                </strong>
-                                            </PageBlock>
-                                            <PageText>|</PageText>
-                                            <PostPreviewDate>
-                                                {new Date(
-                                                    parseInt(
-                                                        data?.findPost
-                                                            ?.updatedAt!
-                                                    )
-                                                ).toLocaleString("en-us", {
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    year: "numeric",
-                                                })}
-                                                {data?.findPost?.createdAt !== data?.findPost?.updatedAt && `, updated ${processDate(
-                                                    data?.findPost?.updatedAt!
-                                                )}`}
-                                            </PostPreviewDate>
-                                        </PostPreviewInfo>
-                                        <PostPreviewImage>
-                                            <img
-                                                src={
-                                                    data?.findPost
-                                                        ?.postCover !== "" &&
-                                                    data?.findPost
-                                                        ?.postCover !== null
-                                                        ? data?.findPost
-                                                              ?.postCover
-                                                        : postCover
-                                                }
-                                                title={`Cover of post ${data?.findPost?.id}`}
-                                                alt={`Cover of post ${data?.findPost?.id}`}
-                                            />
-                                        </PostPreviewImage>
-                                        {contentReady && (
-                                            <PostPreviewContent>
-                                                <Editor
-                                                    readOnly={true}
-                                                    toolbarHidden={true}
-                                                    initialContentState={postContent}
-                                                />
-                                            </PostPreviewContent>
+                                    <>
+                                        {data && data.findPost ? (
+                                            <PostPreviewContainer>
+                                                <PageBlock>
+                                                    <PostPreviewSlogan>
+                                                        {(data.findPost.slogan && data.findPost.slogan.length > 0)
+                                                            ? data.findPost.slogan
+                                                            : "Slogan"}
+                                                    </PostPreviewSlogan>
+                                                </PageBlock>
+                                                <PostPreviewTitle>
+                                                    {(data.findPost.title && data.findPost.title.length > 0)
+                                                        ? data.findPost.title
+                                                        : "Title"}
+                                                </PostPreviewTitle>
+                                                <PageText>
+                                                    {(data.findPost.description && data.findPost.description.length > 0)
+                                                        ? data.findPost.description
+                                                        : "Post description."}
+                                                </PageText>
+                                                <PostPreviewInfo>
+                                                    <PageBlock>
+                                                        By{" "}
+                                                        <strong>
+                                                            {
+                                                                data.findPost.author
+                                                                    .firstName
+                                                            }{" "}
+                                                            {
+                                                                data.findPost.author
+                                                                    .lastName
+                                                            }
+                                                        </strong>
+                                                    </PageBlock>
+                                                    <PageText>|</PageText>
+                                                    <PostPreviewDate>
+                                                        {new Date(
+                                                            parseInt(
+                                                                data.findPost
+                                                                    .updatedAt
+                                                            )
+                                                        ).toLocaleString("en-us", {
+                                                            month: "long",
+                                                            day: "numeric",
+                                                            year: "numeric",
+                                                        })}
+                                                        {data.findPost.createdAt !== data.findPost.updatedAt && `, updated ${processDate(
+                                                            data.findPost.updatedAt
+                                                        )}`}
+                                                    </PostPreviewDate>
+                                                </PostPreviewInfo>
+                                                <PostPreviewImage>
+                                                    <img
+                                                        src={
+                                                            data.findPost
+                                                                .postCover !== "" &&
+                                                            data.findPost
+                                                                .postCover !== null
+                                                                ? data.findPost
+                                                                    .postCover
+                                                                : postCover
+                                                        }
+                                                        title={`Cover of post ${data.findPost.id}`}
+                                                        alt={`Cover of post ${data.findPost.id}`}
+                                                    />
+                                                </PostPreviewImage>
+                                                {contentReady && (
+                                                    <PostPreviewContent>
+                                                        <Editor
+                                                            readOnly={true}
+                                                            toolbarHidden={true}
+                                                            initialContentState={postContent}
+                                                        />
+                                                    </PostPreviewContent>
+                                                )}
+                                            </PostPreviewContainer>
+                                        ) : (
+                                            <ErrorComponent />
                                         )}
-                                    </PostPreviewContainer>
+                                    </>
                                 )}
                             </>
                         }

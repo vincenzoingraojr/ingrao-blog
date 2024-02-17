@@ -3,7 +3,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { SvgIcon } from "../../styles/global";
 
 interface CloseProps {
-    type: string;
+    type: "normal" | "small";
     color?: string;
 }
 

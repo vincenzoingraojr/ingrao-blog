@@ -1,4 +1,4 @@
-import { Link, useNavigate, useNavigationType } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Head from "../components/Head";
 import Arrow from "../components/icons/Arrow";
@@ -89,7 +89,6 @@ const LogoutButton = styled(Button)`
 
 function Logout() {
     const navigate = useNavigate();
-    const navigationType = useNavigationType();
 
     const { data, loading } = useMeQuery({
         fetchPolicy: "network-only",
@@ -115,10 +114,10 @@ function Logout() {
                             role="button"
                             aria-label="Go back"
                             onClick={() => {
-                                if (navigationType === "POP") {
-                                    navigate("/");
-                                } else {
+                                if (window.history.length > 2) {
                                     navigate(-1);
+                                } else {
+                                    navigate("/");
                                 }
                             }}
                         >
@@ -145,7 +144,7 @@ function Logout() {
                             onClick={async () => {
                                 await logout();
                                 setAccessToken("");
-                                await client!.resetStore();
+                                await client.resetStore();
                                 navigate(0);
                             }}
                         >

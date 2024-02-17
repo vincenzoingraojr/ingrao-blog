@@ -19,6 +19,7 @@ import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Head from "../../components/Head";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const PublishPostButton = styled(Button)`
     background-color: #000000;
@@ -76,91 +77,99 @@ function PublishPost() {
                 title="Publish this post | dashboard.ingrao.blog"
                 description="In this page you can publish this post."
             />
-            {(meLoading && !meData) || meError ? (
+            {(meLoading || loading) ? (
                 <ModalLoading />
             ) : (
-                <ModalContentContainer>
-                    <PageTextMB24>
-                        Publish this post. Before publishing the post, make sure
-                        that every field is compiled, otherwise you won't be
-                        able to publish the post.
-                    </PageTextMB24>
-                    <Formik
-                        initialValues={{
-                            postId: parseInt(params.id!),
-                        }}
-                        onSubmit={async (values, { setStatus }) => {
-                            const response = await publishPost({
-                                variables: values,
-                            });
-
-                            if (
-                                response.data?.publishPost?.errors?.length === 0
-                            ) {
-                                setStatus(response.data?.publishPost?.status);
-                                setErrors(null);
-                            } else {
-                                setStatus(null);
-                                setErrors(response.data?.publishPost?.errors!);
-                            }
-                        }}
-                    >
-                        {({ status }) => (
-                            <Form>
-                                {status ? <Status>{status}</Status> : null}
-                                <FlexContainer24>
-                                    {errors &&
-                                        errors.map(
-                                            (
-                                                error: {
-                                                    field: string;
-                                                    message: string;
-                                                },
-                                                i: React.Key | number | null
-                                            ) => (
-                                                <PageBlock key={i}>
-                                                    {error.field}:{" "}
-                                                    {error.message}.
+                <>
+                    {(data && meData && !error && !meError) ? (
+                        <ModalContentContainer>
+                            <PageTextMB24>
+                                Publish this post. Before publishing the post, make sure
+                                that every field is compiled, otherwise you won't be
+                                able to publish the post.
+                            </PageTextMB24>
+                            <Formik
+                                initialValues={{
+                                    postId: parseInt(params.id!),
+                                }}
+                                onSubmit={async (values, { setStatus }) => {
+                                    const response = await publishPost({
+                                        variables: values,
+                                    });
+        
+                                    if (response.data) {
+                                        if (
+                                            response.data.publishPost.errors && response.data.publishPost.errors.length === 0
+                                        ) {
+                                            setStatus(response.data.publishPost.status);
+                                            setErrors(null);
+                                        } else {
+                                            setStatus(null);
+                                            setErrors(response.data.publishPost.errors);
+                                        }
+                                    }
+                                }}
+                            >
+                                {({ status }) => (
+                                    <Form>
+                                        {status && <Status>{status}</Status>}
+                                        <FlexContainer24>
+                                            {errors &&
+                                                errors.map(
+                                                    (
+                                                        error: {
+                                                            field: string;
+                                                            message: string;
+                                                        },
+                                                        i: React.Key | number | null
+                                                    ) => (
+                                                        <PageBlock key={i}>
+                                                            {error.field}:{" "}
+                                                            {error.message}.
+                                                        </PageBlock>
+                                                    )
+                                                )}
+                                            <FlexRow24>
+                                                <PageBlock>
+                                                    <PublishPostButton
+                                                        type="submit"
+                                                        title="Publish post"
+                                                        role="button"
+                                                        aria-label="Publish post"
+                                                    >
+                                                        Publish post
+                                                    </PublishPostButton>
                                                 </PageBlock>
-                                            )
-                                        )}
-                                    <FlexRow24>
-                                        <PageBlock>
-                                            <PublishPostButton
-                                                type="submit"
-                                                title="Publish post"
-                                                role="button"
-                                                aria-label="Publish post"
-                                            >
-                                                Publish post
-                                            </PublishPostButton>
-                                        </PageBlock>
-                                        {errors && (
-                                            <PageBlock>
-                                                <EditPostButton
-                                                    to={`/update-post/${params.id}`}
-                                                    title="Update post"
-                                                >
-                                                    Update post
-                                                </EditPostButton>
-                                            </PageBlock>
-                                        )}
-                                        {status && (
-                                            <PageBlock>
-                                                <ViewPostButton
-                                                    to={`/post/${data?.findPost?.slug}`}
-                                                    title="View post"
-                                                >
-                                                    View post
-                                                </ViewPostButton>
-                                            </PageBlock>
-                                        )}
-                                    </FlexRow24>
-                                </FlexContainer24>
-                            </Form>
-                        )}
-                    </Formik>
-                </ModalContentContainer>
+                                                {errors && (
+                                                    <PageBlock>
+                                                        <EditPostButton
+                                                            to={`/update-post/${params.id}`}
+                                                            title="Update post"
+                                                        >
+                                                            Update post
+                                                        </EditPostButton>
+                                                    </PageBlock>
+                                                )}
+                                                {(status && data && data.findPost) && (
+                                                    <PageBlock>
+                                                        <ViewPostButton
+                                                            to={`/post/${data.findPost.slug}`}
+                                                            title="View post"
+                                                        >
+                                                            View post
+                                                        </ViewPostButton>
+                                                    </PageBlock>
+                                                )}
+                                            </FlexRow24>
+                                        </FlexContainer24>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </ModalContentContainer>
+                    ) : (
+                        <ErrorComponent />
+                    )}
+                </>
             )}
         </>
     );

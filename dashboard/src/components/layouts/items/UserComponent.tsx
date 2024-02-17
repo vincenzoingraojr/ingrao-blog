@@ -1,13 +1,13 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useMeQuery } from "../../../generated/graphql";
+import { User, useMeQuery } from "../../../generated/graphql";
 import profilePicture from "../../../images/profile-picture.svg";
 import { devices } from "../../../styles/devices";
 import { PageBlock, PageText, TextButton } from "../../../styles/global";
 
 interface UserComponentProps {
-    user: any;
+    user: User;
     nocontrol?: boolean;
 }
 

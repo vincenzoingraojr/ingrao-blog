@@ -8,6 +8,7 @@ import { useSubscribedUsersQuery, useMeQuery } from "../../generated/graphql";
 import { LoadingContainer, PageTextMB48 } from "../../styles/global";
 import SettingsComponent from "./NewsletterComponent";
 import SearchBoxComponent from "../../components/utils/SearchBox";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 function SubscribedUsers() {
     const { data, loading, error } = useMeQuery({
@@ -25,7 +26,7 @@ function SubscribedUsers() {
         }
     }, [data]);
 
-    const { data: subscribedUsersData } = useSubscribedUsersQuery({ fetchPolicy: "network-only" });
+    const { data: subscribedUsersData, loading: subscribedUsersLoading, error: subscribedUsersError } = useSubscribedUsersQuery({ fetchPolicy: "network-only" });
 
     return (
         <>
@@ -41,19 +42,25 @@ function SubscribedUsers() {
                                 isAdmin={isAdmin}
                                 content={
                                     <>
-                                        {(loading && !data) || error ? (
+                                        {(loading || subscribedUsersLoading) ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
                                         ) : (
                                             <>
-                                                <SidebarLayoutTitle>
-                                                    Subscribed users
-                                                </SidebarLayoutTitle>
-                                                <PageTextMB48>
-                                                    In this page you can manage the ingrao.blog newsletter subscribed users.
-                                                </PageTextMB48>
-                                                <SearchBoxComponent data={subscribedUsersData?.subscribedUsers || []} type="user" nocontrol={true} />
+                                                {data && data.me && subscribedUsersData && subscribedUsersData.subscribedUsers && !error && !subscribedUsersError ? (
+                                                    <>
+                                                        <SidebarLayoutTitle>
+                                                            Subscribed users
+                                                        </SidebarLayoutTitle>
+                                                        <PageTextMB48>
+                                                            In this page you can manage the ingrao.blog newsletter subscribed users.
+                                                        </PageTextMB48>
+                                                        <SearchBoxComponent data={subscribedUsersData.subscribedUsers} type="user" nocontrol={true} />
+                                                    </>
+                                                ) : (
+                                                    <ErrorComponent />
+                                                )}
                                             </>
                                         )}
                                     </>

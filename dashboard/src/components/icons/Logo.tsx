@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { SvgIcon } from "../../styles/global";
 
 export interface LogoProps {
-    type?: string;
+    type?: "index-logo" | "logo" | "inline";
 }
 
 const LogoContainer = styled(SvgIcon).attrs((props: { size: number }) => props)`

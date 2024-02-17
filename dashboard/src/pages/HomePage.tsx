@@ -23,6 +23,7 @@ import {
 } from "chart.js";
 import { Line, Pie } from "react-chartjs-2";
 import { useEffect, useState } from "react";
+import ErrorComponent from "../components/utils/ErrorComponent";
   
 ChartJS.register(
     CategoryScale,
@@ -150,11 +151,11 @@ const PieChartContainer = styled.div`
 `;
 
 function HomePage() {
-    const { data: dashPostsData } = useDashPostFeedQuery({ fetchPolicy: "cache-and-network" });
+    const { data: dashPostsData, loading: dashPostsLoading, error: dashPostsError } = useDashPostFeedQuery({ fetchPolicy: "cache-and-network" });
     const { data, loading, error } = usePostFeedQuery({ fetchPolicy: "cache-and-network" });
-    const { data: draftPostsData } = useDraftPostFeedQuery({ fetchPolicy: "cache-and-network" });
+    const { data: draftPostsData, loading: draftPostsLoading, error: draftPostsError } = useDraftPostFeedQuery({ fetchPolicy: "cache-and-network" });
     
-    const { data: analyticsData } = useSummaryQuery({ fetchPolicy: "cache-and-network" });
+    const { data: analyticsData, loading: analyticsLoading, error: analyticsError } = useSummaryQuery({ fetchPolicy: "cache-and-network" });
 
     const formatter = Intl.NumberFormat("en-US", { notation: "compact" });
 
@@ -331,92 +332,98 @@ function HomePage() {
             />
             <PageLayout content={
                 <PageContentLayout content={
-                    <HomePageContainer>
-                        <DashStatsContainer>
-                            <StatsContainer>
-                                <DataContainer>{dashPostsData?.dashPostFeed.length}</DataContainer>
-                                <DataTypeContainer>Total number of posts</DataTypeContainer>
-                            </StatsContainer>
-                            <StatsContainer>
-                                <DataContainer>{data?.postFeed.length}</DataContainer>
-                                <DataTypeContainer>Number of your public posts</DataTypeContainer>
-                            </StatsContainer>
-                            <StatsContainer>
-                                <DataContainer>{draftPostsData?.draftPostFeed.length}</DataContainer>
-                                <DataTypeContainer>Number of <Link to="/create-post" title="Your drafts" aria-label="Your drafts">your drafts</Link></DataTypeContainer>
-                            </StatsContainer>
-                        </DashStatsContainer>
-                        <AnalyticsContainer>
-                            <PageBlock>
-                                <AnalyticsTitle>Analytics</AnalyticsTitle>
-                            </PageBlock>
-                            <AnalyticsStatsContainer>
-                                <AnalyticsStatContainer>
-                                    <InfoContainer>{formatter.format(analyticsData?.summary.views as number || 0)}</InfoContainer>
-                                    <InfoTypeContainer>Total number of visits in the last 28 days</InfoTypeContainer>
-                                </AnalyticsStatContainer>
-                                <AnalyticsStatContainer>
-                                    <InfoContainer>{analyticsData?.summary.viewsVariation as number > 0 && "+"}{analyticsData?.summary.viewsVariation.toFixed(1)}%</InfoContainer>
-                                    <InfoTypeContainer>Change in the number of visits compared to the previous 28-day period</InfoTypeContainer>
-                                </AnalyticsStatContainer>
-                                <AnalyticsStatContainer>
-                                    <InfoContainer>{formatter.format(analyticsData?.summary.uniqueVisitors as number || 0)}</InfoContainer>
-                                    <InfoTypeContainer>Number of unique visitors in the last 28 days</InfoTypeContainer>
-                                </AnalyticsStatContainer>
-                                <AnalyticsStatContainer>
-                                    <InfoContainer>{analyticsData?.summary.uniqueVisitorsVariation as number > 0 && "+"}{analyticsData?.summary.uniqueVisitorsVariation.toFixed(1)}%</InfoContainer>
-                                    <InfoTypeContainer>Change in the number of unique visitors compared to the previous 28-day period</InfoTypeContainer>
-                                </AnalyticsStatContainer>
-                            </AnalyticsStatsContainer>
-                            <AnalyticsChart>
-                                <Line data={chartData} options={options} />
-                            </AnalyticsChart>
-                            <OtherAnalyticsContainer>
-                                <PieChartContainer>
-                                    <Pie data={pieData} options={pieOptions} />
-                                </PieChartContainer>
-                            </OtherAnalyticsContainer>
-                        </AnalyticsContainer>
-                        <PageBlock>
-                            <OptionContainer>
-                                <OptionTitle>
-                                    Your public posts
-                                </OptionTitle>
-                                <PageText>
-                                    Here you can view and edit your public posts.
-                                </PageText>
-                                <PageBlock>
-                                    {(loading && !data) || error ? (
-                                        <LoadingContainer>
-                                            <LoadingComponent />
-                                        </LoadingContainer>
-                                    ) : (
-                                        <>
-                                            {data?.postFeed?.length ===
-                                            0 ? (
+                    <>
+                        {(loading || dashPostsLoading || analyticsLoading || draftPostsLoading) ? (
+                            <LoadingContainer>
+                                <LoadingComponent />
+                            </LoadingContainer>
+                        ) : (
+                            <>
+                                {(data && dashPostsData && analyticsData && draftPostsData && !error && !dashPostsError && !analyticsError && !draftPostsError) ? (
+                                    <HomePageContainer>
+                                        <DashStatsContainer>
+                                            <StatsContainer>
+                                                <DataContainer>{dashPostsData.dashPostFeed.length}</DataContainer>
+                                                <DataTypeContainer>Total number of posts</DataTypeContainer>
+                                            </StatsContainer>
+                                            <StatsContainer>
+                                                <DataContainer>{data.postFeed.length}</DataContainer>
+                                                <DataTypeContainer>Number of your public posts</DataTypeContainer>
+                                            </StatsContainer>
+                                            <StatsContainer>
+                                                <DataContainer>{draftPostsData.draftPostFeed.length}</DataContainer>
+                                                <DataTypeContainer>Number of <Link to="/create-post" title="Your drafts" aria-label="Your drafts">your drafts</Link></DataTypeContainer>
+                                            </StatsContainer>
+                                        </DashStatsContainer>
+                                        <AnalyticsContainer>
+                                            <PageBlock>
+                                                <AnalyticsTitle>Analytics</AnalyticsTitle>
+                                            </PageBlock>
+                                            <AnalyticsStatsContainer>
+                                                <AnalyticsStatContainer>
+                                                    <InfoContainer>{formatter.format(analyticsData.summary.views as number || 0)}</InfoContainer>
+                                                    <InfoTypeContainer>Total number of visits in the last 28 days</InfoTypeContainer>
+                                                </AnalyticsStatContainer>
+                                                <AnalyticsStatContainer>
+                                                    <InfoContainer>{analyticsData.summary.viewsVariation as number > 0 && "+"}{analyticsData.summary.viewsVariation.toFixed(1)}%</InfoContainer>
+                                                    <InfoTypeContainer>Change in the number of visits compared to the previous 28-day period</InfoTypeContainer>
+                                                </AnalyticsStatContainer>
+                                                <AnalyticsStatContainer>
+                                                    <InfoContainer>{formatter.format(analyticsData.summary.uniqueVisitors as number || 0)}</InfoContainer>
+                                                    <InfoTypeContainer>Number of unique visitors in the last 28 days</InfoTypeContainer>
+                                                </AnalyticsStatContainer>
+                                                <AnalyticsStatContainer>
+                                                    <InfoContainer>{analyticsData.summary.uniqueVisitorsVariation as number > 0 && "+"}{analyticsData.summary.uniqueVisitorsVariation.toFixed(1)}%</InfoContainer>
+                                                    <InfoTypeContainer>Change in the number of unique visitors compared to the previous 28-day period</InfoTypeContainer>
+                                                </AnalyticsStatContainer>
+                                            </AnalyticsStatsContainer>
+                                            <AnalyticsChart>
+                                                <Line data={chartData} options={options} />
+                                            </AnalyticsChart>
+                                            <OtherAnalyticsContainer>
+                                                <PieChartContainer>
+                                                    <Pie data={pieData} options={pieOptions} />
+                                                </PieChartContainer>
+                                            </OtherAnalyticsContainer>
+                                        </AnalyticsContainer>
+                                        <PageBlock>
+                                            <OptionContainer>
+                                                <OptionTitle>
+                                                    Your public posts
+                                                </OptionTitle>
                                                 <PageText>
-                                                    You have no public posts.
+                                                    Here you can view and edit your public posts.
                                                 </PageText>
-                                            ) : (
-                                                <PublicPostsGrid>
-                                                    {data?.postFeed?.map(
-                                                        (post) => (
-                                                            <PostComponent
-                                                                key={
-                                                                    post.id
-                                                                }
-                                                                post={post}
-                                                            />
-                                                        )
+                                                <PageBlock>
+                                                    {data.postFeed.length ===
+                                                    0 ? (
+                                                        <PageText>
+                                                            You have no public posts.
+                                                        </PageText>
+                                                    ) : (
+                                                        <PublicPostsGrid>
+                                                            {data.postFeed.map(
+                                                                (post) => (
+                                                                    <PostComponent
+                                                                        key={
+                                                                            post.id
+                                                                        }
+                                                                        post={post}
+                                                                    />
+                                                                )
+                                                            )}
+                                                        </PublicPostsGrid>
                                                     )}
-                                                </PublicPostsGrid>
-                                            )}
-                                        </>
-                                    )}
-                                </PageBlock>
-                            </OptionContainer>
-                        </PageBlock>
-                    </HomePageContainer>
+                                                </PageBlock>
+                                            </OptionContainer>
+                                        </PageBlock>
+                                    </HomePageContainer>
+                                ) : (
+                                    <ErrorComponent />
+                                )}
+                            </>
+                        )}
+                    </>
                 } />
             } />
         </>

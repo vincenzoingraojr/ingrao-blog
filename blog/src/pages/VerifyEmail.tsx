@@ -51,7 +51,7 @@ function VerifyEmail() {
                                 });
 
                                 const { exp } = jwtDecode<JwtPayload>(
-                                    params.token!
+                                    params.token as string
                                 );
 
                                 if (exp && Date.now() >= exp * 1000) {

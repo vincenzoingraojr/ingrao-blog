@@ -34,12 +34,12 @@ function Login() {
                         const response = await login({
                             variables: values,
                             update: (store, { data }) => {
-                                if (data) {
+                                if (data && data.login && data.login.user) {
                                     store.writeQuery<MeQuery>({
                                         query: MeDocument,
                                         data: {
                                             me: data.login
-                                                ?.user as User,
+                                                .user as User,
                                         },
                                     });
                                 }

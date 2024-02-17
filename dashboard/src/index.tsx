@@ -97,7 +97,7 @@ const client = new ApolloClient({
 
                 try {
                     const { exp } = jwtDecode<JwtPayload>(token);
-                    if (Date.now() >= exp! * 1000) {
+                    if (exp && Date.now() >= exp * 1000) {
                         return false;
                     } else {
                         return true;
@@ -107,7 +107,7 @@ const client = new ApolloClient({
                 }
             },
             fetchAccessToken: () => {
-                return fetch(process.env.REACT_APP_SERVER_ORIGIN!, {
+                return fetch(process.env.REACT_APP_SERVER_ORIGIN as string, {
                     method: "POST",
                     credentials: "include",
                 });
@@ -126,7 +126,7 @@ const client = new ApolloClient({
         }) as any,
         requestLink,
         new HttpLink({
-            uri: process.env.REACT_APP_SCHEMA_URL,
+            uri: `${process.env.REACT_APP_SERVER_ORIGIN}/graphql`,
             credentials: "include",
         }),
     ]),

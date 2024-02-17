@@ -1,13 +1,13 @@
 import { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useDeleteIssueMutation, useUnpublishIssueMutation } from "../../../generated/graphql";
+import { Newsletter, useDeleteIssueMutation, useUnpublishIssueMutation } from "../../../generated/graphql";
 import newsletterCover from "../../../images/cover.svg";
 import { PageText, TextButton } from "../../../styles/global";
 import { processDate } from "../../../utils/processDate";
 
 interface SmallIssueComponentProps {
-    issue: any;
+    issue: Newsletter;
 }
 
 const SmallIssueContainer = styled.div`

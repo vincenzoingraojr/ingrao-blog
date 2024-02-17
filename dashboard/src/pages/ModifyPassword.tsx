@@ -25,8 +25,8 @@ function ModifyPassword() {
 
     useEffect(() => {
         try {
-            const header = jwtDecode<JwtHeader>(params.token!);
-            const payload = jwtDecode<JwtPayload>(params.token!);
+            const header = jwtDecode<JwtHeader>(params.token as string);
+            const payload = jwtDecode<JwtPayload>(params.token as string);
             if (header && payload) {
                 console.log("Valid JWT token");
             }
@@ -50,7 +50,7 @@ function ModifyPassword() {
                         </PageTextMB24>
                         <Formik
                             initialValues={{
-                                token: params.token!,
+                                token: params.token || "",
                                 password: "",
                                 confirmPassword: "",
                             }}
@@ -66,35 +66,38 @@ function ModifyPassword() {
                                     params.token!
                                 );
 
-                                if (Date.now() >= exp! * 1000) {
+                                if (exp && Date.now() >= exp * 1000) {
                                     setStatus(
                                         "Your token is expired. Please repeat the password recovery operation."
                                     );
                                 } else {
-                                    if (
-                                        response.data?.notAuthModifyPassword
-                                            .errors?.length !== 0
-                                    ) {
-                                        setStatus(null);
-                                        setErrors(
-                                            toErrorMap(
-                                                response.data
-                                                    ?.notAuthModifyPassword
-                                                    .errors!
-                                            )
-                                        );
-                                    } else {
-                                        setStatus(
+                                    if (response.data) {
+                                        if (
+                                            response.data.notAuthModifyPassword.errors &&
                                             response.data.notAuthModifyPassword
-                                                .status
-                                        );
+                                                .errors.length > 0
+                                        ) {
+                                            setStatus(null);
+                                            setErrors(
+                                                toErrorMap(
+                                                    response.data
+                                                        .notAuthModifyPassword
+                                                        .errors
+                                                )
+                                            );
+                                        } else {
+                                            setStatus(
+                                                response.data.notAuthModifyPassword
+                                                    .status
+                                            );
+                                        }
                                     }
                                 }
                             }}
                         >
                             {({ status, errors }) => (
                                 <Form>
-                                    {status ? <Status>{status}</Status> : null}
+                                    {status && <Status>{status}</Status>}
                                     <AuthFormContent>
                                         <InputField
                                             field="password"

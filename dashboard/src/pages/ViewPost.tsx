@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useNavigationType, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Head from "../components/Head";
 import PageLayout from "../components/layouts/PageLayout";
 import PageContentLayout from "../components/layouts/sublayouts/PageContentLayout";
@@ -11,6 +11,7 @@ import { devices } from "../styles/devices";
 import Arrow from "../components/icons/Arrow";
 import { Editor } from "@ingrao-blog/editor";
 import { processDate } from "../utils/processDate";
+import ErrorComponent from "../components/utils/ErrorComponent";
 
 const PostCoverImage = styled.div`
     display: block;
@@ -112,7 +113,6 @@ const EditPostButton = styled(LinkButton)`
 function ViewPost() {
     const navigate = useNavigate();
     const params = useParams();
-    const navigationType = useNavigationType();
 
     const { data, loading, error } = useFindPostBySlugQuery({
         fetchPolicy: "network-only",
@@ -137,16 +137,18 @@ function ViewPost() {
     const [contentReady, setContentReady] = useState(false);
 
     useEffect(() => {
-        const content = data?.findPostBySlug?.content;
+        if (data && data.findPostBySlug) {
+            const content = data.findPostBySlug.content;
 
-        if (content) {
-            setContentReady(true);
-            setPostContent(JSON.parse(content));
-        } else {
-            setContentReady(false);
-            setPostContent(undefined);
+            if (content) {
+                setContentReady(true);
+                setPostContent(JSON.parse(content));
+            } else {
+                setContentReady(false);
+                setPostContent(undefined);
+            }
         }
-    }, [data?.findPostBySlug?.content]);
+    }, [data]);
     
     const [date, setDate] = useState("");
 
@@ -175,97 +177,103 @@ function ViewPost() {
     return (
         <>
             <Head
-                title={`${data?.findPostBySlug?.title} | dashboard.ingrao.blog`}
-                description={`In this page you can read "${data?.findPostBySlug?.title}", a post by ${data?.findPostBySlug?.author.firstName} ${data?.findPostBySlug?.author.lastName}.`}
+                title={loading ? ("Loading... | dashboard.ingrao.blog") : ((data && data.findPostBySlug) ? `${data.findPostBySlug.title} | dashboard.ingrao.blog` : "No data")}
+                description={loading ? "Loading..." : ((data && data.findPostBySlug) ? `${data.findPostBySlug.description}${" "}Written by ${data.findPostBySlug.author.firstName} ${data.findPostBySlug.author.lastName}` : "No data")}
             />
             <PageLayout
                 content={
                     <PageContentLayout
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
-                                    <PostContainer>
-                                        <PostHeader>
-                                            <GoBackButton>
-                                                <ControlContainer
-                                                    title="Go back"
-                                                    role="button"
-                                                    aria-label="Go back"
-                                                    onClick={() => {
-                                                        if (navigationType === "POP") {
-                                                            navigate("/");
-                                                        } else {
-                                                            navigate(-1);
+                                    <>
+                                        {data && data.findPostBySlug && !error ? (
+                                            <PostContainer>
+                                                <PostHeader>
+                                                    <GoBackButton>
+                                                        <ControlContainer
+                                                            title="Go back"
+                                                            role="button"
+                                                            aria-label="Go back"
+                                                            onClick={() => {
+                                                                if (window.history.length > 2) {
+                                                                    navigate(-1);
+                                                                } else {
+                                                                    navigate("/");
+                                                                }
+                                                            }}
+                                                        >
+                                                            <Arrow />
+                                                        </ControlContainer>
+                                                        <GoBackButtonText>
+                                                            Go back
+                                                        </GoBackButtonText>
+                                                    </GoBackButton>
+                                                    <EditPostButton
+                                                        to={`/edit-post/${data.findPostBySlug.id}`}
+                                                        title="Edit post"
+                                                    >
+                                                        Edit post
+                                                    </EditPostButton>
+                                                </PostHeader>
+                                                <PageBlock>
+                                                    <PostSlogan>
+                                                        {data.findPostBySlug.slogan}
+                                                    </PostSlogan>
+                                                </PageBlock>
+                                                <PostTitle>
+                                                    {data.findPostBySlug.title}
+                                                </PostTitle>
+                                                <PageText>
+                                                    {data.findPostBySlug.description}
+                                                </PageText>
+                                                <PostInfo>
+                                                    <PageBlock>
+                                                        By{" "}
+                                                        <strong>
+                                                            {
+                                                                data.findPostBySlug.author
+                                                                    .firstName
+                                                            }{" "}
+                                                            {
+                                                                data.findPostBySlug.author
+                                                                    .lastName
+                                                            }
+                                                        </strong>
+                                                    </PageBlock>
+                                                    <PageText>|</PageText>
+                                                    <PostDate>
+                                                        {date}
+                                                    </PostDate>
+                                                </PostInfo>
+                                                <PostCoverImage>
+                                                    <img
+                                                        src={
+                                                            data.findPostBySlug
+                                                                .postCover as string
                                                         }
-                                                    }}
-                                                >
-                                                    <Arrow />
-                                                </ControlContainer>
-                                                <GoBackButtonText>
-                                                    Go back
-                                                </GoBackButtonText>
-                                            </GoBackButton>
-                                            <EditPostButton
-                                                to={`/edit-post/${data?.findPostBySlug?.id}`}
-                                                title="Edit post"
-                                            >
-                                                Edit post
-                                            </EditPostButton>
-                                        </PostHeader>
-                                        <PageBlock>
-                                            <PostSlogan>
-                                                {data?.findPostBySlug?.slogan}
-                                            </PostSlogan>
-                                        </PageBlock>
-                                        <PostTitle>
-                                            {data?.findPostBySlug?.title}
-                                        </PostTitle>
-                                        <PageText>
-                                            {data?.findPostBySlug?.description}
-                                        </PageText>
-                                        <PostInfo>
-                                            <PageBlock>
-                                                By{" "}
-                                                <strong>
-                                                    {
-                                                        data?.findPostBySlug?.author
-                                                            .firstName
-                                                    }{" "}
-                                                    {
-                                                        data?.findPostBySlug?.author
-                                                            .lastName
-                                                    }
-                                                </strong>
-                                            </PageBlock>
-                                            <PageText>|</PageText>
-                                            <PostDate>
-                                                {date}
-                                            </PostDate>
-                                        </PostInfo>
-                                        <PostCoverImage>
-                                            <img
-                                                src={
-                                                    data?.findPostBySlug
-                                                        ?.postCover!
-                                                }
-                                                title={`Cover of post ${data?.findPostBySlug?.id}: ${data?.findPostBySlug?.title}`}
-                                                alt={`Cover of post ${data?.findPostBySlug?.id}: ${data?.findPostBySlug?.title}`}
-                                            />
-                                        </PostCoverImage>
-                                        {contentReady && (
-                                            <PostContent>
-                                                <Editor
-                                                    readOnly={true}
-                                                    toolbarHidden={true}
-                                                    initialContentState={postContent}
-                                                />
-                                            </PostContent>
+                                                        title={`Cover of post ${data.findPostBySlug.id}: ${data.findPostBySlug.title}`}
+                                                        alt={`Cover of post ${data.findPostBySlug.id}: ${data.findPostBySlug.title}`}
+                                                    />
+                                                </PostCoverImage>
+                                                {contentReady && (
+                                                    <PostContent>
+                                                        <Editor
+                                                            readOnly={true}
+                                                            toolbarHidden={true}
+                                                            initialContentState={postContent}
+                                                        />
+                                                    </PostContent>
+                                                )}
+                                            </PostContainer>
+                                        ) : (
+                                            <ErrorComponent />
                                         )}
-                                    </PostContainer>
+                                    </>
                                 )}
                             </>
                         }

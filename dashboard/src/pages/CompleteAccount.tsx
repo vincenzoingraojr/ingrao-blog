@@ -25,8 +25,8 @@ function CompleteAccount() {
 
     useEffect(() => {
         try {
-            const header = jwtDecode<JwtHeader>(params.token!);
-            const payload = jwtDecode<JwtPayload>(params.token!);
+            const header = jwtDecode<JwtHeader>(params.token as string);
+            const payload = jwtDecode<JwtPayload>(params.token as string);
             if (header && payload) {
                 console.log("Valid JWT token");
             }
@@ -63,36 +63,39 @@ function CompleteAccount() {
                                 });
 
                                 const { exp } = jwtDecode<JwtPayload>(
-                                    params.token!
+                                    params.token as string
                                 );
 
-                                if (Date.now() >= exp! * 1000) {
+                                if (exp && Date.now() >= exp * 1000) {
                                     setStatus(
                                         "Your token is expired. Please repeat the password setup operation."
                                     );
                                 } else {
-                                    if (
-                                        response.data?.passwordSetup.errors
-                                            ?.length !== 0
-                                    ) {
-                                        setStatus(null);
-                                        setErrors(
-                                            toErrorMap(
-                                                response.data?.passwordSetup
-                                                    .errors!
-                                            )
-                                        );
-                                    } else {
-                                        setStatus(
-                                            response.data.passwordSetup.status
-                                        );
+                                    if (response.data) {
+                                        if (
+                                            response.data.passwordSetup.errors &&
+                                            response.data.passwordSetup.errors
+                                                .length > 0
+                                        ) {
+                                            setStatus(null);
+                                            setErrors(
+                                                toErrorMap(
+                                                    response.data.passwordSetup
+                                                        .errors
+                                                )
+                                            );
+                                        } else {
+                                            setStatus(
+                                                response.data.passwordSetup.status
+                                            );
+                                        }
                                     }
                                 }
                             }}
                         >
                             {({ status, errors }) => (
                                 <Form>
-                                    {status ? <Status>{status}</Status> : null}
+                                    {status && <Status>{status}</Status>}
                                     <AuthFormContent>
                                         <InputField
                                             field="password"

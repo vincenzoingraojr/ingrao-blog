@@ -18,6 +18,7 @@ import { useDraftPostFeedQuery } from "../../generated/graphql";
 import LoadingComponent from "../../components/utils/LoadingComponent";
 import PostComponent from "../../components/layouts/items/PostComponent";
 import { devices } from "../../styles/devices";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const CreateNewPostButton = styled(LinkButton)`
     color: #ffffff;
@@ -85,31 +86,37 @@ function CreatePostPage() {
                                         Here you can edit the unpublished posts.
                                     </PageText>
                                     <PageBlock>
-                                        {(loading && !data) || error ? (
+                                        {loading ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
                                         ) : (
                                             <>
-                                                {data?.draftPostFeed?.length ===
-                                                0 ? (
-                                                    <PageText>
-                                                        No posts need to be
-                                                        updated or published.
-                                                    </PageText>
-                                                ) : (
-                                                    <PostGrid>
-                                                        {data?.draftPostFeed?.map(
-                                                            (post) => (
-                                                                <PostComponent
-                                                                    key={
-                                                                        post.id
-                                                                    }
-                                                                    post={post}
-                                                                />
-                                                            )
+                                                {data && data.draftPostFeed && !error ? (
+                                                    <>
+                                                        {data.draftPostFeed.length ===
+                                                        0 ? (
+                                                            <PageText>
+                                                                No posts need to be
+                                                                updated or published.
+                                                            </PageText>
+                                                        ) : (
+                                                            <PostGrid>
+                                                                {data.draftPostFeed.map(
+                                                                    (post) => (
+                                                                        <PostComponent
+                                                                            key={
+                                                                                post.id
+                                                                            }
+                                                                            post={post}
+                                                                        />
+                                                                    )
+                                                                )}
+                                                            </PostGrid>
                                                         )}
-                                                    </PostGrid>
+                                                    </>
+                                                ) : (
+                                                    <ErrorComponent />
                                                 )}
                                             </>
                                         )}
