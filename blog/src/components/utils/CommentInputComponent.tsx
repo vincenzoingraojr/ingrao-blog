@@ -50,7 +50,7 @@ const CommentInputComponent: FunctionComponent<CommentInputComponentProps> = ({ 
                                         data: {
                                             postComments: [
                                                 data.createComment.comment,
-                                                ...commentsData!,
+                                                ...commentsData,
                                             ],
                                         },
                                         variables: {
@@ -58,32 +58,36 @@ const CommentInputComponent: FunctionComponent<CommentInputComponentProps> = ({ 
                                         },
                                     });
                                 } else {
-                                    store.writeQuery<CommentRepliesQuery>({
-                                        query: CommentRepliesDocument,
-                                        data: {
-                                            commentReplies: [
-                                                data.createComment.comment,
-                                                ...commentRepliesData?.commentReplies!,
-                                            ],
-                                        },
-                                        variables: {
-                                            postId: postId,
-                                            commentId: values.isReplyTo,
-                                        },
-                                    });
+                                    if (commentRepliesData) {
+                                        store.writeQuery<CommentRepliesQuery>({
+                                            query: CommentRepliesDocument,
+                                            data: {
+                                                commentReplies: [
+                                                    data.createComment.comment,
+                                                    ...commentRepliesData.commentReplies,
+                                                ],
+                                            },
+                                            variables: {
+                                                postId: postId,
+                                                commentId: values.isReplyTo,
+                                            },
+                                        });
+                                    }
                                 }
                             }
                         },
                     });
 
-                    if (
-                        response.data?.createComment.errors &&
-                        response.data.createComment.errors.length !== 0
-                    ) {
-                        setStatus(null);
-                        setErrors(toErrorMap(response.data.createComment.errors));
-                    } else {
-                        setStatus("Your comment has been published.");
+                    if (response.data) {
+                        if (
+                            response.data.createComment.errors &&
+                            response.data.createComment.errors.length > 0
+                        ) {
+                            setStatus(null);
+                            setErrors(toErrorMap(response.data.createComment.errors));
+                        } else {
+                            setStatus("Your comment has been published.");
+                        }
                     }
                 }}
             >
@@ -92,7 +96,7 @@ const CommentInputComponent: FunctionComponent<CommentInputComponentProps> = ({ 
                     status
                 }) => (
                     <Form>
-                        {status ? <Status>{status}</Status> : null}
+                        {status && <Status>{status}</Status>}
                         <FlexContainer24>
                             <EditorField
                                 field="content"
