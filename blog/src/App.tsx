@@ -64,7 +64,7 @@ function App() {
 
     return (
         <>
-            <Routes location={state.backgroundLocation || location}>
+            <Routes location={state && state.backgroundLocation ? state.backgroundLocation : location}>
                 <Route
                     path="/"
                     element={
@@ -253,7 +253,7 @@ function App() {
                     }
                 />
             </Routes>
-            {state.backgroundLocation && (
+            {state && state.backgroundLocation && (
                 <Routes>
                     <Route
                         path="/login"
