@@ -206,6 +206,7 @@ function UpdateIssue() {
             }
         },
         [
+            params.newsletterId,
             updateIssue,
             selectedIssueCover,
             data,
