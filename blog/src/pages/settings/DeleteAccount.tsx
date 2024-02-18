@@ -59,14 +59,14 @@ function DeleteAccount() {
                                                         </SidebarLayoutTitle>
                                                         <DeleteAccountPageContent>
                                                             <PageText>
-                                                                In this page you can delete all of your account data. By deleting your account, these effects will take place:
+                                                                In this page you can delete your account.
                                                             </PageText>
                                                             <OptionContainer>
                                                                 <OptionTitle>
-                                                                    Delete your data
+                                                                    Delete your account
                                                                 </OptionTitle>
                                                                 <PageText>
-                                                                    Here you can delete your account. Know that once that you delete your account, all of your profile information, posts and images will be permanently deleted.
+                                                                    Here you can delete your account. Know that once that you delete your account, all of your profile information, comments and images will be permanently deleted.
                                                                 </PageText>
                                                                 <PageBlock>
                                                                     <Formik
