@@ -1,12 +1,11 @@
 import { User } from "../entities/User";
-import { createAccessToken } from "../auth/auth";
+import appDataSource from "../dataSource";
 import aws from "aws-sdk";
+import { createAccessToken } from "../auth/auth";
 import ejs from "ejs";
 import path from "path";
-import appDataSource from "../dataSource";
-import { Not } from "typeorm";
 
-export async function initAdmin() {
+export async function initStaffAccount() {
     const userRepository = appDataSource.getRepository(User);
 
     const ses = new aws.SES({
@@ -17,29 +16,26 @@ export async function initAdmin() {
         region: "eu-south-1",
     });
 
-    let users = await userRepository.find({
-        where: { role: Not("user") },
-    });
-
     let adminUser = await userRepository.findOne({
-        where: { email: process.env.PERSONAL_EMAIL },
+        where: { email: process.env.ADMIN_EMAIL },
     });
 
-    if (!adminUser && users.length === 0) {
+    if (!adminUser) {
         const result = await userRepository
             .createQueryBuilder()
             .insert()
             .into(User)
             .values({
-                email: process.env.PERSONAL_EMAIL,
-                firstName: "Vincenzo Jr.",
-                lastName: "Ingrao",
+                email: process.env.ADMIN_EMAIL,
+                firstName: "Staff",
+                lastName: "",
                 title: "Mr.",
                 gender: "Male",
                 birthDate: "2002-01-24",
                 role: "admin",
                 newsletterSubscribed: true,
                 verified: true,
+                profilePicture: "https://storage.ingrao.blog/brand/logo.png",
             })
             .returning("*")
             .execute();
@@ -56,7 +52,7 @@ export async function initAdmin() {
                 } else {
                     const params: aws.SES.SendEmailRequest = {
                         Destination: {
-                            ToAddresses: [process.env.PERSONAL_EMAIL as string],
+                            ToAddresses: [process.env.ADMIN_EMAIL as string],
                         },
                         Message: {
                             Body: {
@@ -74,7 +70,7 @@ export async function initAdmin() {
                     ses.sendEmail(params)
                         .promise()
                         .then(() => {
-                            console.log("Admin user initialized.");
+                            console.log("Staff user initialized.");
                         })
                         .catch((error) => {
                             console.error(error);

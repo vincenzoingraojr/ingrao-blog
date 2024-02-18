@@ -20,6 +20,7 @@ import { CommentResolver } from "./resolvers/CommentResolver";
 import { createUniqueIdentifier } from "./helpers/createUniqueIdentifier";
 import { v4 as uuidv4 } from "uuid";
 import appDataSource from "./dataSource";
+import { initStaffAccount } from "./helpers/initStaffAccount";
 
 async function main() {
     const app = express();
@@ -122,6 +123,7 @@ async function main() {
     });
 
     await initAdmin();
+    await initStaffAccount();
 }
 
 main().catch((error) => {

@@ -55,7 +55,7 @@ export class User extends BaseEntity {
     issues: Newsletter[];
 
     @Field(() => [Comment], { nullable: true, defaultValue: [] })
-    @OneToMany(() => Comment, (comment) => comment.author, { nullable: true })
+    @OneToMany(() => Comment, (comment) => comment.author, { nullable: true, cascade: true })
     comments: Comment[];
 
     @Field(() => Boolean, { nullable: false })

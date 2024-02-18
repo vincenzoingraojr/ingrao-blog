@@ -111,7 +111,7 @@ export class UserResolver {
                 process.env.ACCESS_TOKEN_SECRET as string
             );
 
-            if (origin === "dash") {
+            if (origin === "dash" && payload.role !== "user") {
                 user = this.userRepository.findOne({
                     where: { id: payload.id },
                     relations: ["posts", "issues", "comments"],
@@ -184,7 +184,7 @@ export class UserResolver {
         } else {
             if (
                 (user.password === "" || user.password === null) &&
-                origin === "dash"
+                origin === "dash" && user.role !== "user"
             ) {
                 const token = createAccessToken(user);
                 const link = `${process.env.DASHBOARD_ORIGIN}/complete-account/${token}`;
@@ -227,9 +227,10 @@ export class UserResolver {
                     }
                 );
             } else {
-                if ((user.password === "" || user.password === null) && user.role === "admin") {
-                    status = "You seem to be an admin. Go to the dashboard to set up your password.";
-                } else {
+                if ((user.password === "" || user.password === null) && user.role !== "user" && origin === "blog") {
+                    status = "You seem to be part of the staff. Go to the dashboard to set up your password.";
+                }  
+                if (user.password.length > 0 && ((user.role !== "user" && origin === "dash") || (origin === "blog"))) {
                     const valid = await argon2.verify(user.password, password);
 
                     if (!valid) {
@@ -249,6 +250,8 @@ export class UserResolver {
                             sendVerificationEmail(email, origin, verifyToken);
                         }
                     }
+                } else if (user.role === "user" && origin === "dash") {
+                    status = "Regular users can't log in to the dashboard.";
                 }
             }
         }
@@ -803,12 +806,6 @@ export class UserResolver {
                 message: "The first name field cannot be empty",
             });
         }
-        if (lastName === "" || lastName === null) {
-            errors.push({
-                field: "lastName",
-                message: "The last name field cannot be empty",
-            });
-        }
         if (title === "Title" || title === "") {
             errors.push({
                 field: "title",
@@ -1200,26 +1197,30 @@ export class UserResolver {
         if (!payload) {
             status = "You are not authenticated.";
         } else if (errors.length === 0 && payload.role === "admin") {
-            try {
-                await this.userRepository.update(
-                    {
-                        id,
-                    },
-                    {
-                        role,
-                    },
-                );
+            user = await this.userRepository.findOne({
+                where: { id },
+                relations: ["posts", "issues", "comments"],
+            });
 
-                status = "The user role has been changed.";
-                
-                user = await this.userRepository.findOne({
-                    where: { id },
-                    relations: ["posts", "issues", "comments"],
-                });
-            } catch (error) {
-                console.log(error);
-                status =
-                    "An error has occurred. Please try again later to change the user role.";
+            if (user && user.email !== process.env.ADMIN_EMAIL) {
+                try {
+                    await this.userRepository.update(
+                        {
+                            id,
+                        },
+                        {
+                            role,
+                        },
+                    );
+    
+                    status = "The user role has been changed.";
+                } catch (error) {
+                    console.log(error);
+                    status =
+                        "An error has occurred. Please try again later to change the user role.";
+                }
+            } else {
+                status = "You can't change the role of this account.";
             }
         } else if (payload.role !== "admin") {
             status = "You are not authorized to change the role of another user.";
@@ -1249,8 +1250,36 @@ export class UserResolver {
             status = "You are not authenticated.";
         } else if (!user) {
             status = "This user doesn't exist.";
+        } else if (user.email === process.env.ADMIN_EMAIL) {
+            status = "You can't delete this account.";
         } else if (payload.role === "admin") {
-            await this.userRepository.remove(user).then(() => {
+            await this.userRepository.remove(user).then(async () => {
+                if (user && user.profilePicture && user.profilePicture !== null && user.profilePicture !== "") {
+                    const profilePictureName = user.profilePicture.replace(
+                        "https://storage.ingrao.blog/",
+                        "",
+                    );
+                    await axios.delete(`${process.env.STORAGE_LINK}/${profilePictureName}`);
+                }
+
+                const staff = await this.userRepository.findOne({ where: { email: process.env.ADMIN_EMAIL } });
+
+                if (user && staff) {
+                    for (const post of user.posts) {
+                        post.author = staff;
+                        post.authorId = staff.id;
+                        
+                        await post.save();
+                    }
+
+                    for (const issue of user.issues) {
+                        issue.author = staff;
+                        issue.authorId = staff.id;
+
+                        await issue.save();
+                    }
+                }
+
                 status = "This user has been deleted.";
             }).catch(() => {
                 status = "An error has occurred while deleting this user. Please try again later.";
@@ -1274,7 +1303,7 @@ export class UserResolver {
         if (!payload) {
             status = "You are not authenticated.";
         } else {
-            let user;
+            let user: User | null = null;
             if (origin === "dash") {
                 user = await this.userRepository.findOne({
                     where: { id: payload.id },
@@ -1287,10 +1316,6 @@ export class UserResolver {
                 });
             }
 
-            if (user && user.profilePicture !== "" && user.profilePicture !== null) {
-                await axios.delete(user.profilePicture);
-            }
-
             let adminUsers = await this.userRepository.find({
                 where: { role: "admin" }, 
             });
@@ -1298,14 +1323,53 @@ export class UserResolver {
             if (payload.role === "admin" && (adminUsers.length - 1) === 0) {
                 status = "You can't delete your account because you are the only admin of ingrao.blog.";
                 ok = false;
+            } else if (user && user.email === process.env.ADMIN_EMAIL) {
+                status = "You can't delete this account.";
+                ok = false;
             } else {
-                await this.userRepository.remove(user!).then(() => {
-                    status = "Your data has been deleted.";
-                    ok = true;
-                }).catch(() => {
-                    status = "An error has occurred while deleting your data. Please try again later.";
+                try {
+                    if (user) {
+                        await this.userRepository.remove(user).then(async () => {
+                            if (user && user.profilePicture && user.profilePicture !== null && user.profilePicture !== "") {
+                                const profilePictureName = user.profilePicture.replace(
+                                    "https://storage.ingrao.blog/",
+                                    "",
+                                );
+                                await axios.delete(`${process.env.STORAGE_LINK}/${profilePictureName}`);
+                            }
+
+                            const staff = await this.userRepository.findOne({ where: { email: process.env.ADMIN_EMAIL } });
+
+                            if (user && staff) {
+                                for (const post of user.posts) {
+                                    post.author = staff;
+                                    post.authorId = staff.id;
+                                    
+                                    await post.save();
+                                }
+
+                                for (const issue of user.issues) {
+                                    issue.author = staff;
+                                    issue.authorId = staff.id;
+
+                                    await issue.save();
+                                }
+                            }
+
+                            status = "Your data has been deleted.";
+                            ok = true;
+                        }).catch(() => {
+                            status = "An error has occurred while deleting your data. Please try again later.";
+                            ok = false;
+                        });
+                    } else {
+                        status = "An error has occurred while deleting your data. Please try again later.";
+                        ok = false;
+                    }
+                } catch (error) {
+                    console.error(error);
                     ok = false;
-                });
+                }
             }
         }
 

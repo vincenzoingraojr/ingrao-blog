@@ -57,7 +57,7 @@ function App() {
         }).then(async (x) => {
             const { accessToken, role } = await x.json();
             setAccessToken(accessToken);
-            if (accessToken) {
+            if (accessToken && role !== "user") {
                 setIsAuth(true);
             } else {
                 setIsAuth(false);
