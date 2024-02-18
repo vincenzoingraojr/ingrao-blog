@@ -7,6 +7,7 @@ import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import Head from "../../../components/Head";
+import ErrorComponent from "../../../components/utils/ErrorComponent";
 
 const VerifyEmailAddressButton = styled(Button)`
     background-color: blue;
@@ -26,8 +27,8 @@ function VerifyEmailAddress() {
 
     useEffect(() => {
         try {
-            const header = jwtDecode<JwtHeader>(params.token!);
-            const payload = jwtDecode<JwtPayload>(params.token!);
+            const header = jwtDecode<JwtHeader>(params.token as string);
+            const payload = jwtDecode<JwtPayload>(params.token as string);
             if (header && payload) {
                 console.log("Valid JWT token");
             }
@@ -42,60 +43,68 @@ function VerifyEmailAddress() {
                 title="Verify your email address | dashboard.ingrao.blog"
                 description="In this page you can verify your email address."
             />
-            {(loading && !data) || error ? (
+            {loading ? (
                 <ModalLoading />
             ) : (
-                <ModalContentContainer>
-                    <PageTextMB24>
-                        Verify the email address linked to your account.
-                    </PageTextMB24>
-                    <Formik
-                        initialValues={{
-                            token: params.token!,
-                        }}
-                        onSubmit={async (
-                            values,
-                            { setStatus }
-                        ) => {
-                            const response = await verifyEmail({
-                                variables: values,
-                            });
-
-                            const { exp } = jwtDecode<JwtPayload>(
-                                params.token!
-                            );
-
-                            if (Date.now() >= exp! * 1000) {
-                                setStatus(
-                                    "Your token is expired. Please repeat the email address verification."
-                                );
-                            } else {
-                                setStatus(
-                                    response?.data?.verifyEmailAddress
-                                        .status
-                                );
-                            }
-                        }}
-                    >
-                        {({ status }) => (
-                            <Form>
-                                {status ? <Status>{status}</Status> : null}
-                                <FlexContainer24>
-                                    <PageBlock>
-                                        <VerifyEmailAddressButton
-                                            type="submit"
-                                            title="Verify email address"
-                                            role="button"
-                                            aria-label="Verify email address"
-                                        >
-                                            Verify email address
-                                        </VerifyEmailAddressButton>
-                                    </PageBlock>
-                                </FlexContainer24>
-                            </Form>
-                        )}
-                    </Formik>
-                </ModalContentContainer>
+                <>
+                    {data && data.me && !error ? (
+                        <ModalContentContainer>
+                            <PageTextMB24>
+                                Verify the email address linked to your account.
+                            </PageTextMB24>
+                            <Formik
+                                initialValues={{
+                                    token: params.token!,
+                                }}
+                                onSubmit={async (
+                                    values,
+                                    { setStatus }
+                                ) => {
+                                    const response = await verifyEmail({
+                                        variables: values,
+                                    });
+        
+                                    const { exp } = jwtDecode<JwtPayload>(
+                                        params.token!
+                                    );
+        
+                                    if (exp && Date.now() >= exp * 1000) {
+                                        setStatus(
+                                            "Your token is expired. Please repeat the email address verification."
+                                        );
+                                    } else {
+                                        if (response.data) {
+                                            setStatus(
+                                                response.data.verifyEmailAddress
+                                                    .status
+                                            );
+                                        }
+                                    }
+                                }}
+                            >
+                                {({ status }) => (
+                                    <Form>
+                                        {status && <Status>{status}</Status>}
+                                        <FlexContainer24>
+                                            <PageBlock>
+                                                <VerifyEmailAddressButton
+                                                    type="submit"
+                                                    title="Verify email address"
+                                                    role="button"
+                                                    aria-label="Verify email address"
+                                                >
+                                                    Verify email address
+                                                </VerifyEmailAddressButton>
+                                            </PageBlock>
+                                        </FlexContainer24>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </ModalContentContainer>
+                    ) : (
+                        <ErrorComponent />
+                    )}
+                </>
             )}
         </>
     );

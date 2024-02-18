@@ -5,9 +5,10 @@ import DatePickerField from "../../../components/input/datepicker/DatePickerFiel
 import InputField from "../../../components/input/InputField";
 import SelectField from "../../../components/input/select/SelectField";
 import ModalLoading from "../../../components/utils/modal/ModalLoading";
-import { DashUsersDocument, DashUsersQuery, useAddDashUserMutation, useDashUsersQuery, useMeQuery } from "../../../generated/graphql";
+import { DashUsersDocument, DashUsersQuery, FieldError, useAddDashUserMutation, useDashUsersQuery, useMeQuery } from "../../../generated/graphql";
 import { Button, FlexContainer24, FlexRow24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../../styles/global";
 import { toErrorMap } from "../../../utils/toErrorMap";
+import ErrorComponent from "../../../components/utils/ErrorComponent";
 
 const AddNewDashUserButton = styled(Button)`
     background-color: blue;
@@ -42,7 +43,7 @@ function AddNewUser() {
 
     const [addUser] = useAddDashUserMutation();
 
-    const { data: dashUsersData } = useDashUsersQuery({
+    const { data: dashUsersData, loading: dashUsersLoading, error: dashUsersError } = useDashUsersQuery({
         fetchPolicy: "network-only",
     });
 
@@ -52,138 +53,146 @@ function AddNewUser() {
                 title="Add a new user | dashboard.ingrao.blog"
                 description="In this page you can add a new user to the dashboard."
             />
-            {(loading && !data) || error ? (
+            {(loading || dashUsersLoading) ? (
                 <ModalLoading />
             ) : (
-                <ModalContentContainer>
-                    <PageTextMB24>
-                        Add a new user to the dashboard.
-                    </PageTextMB24>
-                    <Formik
-                        initialValues={{
-                            email: "",
-                            firstName: "",
-                            lastName: "",
-                            title: "",
-                            gender: "",
-                            role: "",
-                            birthDate: Date(),
-                        }}
-                        onSubmit={async (values, { setErrors, setStatus }) => {
-                            const response = await addUser({
-                                variables: values,
-                                update: (store, { data }) => {
-                                    if (
-                                        data &&
-                                        data.addDashUser &&
-                                        data.addDashUser.user
-                                    ) {
-                                        store.writeQuery<DashUsersQuery>({
-                                            query: DashUsersDocument,
-                                            data: {
-                                                dashUsers: [
-                                                    data.addDashUser.user,
-                                                    ...dashUsersData?.dashUsers!,
-                                                ],
-                                            },
-                                        });
+                <>
+                    {data && dashUsersData && !error && !dashUsersError ? (
+                        <ModalContentContainer>
+                            <PageTextMB24>
+                                Add a new user to the dashboard.
+                            </PageTextMB24>
+                            <Formik
+                                initialValues={{
+                                    email: "",
+                                    firstName: "",
+                                    lastName: "",
+                                    title: "",
+                                    gender: "",
+                                    role: "",
+                                    birthDate: Date(),
+                                }}
+                                onSubmit={async (values, { setErrors, setStatus }) => {
+                                    const response = await addUser({
+                                        variables: values,
+                                        update: (store, { data }) => {
+                                            if (
+                                                data &&
+                                                data.addDashUser &&
+                                                data.addDashUser.user
+                                            ) {
+                                                store.writeQuery<DashUsersQuery>({
+                                                    query: DashUsersDocument,
+                                                    data: {
+                                                        dashUsers: [
+                                                            data.addDashUser.user,
+                                                            ...dashUsersData.dashUsers,
+                                                        ],
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    });
+        
+                                    if (response.data && response.data.addDashUser) {
+                                        if (response.data.addDashUser.user || (response.data.addDashUser.status && response.data.addDashUser.status.length > 0)) {
+                                            setStatus(response.data.addDashUser.status);
+                                        } else {
+                                            setStatus(null);
+                                            setErrors(
+                                                toErrorMap(
+                                                    response.data.addDashUser.errors as FieldError[]
+                                                )
+                                            );
+                                        }
                                     }
-                                },
-                            });
-
-                            if (response.data?.addDashUser?.user || response.data?.addDashUser?.status) {
-                                setStatus(response.data.addDashUser.status);
-                            } else {
-                                setStatus(null);
-                                setErrors(
-                                    toErrorMap(
-                                        response.data?.addDashUser?.errors!
-                                    )
-                                );
-                            }
-                        }}
-                    >
-                        {({ errors, status }) => (
-                            <Form>
-                                {status ? <Status>{status}</Status> : null}
-                                <FlexContainer24>
-                                    <FlexRow24>
-                                        <DatePickerField
-                                            field="birthDate"
-                                            placeholder="Birthday"
-                                        />
-                                        <SelectField
-                                            field="role"
-                                            placeholder="Role"
-                                            errors={
-                                                errors
-                                            }
-                                            options={
-                                                roleOptions
-                                            }
-                                        />
-                                    </FlexRow24>
-                                    <FlexRow24>
-                                        <SelectField
-                                            field="title"
-                                            placeholder="Title"
-                                            errors={
-                                                errors
-                                            }
-                                            options={
-                                                titleOptions
-                                            }
-                                        />
-                                        <SelectField
-                                            field="gender"
-                                            placeholder="Gender"
-                                            errors={
-                                                errors
-                                            }
-                                            options={
-                                                genderOptions
-                                            }
-                                        />
-                                    </FlexRow24>
-                                    <InputField
-                                        field="email"
-                                        type="email"
-                                        placeholder="Email"
-                                        errors={
-                                            errors
-                                        }
-                                    />
-                                    <InputField
-                                        field="firstName"
-                                        type="text"
-                                        placeholder="First name"
-                                        errors={
-                                            errors
-                                        }
-                                    />
-                                    <InputField
-                                        field="lastName"
-                                        type="text"
-                                        placeholder="Last name"
-                                        errors={
-                                            errors
-                                        }
-                                    />
-                                    <PageBlock>
-                                        <AddNewDashUserButton
-                                            type="submit"
-                                            title="Add user"
-                                            role="button"
-                                            aria-label="Add user"
-                                        >
-                                            Add user
-                                        </AddNewDashUserButton>
-                                    </PageBlock>
-                                </FlexContainer24>
-                            </Form>
-                        )}
-                    </Formik>
-                </ModalContentContainer>
+                                }}
+                            >
+                                {({ errors, status }) => (
+                                    <Form>
+                                        {status && <Status>{status}</Status>}
+                                        <FlexContainer24>
+                                            <FlexRow24>
+                                                <DatePickerField
+                                                    field="birthDate"
+                                                    placeholder="Birthday"
+                                                />
+                                                <SelectField
+                                                    field="role"
+                                                    placeholder="Role"
+                                                    errors={
+                                                        errors
+                                                    }
+                                                    options={
+                                                        roleOptions
+                                                    }
+                                                />
+                                            </FlexRow24>
+                                            <FlexRow24>
+                                                <SelectField
+                                                    field="title"
+                                                    placeholder="Title"
+                                                    errors={
+                                                        errors
+                                                    }
+                                                    options={
+                                                        titleOptions
+                                                    }
+                                                />
+                                                <SelectField
+                                                    field="gender"
+                                                    placeholder="Gender"
+                                                    errors={
+                                                        errors
+                                                    }
+                                                    options={
+                                                        genderOptions
+                                                    }
+                                                />
+                                            </FlexRow24>
+                                            <InputField
+                                                field="email"
+                                                type="email"
+                                                placeholder="Email"
+                                                errors={
+                                                    errors
+                                                }
+                                            />
+                                            <InputField
+                                                field="firstName"
+                                                type="text"
+                                                placeholder="First name"
+                                                errors={
+                                                    errors
+                                                }
+                                            />
+                                            <InputField
+                                                field="lastName"
+                                                type="text"
+                                                placeholder="Last name"
+                                                errors={
+                                                    errors
+                                                }
+                                            />
+                                            <PageBlock>
+                                                <AddNewDashUserButton
+                                                    type="submit"
+                                                    title="Add user"
+                                                    role="button"
+                                                    aria-label="Add user"
+                                                >
+                                                    Add user
+                                                </AddNewDashUserButton>
+                                            </PageBlock>
+                                        </FlexContainer24>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </ModalContentContainer>
+                    ) : (
+                        <ErrorComponent />
+                    )}
+                </>
             )}
         </>
     );

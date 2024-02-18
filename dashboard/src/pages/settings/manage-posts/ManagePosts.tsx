@@ -8,6 +8,7 @@ import SearchBoxComponent from "../../../components/utils/SearchBox";
 import { useDashPostFeedQuery, useMeQuery } from "../../../generated/graphql";
 import { LoadingContainer, PageTextMB24 } from "../../../styles/global";
 import SettingsComponent from "../SettingsComponent";
+import ErrorComponent from "../../../components/utils/ErrorComponent";
 
 function ManagePosts() {
     const { data, loading, error } = useMeQuery({
@@ -25,7 +26,7 @@ function ManagePosts() {
         }
     }, [data]);
 
-    const { data: dashPostData } = useDashPostFeedQuery({ fetchPolicy: "network-only" });
+    const { data: dashPostsData, loading: dashPostsLoading, error: dashPostsError } = useDashPostFeedQuery({ fetchPolicy: "network-only" });
 
     return (
         <>
@@ -41,19 +42,25 @@ function ManagePosts() {
                                 isAdmin={isAdmin}
                                 content={
                                     <>
-                                        {(loading && !data) || error ? (
+                                        {(loading || dashPostsLoading) ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
                                         ) : (
                                             <>
-                                                <SidebarLayoutTitle>
-                                                    Manage posts
-                                                </SidebarLayoutTitle>
-                                                <PageTextMB24>
-                                                    In this page you can manage all the posts.
-                                                </PageTextMB24>
-                                                <SearchBoxComponent data={dashPostData?.dashPostFeed || []} type="post" />  
+                                                {data && dashPostsData && !error && !dashPostsError ? (
+                                                    <>
+                                                        <SidebarLayoutTitle>
+                                                            Manage posts
+                                                        </SidebarLayoutTitle>
+                                                        <PageTextMB24>
+                                                            In this page you can manage all the posts.
+                                                        </PageTextMB24>
+                                                        <SearchBoxComponent data={dashPostsData.dashPostFeed} type="post" />  
+                                                    </>
+                                                ) : (
+                                                    <ErrorComponent />
+                                                )}
                                             </>
                                         )}
                                     </>

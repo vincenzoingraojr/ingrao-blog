@@ -1,11 +1,12 @@
 import { Form, Formik } from "formik";
 import ModalLoading from "../../../components/utils/modal/ModalLoading";
-import { DashUsersDocument, DashUsersQuery, useDashUsersQuery, useDeleteUserFromDashboardMutation, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
+import { DashUsersDocument, DashUsersQuery, User, useDashUsersQuery, useDeleteUserFromDashboardMutation, useFindUserQuery, useMeQuery } from "../../../generated/graphql";
 import { Button, FlexContainer24, ModalContentContainer, PageBlock, PageTextMB24, Status } from "../../../styles/global";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import Head from "../../../components/Head";
+import ErrorComponent from "../../../components/utils/ErrorComponent";
 
 const DeleteUserButton = styled(Button)`
     background-color: red;
@@ -49,62 +50,71 @@ function DeleteUser() {
                 title="Delete user | dashboard.ingrao.blog"
                 description="In this page you can delete a user from the dashboard."
             />
-            {(loading && !data && !userData) || error ? (
+            {(loading || userLoading) ? (
                 <ModalLoading />
             ) : (
-                <ModalContentContainer>
-                    <PageTextMB24>
-                        Delete a user from the dashboard.
-                    </PageTextMB24>
-                    <Formik
-                        initialValues={{
-                            id: parseInt(params.id!),
-                        }}
-                        onSubmit={async (values, { setStatus }) => {
-                            const response = await deleteUser({
-                                variables: values,
-                                update: (store, { data }) => {
-                                    if (
-                                        data &&
-                                        data.deleteUserFromDashboard
-                                    ) {
-                                        const usersData = dashUsersData?.dashUsers || [];
-                                        const selectedUser = usersData.find((item) => item.id === parseInt(params.id!));
-                                        const index = usersData.indexOf(selectedUser!);
-                                        usersData.splice(index!, 1);
-                                        
-                                        store.writeQuery<DashUsersQuery>({
-                                            query: DashUsersDocument,
-                                            data: {
-                                                dashUsers: usersData,
-                                            },
-                                        });
+                <>
+                    {data && userData && !error && !userError ? (
+                        <ModalContentContainer>
+                            <PageTextMB24>
+                                Delete a user from the dashboard.
+                            </PageTextMB24>
+                            <Formik
+                                initialValues={{
+                                    id: parseInt(params.id!),
+                                }}
+                                onSubmit={async (values, { setStatus }) => {
+                                    const response = await deleteUser({
+                                        variables: values,
+                                        update: (store, { data }) => {
+                                            if (
+                                                data &&
+                                                data.deleteUserFromDashboard && 
+                                                dashUsersData
+                                            ) {
+                                                const usersData = dashUsersData.dashUsers || [];
+                                                const selectedUser = usersData.find((item) => item.id === parseInt(params.id as string));
+                                                const index = usersData.indexOf(selectedUser as User);
+                                                usersData.splice(index!, 1);
+                                                
+                                                store.writeQuery<DashUsersQuery>({
+                                                    query: DashUsersDocument,
+                                                    data: {
+                                                        dashUsers: usersData,
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    });
+        
+                                    if (response.data) {
+                                        setStatus(response.data.deleteUserFromDashboard.status);
                                     }
-                                },
-                            });
-
-                            setStatus(response.data?.deleteUserFromDashboard?.status);
-                        }}
-                    >
-                        {({ status }) => (
-                            <Form>
-                                {status ? <DeleteStatus>{status}</DeleteStatus> : null}
-                                <FlexContainer24>
-                                    <PageBlock>
-                                        <DeleteUserButton
-                                            type="submit"
-                                            title="Delete user"
-                                            role="button"
-                                            aria-label="Delete user"
-                                        >
-                                            Delete user
-                                        </DeleteUserButton>
-                                    </PageBlock>
-                                </FlexContainer24>
-                            </Form>
-                        )}
-                    </Formik>
-                </ModalContentContainer>
+                                }}
+                            >
+                                {({ status }) => (
+                                    <Form>
+                                        {status && <DeleteStatus>{status}</DeleteStatus>}
+                                        <FlexContainer24>
+                                            <PageBlock>
+                                                <DeleteUserButton
+                                                    type="submit"
+                                                    title="Delete user"
+                                                    role="button"
+                                                    aria-label="Delete user"
+                                                >
+                                                    Delete user
+                                                </DeleteUserButton>
+                                            </PageBlock>
+                                        </FlexContainer24>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </ModalContentContainer>
+                    ) : (
+                        <ErrorComponent />
+                    )}
+                </>
             )}
         </>
     )

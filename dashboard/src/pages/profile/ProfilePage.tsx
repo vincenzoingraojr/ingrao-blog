@@ -632,13 +632,13 @@ function ProfilePage() {
                                                                                                     </PageText>
                                                                                                 </ProfileLargeInfoContainer>
                                                                                             </ProfileLargeContainer>
-                                                                                            {status ? (
+                                                                                            {status && (
                                                                                                 <Status>
                                                                                                     {
                                                                                                         status
                                                                                                     }
                                                                                                 </Status>
-                                                                                            ) : null}
+                                                                                            )}
                                                                                             <EditProfileFormContent>
                                                                                                 <FlexRow24>
                                                                                                     <SelectField
