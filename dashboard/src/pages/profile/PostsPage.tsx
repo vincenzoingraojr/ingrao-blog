@@ -8,6 +8,7 @@ import LoadingComponent from "../../components/utils/LoadingComponent";
 import { useDraftPostFeedQuery, useMeQuery, usePostFeedQuery } from "../../generated/graphql";
 import { LoadingContainer, OptionContainer, OptionTitle, PageBlock, PageText } from "../../styles/global";
 import ProfilePageComponent from "./ProfilePageComponent";
+import ErrorComponent from "../../components/utils/ErrorComponent";
 
 const PostsPageContent = styled.div`
     display: flex;
@@ -43,94 +44,112 @@ function PostsPage() {
                             <ProfilePageComponent
                                 content={
                                     <>
-                                        {(loading && !data) || error ? (
+                                        {loading ? (
                                             <LoadingContainer>
                                                 <LoadingComponent />
                                             </LoadingContainer>
                                         ) : (
                                             <>
-                                                <SidebarLayoutTitle>
-                                                    Your posts
-                                                </SidebarLayoutTitle>
-                                                <PostsPageContent>
-                                                    <PageText>
-                                                        You've been working on {data?.me?.posts?.length}{" "}{data?.me?.posts?.length === 1 ? "post" : "posts"}. 
-                                                    </PageText>
-                                                    <OptionContainer>
-                                                        <OptionTitle>
-                                                            Your published posts
-                                                        </OptionTitle>
-                                                        <PageText>
-                                                            Here you can view your published posts.
-                                                        </PageText>
-                                                        <PageBlock>
-                                                            {(postLoading && !postData) || postError ? (
-                                                                <LoadingContainer>
-                                                                    <LoadingComponent />
-                                                                </LoadingContainer>
-                                                            ) : (
-                                                                <>
-                                                                    {postData?.postFeed?.length ===
-                                                                    0 ? (
-                                                                        <PageText>
-                                                                            There are no published posts.
-                                                                        </PageText>
+                                                {data && data.me && data.me.posts && !error ? (
+                                                    <>
+                                                        <SidebarLayoutTitle>
+                                                            Your posts
+                                                        </SidebarLayoutTitle>
+                                                        <PostsPageContent>
+                                                            <PageText>
+                                                                You've been working on {data.me.posts.length}{" "}{data.me.posts.length === 1 ? "post" : "posts"}. 
+                                                            </PageText>
+                                                            <OptionContainer>
+                                                                <OptionTitle>
+                                                                    Your published posts
+                                                                </OptionTitle>
+                                                                <PageText>
+                                                                    Here you can view your published posts.
+                                                                </PageText>
+                                                                <PageBlock>
+                                                                    {postLoading ? (
+                                                                        <LoadingContainer>
+                                                                            <LoadingComponent />
+                                                                        </LoadingContainer>
                                                                     ) : (
-                                                                        <PostFeed>
-                                                                            {postData?.postFeed?.map(
-                                                                                (post) => (
-                                                                                    <SmallPostComponent
-                                                                                        key={
-                                                                                            post.id
-                                                                                        }
-                                                                                        post={post}
-                                                                                    />
-                                                                                )
+                                                                        <>
+                                                                            {postData && postData.postFeed && !postError ? (
+                                                                                <>
+                                                                                    {postData.postFeed.length ===
+                                                                                    0 ? (
+                                                                                        <PageText>
+                                                                                            There are no published posts.
+                                                                                        </PageText>
+                                                                                    ) : (
+                                                                                        <PostFeed>
+                                                                                            {postData.postFeed.map(
+                                                                                                (post) => (
+                                                                                                    <SmallPostComponent
+                                                                                                        key={
+                                                                                                            post.id
+                                                                                                        }
+                                                                                                        post={post}
+                                                                                                    />
+                                                                                                )
+                                                                                            )}
+                                                                                        </PostFeed>
+                                                                                    )}
+                                                                                </>
+                                                                            ) : (
+                                                                                <ErrorComponent />
                                                                             )}
-                                                                        </PostFeed>
+                                                                        </>
                                                                     )}
-                                                                </>
-                                                            )}
-                                                        </PageBlock>
-                                                    </OptionContainer>
-                                                    <OptionContainer>
-                                                        <OptionTitle>
-                                                            Your drafts
-                                                        </OptionTitle>
-                                                        <PageText>
-                                                            Here you can view your unpublished posts.
-                                                        </PageText>
-                                                        <PageBlock>
-                                                            {(draftPostLoading && !draftPostData) || draftPostError ? (
-                                                                <LoadingContainer>
-                                                                    <LoadingComponent />
-                                                                </LoadingContainer>
-                                                            ) : (
-                                                                <>
-                                                                    {draftPostData?.draftPostFeed?.length ===
-                                                                    0 ? (
-                                                                        <PageText>
-                                                                            There are no unpublished posts.
-                                                                        </PageText>
+                                                                </PageBlock>
+                                                            </OptionContainer>
+                                                            <OptionContainer>
+                                                                <OptionTitle>
+                                                                    Your drafts
+                                                                </OptionTitle>
+                                                                <PageText>
+                                                                    Here you can view your unpublished posts.
+                                                                </PageText>
+                                                                <PageBlock>
+                                                                    {draftPostLoading ? (
+                                                                        <LoadingContainer>
+                                                                            <LoadingComponent />
+                                                                        </LoadingContainer>
                                                                     ) : (
-                                                                        <PostFeed>
-                                                                            {draftPostData?.draftPostFeed?.map(
-                                                                                (draftPost) => (
-                                                                                    <SmallPostComponent
-                                                                                        key={
-                                                                                            draftPost.id
-                                                                                        }
-                                                                                        post={draftPost}
-                                                                                    />
-                                                                                )
+                                                                        <>
+                                                                            {draftPostData && draftPostData.draftPostFeed && !draftPostError ? (
+                                                                                <>
+                                                                                    {draftPostData.draftPostFeed.length ===
+                                                                                    0 ? (
+                                                                                        <PageText>
+                                                                                            There are no unpublished posts.
+                                                                                        </PageText>
+                                                                                    ) : (
+                                                                                        <PostFeed>
+                                                                                            {draftPostData.draftPostFeed.map(
+                                                                                                (draftPost) => (
+                                                                                                    <SmallPostComponent
+                                                                                                        key={
+                                                                                                            draftPost.id
+                                                                                                        }
+                                                                                                        post={draftPost}
+                                                                                                    />
+                                                                                                )
+                                                                                            )}
+                                                                                        </PostFeed>
+                                                                                    )}
+                                                                                </>
+                                                                            ) : (
+                                                                                <ErrorComponent />
                                                                             )}
-                                                                        </PostFeed>
+                                                                        </>
                                                                     )}
-                                                                </>
-                                                            )}
-                                                        </PageBlock>
-                                                    </OptionContainer>
-                                                </PostsPageContent>
+                                                                </PageBlock>
+                                                            </OptionContainer>
+                                                        </PostsPageContent>
+                                                    </>
+                                                ) : (
+                                                    <ErrorComponent />
+                                                )}
                                             </>
                                         )}
                                     </>

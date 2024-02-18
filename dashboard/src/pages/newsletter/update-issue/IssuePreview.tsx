@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { devices } from "../../../styles/devices";
 import { processDate } from "../../../utils/processDate";
 import { Editor } from "@ingrao-blog/editor";
+import ErrorComponent from "../../../components/utils/ErrorComponent";
 
 const IssuePreviewImage = styled.div`
     display: block;
@@ -113,102 +114,110 @@ function IssuePreview() {
     const [contentReady, setContentReady] = useState(false);
 
     useEffect(() => {
-        const content = data?.findNewsletterById?.content;
+        if (data && data.findNewsletterById) {
+            const content = data.findNewsletterById.content;
 
-        if (content) {
-            setContentReady(true);
-            setIssueContent(JSON.parse(content));
-        } else {
-            setContentReady(false);
-            setIssueContent(undefined);
+            if (content) {
+                setContentReady(true);
+                setIssueContent(JSON.parse(content));
+            } else {
+                setContentReady(false);
+                setIssueContent(undefined);
+            }
         }
-    }, [data?.findNewsletterById?.content]);
+    }, [data]);
 
     return (
         <>
             <Head
-                title={`${data?.findNewsletterById?.title} | Preview on dashboard.ingrao.blog`}
+                title={loading ? ("Loading... | dashboard.ingrao.blog") : ((data && data.findNewsletterById) ? `${data.findNewsletterById.title} | Preview on dashboard.ingrao.blog` : "No data")}
                 description="In this page you can view the issue preview."
             />
             <FocusPageLayout
-                title={`Update issue ${data?.findNewsletterById?.id}`}
+                title={loading ? ("Loading...") : ((data && data.findNewsletterById) ? `Update issue ${data.findNewsletterById.id}` : "No data")}
                 content={
                     <UpdateIssueComponent
                         newsletterId={params.newsletterId!}
                         content={
                             <>
-                                {(loading && !data) || error ? (
+                                {loading ? (
                                     <LoadingContainer>
                                         <LoadingComponent />
                                     </LoadingContainer>
                                 ) : (
-                                    <IssuePreviewContainer>
-                                        <PageBlock>
-                                            <IssuePreviewSubject>
-                                                {data?.findNewsletterById?.subject !== ""
-                                                    ? data?.findNewsletterById?.subject
-                                                    : "Subject"}
-                                            </IssuePreviewSubject>
-                                        </PageBlock>
-                                        <IssuePreviewTitle>
-                                            {data?.findNewsletterById?.title}
-                                        </IssuePreviewTitle>
-                                        <IssuePreviewInfo>
-                                            <PageBlock>
-                                                By{" "}
-                                                <strong>
-                                                    {
-                                                        data?.findNewsletterById?.author
-                                                            .firstName
-                                                    }{" "}
-                                                    {
-                                                        data?.findNewsletterById?.author
-                                                            .lastName
-                                                    }
-                                                </strong>
-                                            </PageBlock>
-                                            <PageText>|</PageText>
-                                            <IssuePreviewDate>
-                                                {new Date(
-                                                    parseInt(
-                                                        data?.findNewsletterById
-                                                            ?.updatedAt!
-                                                    )
-                                                ).toLocaleString("en-us", {
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    year: "numeric",
-                                                })}
-                                                {data?.findNewsletterById?.createdAt !== data?.findNewsletterById?.updatedAt && `, updated ${processDate(
-                                                    data?.findNewsletterById?.updatedAt!
-                                                )}`}
-                                            </IssuePreviewDate>
-                                        </IssuePreviewInfo>
-                                        <IssuePreviewImage>
-                                            <img
-                                                src={
-                                                    data?.findNewsletterById
-                                                        ?.newsletterCover !== "" &&
-                                                    data?.findNewsletterById
-                                                        ?.newsletterCover !== null
-                                                        ? data?.findNewsletterById
-                                                              ?.newsletterCover
-                                                        : newsletterCover
-                                                }
-                                                title={`Cover of issue ${data?.findNewsletterById?.id}`}
-                                                alt={`Cover of issue ${data?.findNewsletterById?.id}`}
-                                            />
-                                        </IssuePreviewImage>
-                                        {contentReady && (
-                                            <IssuePreviewContent>
-                                                <Editor
-                                                    readOnly={true}
-                                                    toolbarHidden={true}
-                                                    initialContentState={issueContent}
-                                                />
-                                            </IssuePreviewContent>
+                                    <>
+                                        {data && data.findNewsletterById && !error ? (
+                                            <IssuePreviewContainer>
+                                                <PageBlock>
+                                                    <IssuePreviewSubject>
+                                                        {data.findNewsletterById.subject && data.findNewsletterById.subject.length > 0
+                                                            ? data.findNewsletterById.subject
+                                                            : "Subject"}
+                                                    </IssuePreviewSubject>
+                                                </PageBlock>
+                                                <IssuePreviewTitle>
+                                                    {data.findNewsletterById.title}
+                                                </IssuePreviewTitle>
+                                                <IssuePreviewInfo>
+                                                    <PageBlock>
+                                                        By{" "}
+                                                        <strong>
+                                                            {
+                                                                data.findNewsletterById.author
+                                                                    .firstName
+                                                            }{" "}
+                                                            {
+                                                                data.findNewsletterById.author
+                                                                    .lastName
+                                                            }
+                                                        </strong>
+                                                    </PageBlock>
+                                                    <PageText>|</PageText>
+                                                    <IssuePreviewDate>
+                                                        {new Date(
+                                                            parseInt(
+                                                                data.findNewsletterById
+                                                                    .updatedAt
+                                                            )
+                                                        ).toLocaleString("en-us", {
+                                                            month: "long",
+                                                            day: "numeric",
+                                                            year: "numeric",
+                                                        })}
+                                                        {data.findNewsletterById.createdAt !== data.findNewsletterById.updatedAt && `, updated ${processDate(
+                                                            data.findNewsletterById.updatedAt
+                                                        )}`}
+                                                    </IssuePreviewDate>
+                                                </IssuePreviewInfo>
+                                                <IssuePreviewImage>
+                                                    <img
+                                                        src={
+                                                            data.findNewsletterById
+                                                                .newsletterCover !== "" &&
+                                                            data.findNewsletterById
+                                                                .newsletterCover !== null
+                                                                ? data.findNewsletterById
+                                                                    .newsletterCover
+                                                                : newsletterCover
+                                                        }
+                                                        title={`Cover of issue ${data.findNewsletterById.id}`}
+                                                        alt={`Cover of issue ${data.findNewsletterById.id}`}
+                                                    />
+                                                </IssuePreviewImage>
+                                                {contentReady && (
+                                                    <IssuePreviewContent>
+                                                        <Editor
+                                                            readOnly={true}
+                                                            toolbarHidden={true}
+                                                            initialContentState={issueContent}
+                                                        />
+                                                    </IssuePreviewContent>
+                                                )}
+                                            </IssuePreviewContainer>
+                                        ) : (
+                                            <ErrorComponent />
                                         )}
-                                    </IssuePreviewContainer>
+                                    </>
                                 )}
                             </>
                         }
