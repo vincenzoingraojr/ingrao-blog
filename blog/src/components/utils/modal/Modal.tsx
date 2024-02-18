@@ -139,7 +139,7 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                     if (window.history.length > 2) {
                         navigate(-1);
                     } else {
-                        navigate("/home");
+                        navigate("/");
                     }
                 }}
             ></ModalOverlay>
@@ -153,7 +153,7 @@ const Modal: FunctionComponent<ModalProps> = ({ modalContent, headerText }) => {
                             if (window.history.length > 2) {
                                 navigate(-1);
                             } else {
-                                navigate("/home");
+                                navigate("/");
                             }
                         }}
                     >
